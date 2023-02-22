@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elements</title>
+    <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+    <header class="header">
+        <div class="container">
+            <div class="header-wrapper">
+                <div class="logo-wrapper">
+                    <div class="logo"></div>
+                    <div><h1 class="caption">Outy</h1></div>
+                </div>
+
+                <div class="user-panel">
+                    <div class="notification"></div>
+                    <div class="user-data">
+                        <div class="avatar">
+                            <img src="./assets/images/user-photo.avif" alt="user avatar">
+                        </div>
+                        <span class="user-name">Erin Schleifer</span>
+                    </div>
+                    <button type="button" class="btn primary">Logout</button>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <main style="display: flex; flex-direction: column; gap: 15px; padding: 0 0 0 25px;">
+            <div class="inp"> 
+                <input type="text" name="search" required>
+                <button class="ico isearch"></button>
+                <label class="inp-caption">Search</label>
+            </div>
+
+            <div class="inp"> 
+                <input type="password" required>
+                <button class="ico ieye-slash"></button>
+                <label class="inp-caption">Password</label>
+            </div>
+
+            <div class="inp sel">
+                <select required>
+                    <option value="" disabled selected hidden></option>
+                    <option value="assignee 1">Assignee 1</option>
+                    <option value="assignee 2">Assignee 2</option>
+                    <option value="assignee 3">Assignee 3</option>
+                </select>
+                <button class="ico iexpand"></button>
+                <span class="border"></span>
+                <label class="inp-caption">Select ASSIGNEE</label>
+            </div>
+
+            <button type="button" class="btn primary" style="width: 200px;">Add task<span class="ico iadd-task"></span></button>
+
+            <button type="button" class="btn primary" disabled style="width: 200px;">Filter<span class="ico ifilter"></span></button>
+
+            <div class="btn-group">
+                <button type="button" class="btn primary">Rus</button>
+                <button type="button" class="btn primary active">Eng</button>
+            </div>
+
+            <div class="btn-group">
+                <button type="button" class="btn primary"><span class="ico ipublic-earth"></span></button>
+                <button type="button" class="btn primary active"><span class="ico iprivate-lock"></span></button>
+            </div>
+
+            <button type="button" class="btn primary onlyicon"><span class="ico iview-vertical"></span></button>
+            <button type="button" class="btn primary onlyicon active"><span class="ico iview-horizontal"></span></button>
+
+            <div class="btn-group">
+                <button type="button" class="btn hprio active">High</button>
+                <button type="button" class="btn mprio active">Med</span></button>
+                <button type="button" class="btn lprio active">Low</span></button>
+            </div>
+            
+            <div class="btn-group">
+                <button type="button" class="btn hprio">High</button>
+                <button type="button" class="btn mprio">Med</span></button>
+                <button type="button" class="btn lprio">Low</span></button>
+            </div>
+
+            <label class="switch">
+                <input type="checkbox">
+                <span class="slider"></span>
+            </label>
+
+            <div class="inp textarea"> 
+                <textarea required></textarea>
+                <label class="inp-caption">Description</label>
+            </div>
+    </main>
+
+    <!-- <footer class="footer">
+        <div class="container">
+            <div class="footer-wrapper">
+                <div class="appname">
+                    <div>
+                        <span class="caption">Outy</span>
+                        <span class="version">v0.2 (26.02.2023)</span>
+                    </div>
+                    <a class="contact" href="mailto:Koti4Matroskin@gmail.com"><span class="mailto"></span>Koti4Matroskin@gmail.com</a>
+                </div>
+                <div class="copyright">
+                    <p>Rostislav Lutskovich &copy; 2023</p>
+                </div>
+            </div>
+        </div>
+    </footer> -->
+</body>
+</html>

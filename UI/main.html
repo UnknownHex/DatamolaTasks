@@ -8,21 +8,71 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <header></header>
-    
-    <main>1</main>
-
-    <footer class="footer">
+    <header class="header">
         <div class="container">
-            <div class="appname">
-                <div class="logo"></div>
-                <div><span class="caption">Outy</span> <span class="version">v0.2 (26.02.2023)</span></div>
-            </div>
-            <div class="contact">
-                <a href="mailto:koti4matroskin@gmail.com"><span class="mailto"></span>Koti4Matroskin@gmail.com</a>
-                <p>Rostislav Lutskovich &copy; 2023</p>
+            <div class="header-wrapper">
+                <div class="logo-wrapper">
+                    <div class="logo"></div>
+                    <div><h1 class="caption">Outy</h1></div>
+                </div>
+
+                <div class="user-panel">
+                    <div class="notification"></div>
+                    <div class="user-data">
+                        <div class="avatar">
+                            <img src="./assets/images/user-photo.avif" alt="user avatar">
+                        </div>
+                        <span class="user-name">Erin Schleifer</span>
+                    </div>
+                    <button type="button" class="btn primary">Logout</button>
+                </div>
             </div>
         </div>
-    </footer>
+    </header>
+    
+    <main class="main">
+        <div class="container">
+            <div class="action-bar">
+                <div class="inp">
+                    <input type="text" name="search" required>
+                    <label class="inp-caption">Search</label>
+                </div>
+
+                <div class="party">
+                    <button type="button" class="btn primary">Add task<span class="ico iadd-task"></span></button>
+
+                    <button type="button" class="btn primary">Filter<span class="ico ifilter"></span></button>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn primary">Rus</button>
+                    <button type="button" class="btn primary active">Eng</button>
+                </div>
+
+                <div class="party">
+                    <button type="button" class="btn primary onlyicon"><span class="ico iview-vertical"></span></button>
+
+                    <button type="button" class="btn primary onlyicon active"><span class="ico iview-horizontal"></span></button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- <footer class="footer">
+        <div class="container">
+            <div class="footer-wrapper">
+                <div class="appname">
+                    <div>
+                        <span class="caption">Outy</span>
+                        <span class="version">v0.2 (26.02.2023)</span>
+                    </div>
+                    <a class="contact" href="mailto:Koti4Matroskin@gmail.com"><span class="mailto"></span>Koti4Matroskin@gmail.com</a>
+                </div>
+                <div class="copyright">
+                    <p>Rostislav Lutskovich &copy; 2023</p>
+                </div>
+            </div>
+        </div>
+    </footer> -->
 </body>
 </html>
