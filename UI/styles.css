@@ -65,6 +65,7 @@ span.ico {
     padding: 0 40px;
     margin: auto;
     max-width: 1440px;
+    width: 100%;
 }
 
 .active {
@@ -691,8 +692,9 @@ input:checked + .slider:after {
     color: var(--primary300);
     overflow: hidden;
     width: 100%;
+    height: 42px;
 
-    -webkit-line-clamp: 3;
+    -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
 }
 
@@ -749,7 +751,7 @@ input:checked + .slider:after {
     content: attr(attr-comments);
     text-align: center;
     left: -2px;
-    top: -1px;
+    top: 0px;
 }
 
 .h-priority,
@@ -1146,10 +1148,82 @@ input:checked + .slider:after {
     padding: 0 10px 0 0;
 }
 
-.user-comment .user-date {
-    font-size: .9rem;
+.user-date {
+    font-size: .7rem;
+    font-style: italic;
 }
 
 .comment-text {
     padding: 0 0 0 10px;
+}
+
+/* /////////////////////////////////////////////////////////////////////////////////////////////// */
+/* TASK BOARD */
+
+.board-wrapper {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+    width: 100%;
+    height: 50vh;
+    margin: 0 0 400px 0;
+}
+
+.taskboard {
+    /* width: 250px;  DELNEXT  */
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    border-radius: 8px;
+    border: 1px solid var(--white);
+    box-shadow: var(--basic-shadow) var(--primary300);
+}
+
+.taskboard-header {
+    font-size: 1.4rem;
+    font-weight: 600;
+    display: flex;
+    justify-content: end;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 15px;
+    border-radius: 8px 8px 0 0;
+    background: var(--disabled);
+}
+
+.taskboard-header .ico {
+    display: none;
+    margin: 0;
+    background-color: var(--dark);
+}
+
+.taskboard-content {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 20px;
+    padding: 15px 5px;
+    overflow-y: auto;
+}
+
+.taskboard.as-table {
+    border-radius: 0;
+}
+
+.taskboard.as-table .taskboard-header {
+    border-radius: 0;
+    cursor: pointer;
+}
+
+
+.as-table .taskboard-header:hover {
+    color: var(--primary);
+}
+
+.as-table .taskboard-header:hover .ico {
+    background: var(--primary);
+}
+
+.as-table .ico {
+    display: flex;
 }
