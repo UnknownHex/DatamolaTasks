@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-    <header class="header">
+    <!-- <header class="header">
         <div class="container">
             <div class="header-wrapper">
                 <div class="logo-wrapper">
@@ -28,7 +28,7 @@
                 </div>
             </div>
         </div>
-    </header>
+    </header> -->
     
     <main style="display: flex; gap: 15px;">
         <div style="display: flex; flex-direction: column; gap: 15px; padding: 0 0 0 15px;">
@@ -56,9 +56,15 @@
                 <label class="inp-caption">Select ASSIGNEE</label>
             </div>
 
-            <button type="button" class="btn primary" style="width: 200px;">Add task<span class="ico iadd-task"></span></button>
+            <button type="button" class="btn primary" style="width: 200px;"><span class="btn-caption">Add task</span><span class="ico iadd-task"></span></button>
 
-            <button type="button" class="btn primary" disabled style="width: 200px;">Filter<span class="ico ifilter"></span></button>
+            <button type="button" class="btn primary" disabled style="width: 200px;"><span class="btn-caption">Filter</span><span class="ico ifilter"></span></button>
+
+            <button type="button" class="btn primary burger onlyicon">
+                <span class="burg-line"></span>
+                <span class="burg-line"></span>
+                <span class="burg-line"></span>
+            </button>
 
             <div class="btn-group">
                 <button type="button" class="btn primary">Rus</button>
