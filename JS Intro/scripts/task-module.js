@@ -365,6 +365,7 @@ const taskModule = (function() {
     const isDate = (param) => (Object.prototype.toString.call(param) === "[object Date]" && !isNaN(param));
     const isNotEmpty = (param) => (param !== undefined && param !== '' && param !== null);
     const isCurrentUser = (user) => (user === mainState.user);
+    const isLengthValid = (str, maxLen) => (str.length <= maxLen);
     
     const isRightStatus = (param) => {
         const status = param.toLowerCase();
@@ -432,8 +433,8 @@ const taskModule = (function() {
         const verified = {
             id: isString(id),
             assignee: isNotEmpty(assignee),
-            name: isString(name) && isNotEmpty(name) && name.length <= titleMaxLen,
-            description: isString(description) && isNotEmpty(description) && description.length <= descrMaxLen,
+            name: isString(name) && isNotEmpty(name) && isLengthValid(name, titleMaxLen),
+            description: isString(description) && isNotEmpty(description) && isLengthValid(description, descrMaxLen),
             createdAt: isDate(createdAt),
             status: isRightStatus(status),
             priority: isRightPriority(priority),
@@ -442,6 +443,20 @@ const taskModule = (function() {
         };
 
         return checkAppropriate(verified);
+    };
+
+    const validateComment = (com) => {
+        const maxTextLen = 280;
+        const {id , text, createdAt, author} = com;
+
+        const verifiedComment = {
+            id: isString(id) && isNotEmpty(id),
+            text: isNotEmpty(text) && isLengthValid(text, maxTextLen),
+            createdAt: isDate(createdAt),
+            author: isNotEmpty(author),
+        };
+
+        return checkAppropriate(verifiedComment);
     };
 
     const getTasks = (skip = 0, top = 10, filterOpt) => {
@@ -483,7 +498,7 @@ const taskModule = (function() {
     };
 
     const editTask = (id, name, description, assignee, status, priority, isPrivate = false) => {
-        let [editableTask] = mainState.tasklist.filter((task) => task.id === id);
+        let editableTask = getTask(id);
 
         const updatedTask = {
             ...editableTask,
@@ -510,11 +525,31 @@ const taskModule = (function() {
         return false;
     };
 
+    const addComment = (id, text) => {
+        const task = getTask(id);
+
+        const commentObj = {
+            id: crypto.randomUUID(),
+            author: mainState.user,
+            createdAt: new Date(),
+            text,
+        };
+
+        const isValid = validateComment(commentObj);
+
+        if (isValid && task) {
+            task.comments = [...task.comments, commentObj];
+            return true;
+        };
+
+        return false;
+    };
+
     const removeTask = (id) => {
-        const [removableTask] = mainState.tasklist.filter((task) => task.id === id);
+        const removableTask = getTask(id);
         const indexOfRemTask = mainState.tasklist.indexOf(removableTask);
 
-        if (isNotEmpty(removableTask) && isCurrentUser(removableTask.assignee)) {
+        if (removableTask && isCurrentUser(removableTask.assignee)) {
             mainState.tasklist = [...mainState.tasklist.slice(0, indexOfRemTask), ...mainState.tasklist.slice(indexOfRemTask + 1)]
             return true;
         };
@@ -533,6 +568,7 @@ const taskModule = (function() {
         editTask,
         removeTask,
         changeUser,
+        addComment
     };
 })();
 
@@ -553,7 +589,7 @@ console.log(tasksBy5From15);
 console.log('-----------------------------------\n');
 
 
-console.log('Use filter and show results.');
+console.log('getTasks(0, 5, filterOpt) - use filter and show results.');
 // FILTER OPTIONS
 const filterOpt = {
     // assignee: 'Тим',
@@ -607,7 +643,7 @@ taskModule.changeUser('Константина Гон');
 
 const afterEditTaskWithID2 = taskModule.getTask('000003');
 console.log(afterEditTaskWithID2);
-taskModule.editTask('000003', 'new name', 'updated description', 'assignee', 'In progress', 'Low');
+taskModule.editTask('000003', 'new name', 'updated description', 'new assignee', 'In progress', 'Low');
 const beforeEditTaskWithID2 = taskModule.getTask('000003');
 console.log(beforeEditTaskWithID2);
 console.log('-----------------------------------\n');
@@ -617,4 +653,10 @@ console.log('removeTask(\'0000002\') - set out user and remove task id 000002');
 taskModule.changeUser('Карэнт Йусер');
 taskModule.removeTask('000002');
 console.log(showAllTasks());
+console.log('-----------------------------------\n');
+
+
+console.log('addComment(\'000003\', ...) - create comment and add it to task.');
+taskModule.addComment('000003', 'Этот комментарий от текущего пользователя для таски с ИД 000003!');
+console.log(taskModule.getTask('000003').comments);
 console.log('-----------------------------------\n');
