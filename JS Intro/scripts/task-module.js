@@ -171,7 +171,7 @@ const taskModule = (function() {
             {
                 id: '000011',
                 name: 'Разработать сверхновый алгоритм блокчейнов.',
-                description: 'Создать сверхновый, сверх быстрый, сверх надежный алгоритм работы блокчейна.',
+                description: 'Создать сверхновый, сверхбыстрый, сверхнадежный алгоритм работы блокчейна.',
                 createdAt: new Date('2023-03-13T09:07:54'),
                 assignee: 'Джун-Курьер',
                 status: 'To Do',
@@ -369,14 +369,16 @@ const taskModule = (function() {
     
     const isRightStatus = (param) => {
         const status = param.toLowerCase();
+        const statuslist = ['to do', 'in progress', 'complete'];
 
-        return status === 'to do' || status === 'in progress' || status === 'complete';
+        return statuslist.includes(status);
     };
     
     const isRightPriority = (param) => {
         const priority = param.toLowerCase();
+        const prioritylist = ['low', 'medium', 'high'];
 
-        return priority === 'low' || priority === 'medium' || priority === 'high';
+        return prioritylist.includes(priority);
     };
     
     const checkAppropriate = (obj) => (!Object.values(obj).includes(false));
@@ -431,7 +433,7 @@ const taskModule = (function() {
         } = taskObj;
 
         const verified = {
-            id: isString(id),
+            id: isString(id) && isNotEmpty(id),
             assignee: isNotEmpty(assignee),
             name: isString(name) && isNotEmpty(name) && isLengthValid(name, titleMaxLen),
             description: isString(description) && isNotEmpty(description) && isLengthValid(description, descrMaxLen),
@@ -469,8 +471,9 @@ const taskModule = (function() {
     };
 
     const getTask = (id) => {
-        const [taskByID] = mainState.tasklist.filter((task) => task.id === id);
-        return taskByID ?? null;
+        const [task] = mainState.tasklist.filter((task) => task.id === id);
+
+        return task ?? null;
     };
 
     const addTask = (name, description, assignee, status, priority, isPrivate) => {
@@ -491,6 +494,7 @@ const taskModule = (function() {
 
         if (isTaskValid) {
             mainState.tasklist = [...mainState.tasklist, taskObj];
+
             return true;
         }
         
@@ -498,7 +502,7 @@ const taskModule = (function() {
     };
 
     const editTask = (id, name, description, assignee, status, priority, isPrivate = false) => {
-        let editableTask = getTask(id);
+        const editableTask = getTask(id);
 
         const updatedTask = {
             ...editableTask,
@@ -519,6 +523,7 @@ const taskModule = (function() {
             editableTask.status = updatedTask.status;
             editableTask.priority = updatedTask.priority;
             editableTask.isPrivate = updatedTask.isPrivate;
+
             return true;
         };
 
@@ -527,9 +532,10 @@ const taskModule = (function() {
 
     const addComment = (id, text) => {
         const task = getTask(id);
+        const commentID = crypto.randomUUID();
 
         const commentObj = {
-            id: crypto.randomUUID(),
+            id: commentID,
             author: mainState.user,
             createdAt: new Date(),
             text,
@@ -539,6 +545,7 @@ const taskModule = (function() {
 
         if (isValid && task) {
             task.comments = [...task.comments, commentObj];
+
             return true;
         };
 
@@ -551,6 +558,7 @@ const taskModule = (function() {
 
         if (removableTask && isCurrentUser(removableTask.assignee)) {
             mainState.tasklist = [...mainState.tasklist.slice(0, indexOfRemTask), ...mainState.tasklist.slice(indexOfRemTask + 1)]
+
             return true;
         };
 
