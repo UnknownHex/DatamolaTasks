@@ -583,13 +583,13 @@ const taskModule = (function() {
 const showAllTasks = () => taskModule.getTasks(0, 50);
 
 
-console.log('getTasks() - show tasks from 0');
+console.log('1: getTasks() - show tasks from 0');
 const tasksFrom0 = taskModule.getTasks();
 console.log(tasksFrom0);
 console.log('-----------------------------------\n');
 
 
-console.log('getTasks(10, 5) - show tasks from 10');
+console.log('2: getTasks(10, 5) - show tasks from 10');
 const tasksBy5From10 = taskModule.getTasks(10, 5);
 const tasksBy5From15 = taskModule.getTasks(15, 5);
 console.log(tasksBy5From10);
@@ -597,14 +597,14 @@ console.log(tasksBy5From15);
 console.log('-----------------------------------\n');
 
 
-console.log('getTasks(0, 5, filterOpt) - use filter and show results.');
+console.log('3: getTasks(0, 5, filterOpt) - use filter and show results.');
 // FILTER OPTIONS
 const filterOpt = {
     // assignee: 'Тим',
     dateFrom: new Date('2023-03-10T00:00:00'),
     dateTo: new Date('2023-03-10T23:59:59'),
     // status: 'To Do',
-    priority: 'High',
+    // priority: 'High',
     // isPrivate: false,
     // description: 'svg',
 }
@@ -613,13 +613,13 @@ console.log(tasksWithFilter);
 console.log('-----------------------------------\n');
 
 
-console.log('getTask(\'000010\') - show task with id 000010');
+console.log('4: getTask(\'000010\') - show task with id 000010');
 const taskByID = taskModule.getTask('000010');
 console.log(taskByID);
 console.log('-----------------------------------\n');
 
 
-console.log('addTask(...) - create new task');
+console.log('5: addTask(...) - create new task');
 console.log(showAllTasks());
 const addValidTask = taskModule.addTask(
     'Организовать пользователям доступ к файловым хранилищам',
@@ -645,7 +645,7 @@ console.log(showAllTasks());
 console.log('-----------------------------------\n');
 
 
-console.log('editTask(\'0000003\', ...) - edit task with id 000003');
+console.log('6: editTask(\'000003\', ...) - edit task with id 000003');
 console.log('changeUser(...) - set new name and try to edit task.');
 taskModule.changeUser('Константина Гон');
 
@@ -657,14 +657,14 @@ console.log(beforeEditTaskWithID2);
 console.log('-----------------------------------\n');
 
 
-console.log('removeTask(\'0000002\') - set out user and remove task id 000002');
+console.log('7: removeTask(\'000002\') - set out user and remove task id 000002');
 taskModule.changeUser('Карэнт Йусер');
 taskModule.removeTask('000002');
 console.log(showAllTasks());
 console.log('-----------------------------------\n');
 
 
-console.log('addComment(\'000003\', ...) - create comment and add it to task.');
+console.log('8: addComment(\'000003\', ...) - create comment and add it to task.');
 taskModule.addComment('000003', 'Этот комментарий от текущего пользователя для таски с ИД 000003!');
 console.log(taskModule.getTask('000003').comments);
 console.log('-----------------------------------\n');
