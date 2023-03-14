@@ -1,6 +1,7 @@
 class List {
     constructor(startValue) {
         this._root = new Node(startValue);
+        this._len = 1;
     }
 
     get root() {
@@ -11,7 +12,15 @@ class List {
         this._root = node;
     }
 
-    getWorkPoint(idx = null) {
+    get len() {
+        return this._len;
+    }
+
+    set len(value) {
+        this._len = value;
+    }
+
+    getWorkingPoint(idx = null) {
         let point = this.root;
         let currentPoint = 0;
 
@@ -21,7 +30,7 @@ class List {
         };
         
         if (idx && currentPoint !== idx) {
-            throw Error(errors.outOfListRange);
+            throw new Error(errors.outOfListRange);
         };
 
         return point;
@@ -29,29 +38,47 @@ class List {
 
     addNode(value, idx = null) {
         const node = new Node(value);
-        let insertionPoint;
 
         try {
-            insertionPoint = this.getWorkPoint(idx);
+            const insertionPoint = this.getWorkingPoint(idx);
+            node.next = insertionPoint.next;
+
+            if (idx === 0) {
+                this.root.next = node;
+            } else {
+                insertionPoint.next = node;
+            };
         } catch (e) {
             console.log(e);
             return false;
         };
 
-        if (idx === 0) {
-            node.next = this.root;
-            this.root = node;
-        } else if (idx > 0) {
-            node.next = insertionPoint.next;
-            insertionPoint.next = node;
-        } else {
-            insertionPoint.next = node;
-        };
-
+        this.len += 1;
         return true;
     }
 
-    // TODO: removeNod(i?: number): boolean;
+    removeNode(idx = null) {
+        try {
+            if (!idx && !this.root.next) throw new Error(errors.onlyOneElement);
+            
+            const index = idx ?? this.len - 1;
+
+            if (index === 0) {
+                this.root = this.root.next;
+            } else if(index > 0) {
+                const prePoint = this.getWorkingPoint(index - 1);
+                const removablePoint = this.getWorkingPoint(index);
+
+                prePoint.next = removablePoint.next;
+            };
+        } catch (e) {
+            console.log(e);
+            return false;
+        };
+
+        this.len -= 1;
+        return true;
+    }
 
     print() {
         let node = this.root;
