@@ -40,6 +40,8 @@ lst.print();
 console.log(`\nTry to remove tail obj:`);
 console.log(`Has a: ${lst.removeNode()};`);
 lst.print();
+
+console.log(`\nCreate 'NEW TAIL!' with last index:`);
 lst.addNode('NEW TAIL!', 5);
 console.log(`'NEW TAIL!' was added!`);
 lst.print();
@@ -47,3 +49,12 @@ lst.print();
 console.log(`\nTry to remove unexist index:`);
 console.log(`And it is: ${lst.removeNode(10000)};`);
 lst.print();
+
+
+console.log(`\nNow delete all list items! :)`);
+let tmp = true;
+while (tmp) {
+    tmp = lst.removeNode();
+    console.log(`${tmp}:\n`);
+    lst.print();
+};

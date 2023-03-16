@@ -49,7 +49,7 @@ class List {
                 insertionPoint.next = node;
             };
         } catch (e) {
-            console.log(e);
+            console.log(e.message);
             return false;
         };
 
@@ -72,7 +72,7 @@ class List {
                 prePoint.next = removablePoint.next;
             };
         } catch (e) {
-            console.log(e);
+            console.log(e.message);
             return false;
         };
 
