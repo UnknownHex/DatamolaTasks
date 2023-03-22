@@ -1,0 +1,3 @@
+const consts = {
+    appName: 'APPLICATION',
+};
