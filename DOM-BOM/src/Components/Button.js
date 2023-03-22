@@ -1,13 +1,14 @@
 class Button extends BaseElement {
     constructor({
-        caption, type, classNames, onClick, isBurger,
+        caption, type, classNames, onClick, isBurger, icon,
     }) {
         super('button');
-        this.caption = document.createTextNode(caption);
+        this.caption = caption;
         this.type = type ?? 'button';
         this.classes = classNames ?? '';
         this.isBurger = isBurger ?? false;
         this.onClick = onClick;
+        this.icon = icon;
 
         this.init();
     }
@@ -24,14 +25,21 @@ class Button extends BaseElement {
         if (this.isBurger) {
             const line = document.createElement('span');
             line.classList.add(styles.burgLine);
+
             const line2nd = line.cloneNode();
             const line3rd = line.cloneNode();
 
             this.node.appendChild(line);
             this.node.appendChild(line2nd);
             this.node.appendChild(line3rd);
+        } else if (this.classes.includes(styles.onlyicon)) {
+            const icon = document.createElement('span');
+            icon.classList.add(styles.ico);
+            icon.classList.add(this.icon);
+
+            this.node.appendChild(icon);
         } else {
-            this.node.appendChild(this.caption);
+            this.node.textContent = this.caption;
         }
 
         if (this.onClick) {

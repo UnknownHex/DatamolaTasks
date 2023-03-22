@@ -1,5 +1,6 @@
 const styles = {
     container: 'container',
+
     header: 'header',
     headerWrapper: 'header-wrapper',
     logoWrapper: 'logo-wrapper',
@@ -16,4 +17,39 @@ const styles = {
     userData: 'user-data',
     avatar: 'avatar',
     userName: 'user-name',
+    userDate: 'user-date',
+
+    boardWrapper: 'board-wrapper',
+    taskboard: 'taskboard',
+    taskboardHeader: 'taskboard-header',
+    taskboardCaption: 'taskboard-caption',
+    taskboardContent: 'taskboard-content',
+
+    taskContainer: 'task-container',
+    task: 'task',
+    taskHeader: 'task-header',
+    taskInfo: 'task-info',
+    taskCOmments: 'task-comments',
+    taskTitle: 'task-title',
+    taskCaption: 'task-caption',
+    taskPanel: 'task-panel',
+    taskActions: 'task-actions',
+
+    userinfo: 'userinfo',
+    userinfoData: 'userinfo-data',
+
+    badge: 'badge',
+
+    hPriority: 'h-priority',
+    mPriority: 'm-priority',
+    lPriority: 'l-priority',
+
+    ico: 'ico',
+    icons: {
+        idelete: 'idelete',
+        iedit: 'iedit',
+        iexpand: 'iexpand',
+        icomment: 'icomment',
+        iprivateLock: 'iprivate-lock',
+    },
 };

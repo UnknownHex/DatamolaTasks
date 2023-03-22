@@ -1,7 +1,7 @@
-class HeaderView extends BaseElement {
+class HeaderView extends BaseView {
     constructor(containerId) {
-        super('header');
-        this.containerId = containerId;
+        super(containerId);
+
         this.userPanel = new UserPanel({});
 
         this.init();
@@ -9,18 +9,23 @@ class HeaderView extends BaseElement {
 
     init() {
         const headerFragment = document.createDocumentFragment();
+        const header = document.createElement('header');
         const container = new Container();
         const headerWrapper = document.createElement('div');
         const logoWrapper = document.createElement('div');
         const logo = document.createElement('div');
         const h1 = document.createElement('h1');
         const burgerBtn = new Button({
-            caption: 'burger menu',
-            classNames: ['btn', 'burger', 'primary', 'onlyicon'],
+            classNames: [
+                styles.btn,
+                styles.burger,
+                styles.primary,
+                styles.onlyicon,
+            ],
             isBurger: true,
         });
 
-        this.node.classList.add(styles.header);
+        header.classList.add(styles.header);
         headerWrapper.classList.add(styles.headerWrapper);
         logoWrapper.classList.add(styles.logoWrapper);
         logo.classList.add(styles.logo);
@@ -37,11 +42,11 @@ class HeaderView extends BaseElement {
 
         container.node.appendChild(headerWrapper);
 
-        this.node.appendChild(container.node);
+        header.appendChild(container.node);
 
-        headerFragment.appendChild(this.node);
+        headerFragment.appendChild(header);
 
-        document.querySelector(`#${this.containerId}`).appendChild(headerFragment);
+        this.render(headerFragment);
     }
 
     display(params) {
