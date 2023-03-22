@@ -16,13 +16,16 @@ class UserPanel extends BaseElement {
         super();
         this.user = user ?? null;
         this.avatara = avatara;
-        this.notification = document.createElement('div');
 
         this.init();
     }
 
     init() {
+        this.node.classList.add(styles.userPanel);
+
         if (this.user) {
+            const userPanelFragment = document.createDocumentFragment();
+            const notification = document.createElement('div');
             const userData = new UserData({ user: this.user, avatara: this.avatara });
             const logoutBtn = new Button({
                 caption: 'logout',
@@ -30,12 +33,14 @@ class UserPanel extends BaseElement {
                 type: 'button',
             });
 
-            this.notification.classList.add(styles.notification);
+            notification.classList.add(styles.notification);
             this.node.classList.add(styles.userPanel);
 
-            this.node.appendChild(this.notification);
-            this.node.appendChild(userData.node);
-            this.node.appendChild(logoutBtn.node);
+            userPanelFragment.appendChild(notification);
+            userPanelFragment.appendChild(userData.node);
+            userPanelFragment.appendChild(logoutBtn.node);
+
+            this.node.append(userPanelFragment);
         } else {
             const signInBtn = new Button({
                 caption: 'sign in',
@@ -50,7 +55,10 @@ class UserPanel extends BaseElement {
     update({ user, avatara }) {
         this.user = user ?? '';
         this.avatara = avatara;
-        console.log(this.node.childNodes);
+
+        while (this.node.firstChild) {
+            this.node.firstChild.remove();
+        }
 
         this.init();
     }

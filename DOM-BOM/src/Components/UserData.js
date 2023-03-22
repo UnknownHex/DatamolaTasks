@@ -9,13 +9,14 @@
 class UserData extends BaseElement {
     constructor({ user, avatara }) {
         super();
-        this.user = document.createTextNode(user ?? '');
+        this.user = user;
         this.avatara = avatara ?? `./assets/base-avas/body-${Math.floor(Math.random() * 4) + 1}.png`;
 
         this.init();
     }
 
     init() {
+        const userDataFragment = document.createDocumentFragment();
         const avatarDiv = document.createElement('div');
         const img = document.createElement('img');
         const span = document.createElement('span');
@@ -23,13 +24,18 @@ class UserData extends BaseElement {
         this.node.classList.add(styles.userData);
         avatarDiv.classList.add(styles.avatar);
         span.classList.add(styles.userName);
-        span.appendChild(this.user);
+        span.textContent = this.user;
         img.setAttribute('src', this.avatara);
         img.setAttribute('alt', 'User image');
 
         avatarDiv.appendChild(img);
 
-        this.node.append(avatarDiv);
-        this.node.append(span);
+        userDataFragment.appendChild(avatarDiv);
+        userDataFragment.appendChild(span);
+
+        this.avatarImg = img;
+        this.userName = span;
+
+        this.node.appendChild(userDataFragment);
     }
 }

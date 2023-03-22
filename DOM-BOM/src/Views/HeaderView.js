@@ -8,6 +8,7 @@ class HeaderView extends BaseElement {
     }
 
     init() {
+        const headerFragment = document.createDocumentFragment();
         const container = new Container();
         const headerWrapper = document.createElement('div');
         const logoWrapper = document.createElement('div');
@@ -24,11 +25,12 @@ class HeaderView extends BaseElement {
         logoWrapper.classList.add(styles.logoWrapper);
         logo.classList.add(styles.logo);
         h1.classList.add(styles.appCaption);
-        h1.appendChild(document.createTextNode(consts.appName));
 
-        headerWrapper.appendChild(burgerBtn.node);
+        h1.textContent = consts.appName;
+
         headerWrapper.appendChild(logoWrapper);
         headerWrapper.appendChild(this.userPanel.node);
+        headerWrapper.appendChild(burgerBtn.node);
 
         logoWrapper.appendChild(logo);
         logoWrapper.appendChild(h1);
@@ -37,7 +39,9 @@ class HeaderView extends BaseElement {
 
         this.node.appendChild(container.node);
 
-        document.querySelector(`#${this.containerId}`).appendChild(this.node);
+        headerFragment.appendChild(this.node);
+
+        document.querySelector(`#${this.containerId}`).appendChild(headerFragment);
     }
 
     display(params) {
