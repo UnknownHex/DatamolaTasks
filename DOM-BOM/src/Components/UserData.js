@@ -5,11 +5,29 @@
         </div>
         <span class="user-name">Erin Schleifer</span>
     </div>
+
+    <div class="userinfo">
+        <div class="avatar">
+            <img src="./assets/images/user-photo.avif">
+        </div>
+        <div class="userinfo-data">
+            <div class="user-name">Erin Schleifer</div>
+            <div class="user-date">24.05.2023 14:24</div>
+        </div>
+    </div>
 */
 class UserData extends BaseElement {
-    constructor({ user, avatara }) {
+    constructor({
+        user,
+        avatara,
+        isInfo,
+        createdAt,
+    }) {
         super();
+
         this.user = user;
+        this.isInfo = !!isInfo;
+        this.createdAt = createdAt;
         this.avatara = avatara ?? `./assets/base-avas/body-${Math.floor(Math.random() * 4) + 1}.png`;
 
         this.init();
@@ -19,22 +37,49 @@ class UserData extends BaseElement {
         const userDataFragment = document.createDocumentFragment();
         const avatarDiv = document.createElement('div');
         const img = document.createElement('img');
-        const span = document.createElement('span');
+        const spanUserName = document.createElement('span');
 
-        this.node.classList.add(styles.userData);
         avatarDiv.classList.add(styles.avatar);
-        span.classList.add(styles.userName);
-        span.textContent = this.user;
+        spanUserName.classList.add(styles.userName);
+
+        spanUserName.textContent = this.user;
+
         img.setAttribute('src', this.avatara);
-        img.setAttribute('alt', 'User image');
+        img.setAttribute('alt', 'User avatar');
 
         avatarDiv.appendChild(img);
 
         userDataFragment.appendChild(avatarDiv);
-        userDataFragment.appendChild(span);
 
-        this.avatarImg = img;
-        this.userName = span;
+        switch (this.isInfo) {
+        case true: {
+            const divUserData = document.createElement('div');
+            const spanTimestamp = document.createElement('span');
+            const time = document.createElement('time');
+            const dateFormat = formatDate(this.createdAt);
+
+            divUserData.classList.add(styles.userinfoData);
+            spanTimestamp.classList.add(styles.userDate);
+
+            time.setAttribute('datetime', this.createdAt);
+            time.textContent = dateFormat;
+
+            spanTimestamp.appendChild(time);
+
+            divUserData.appendChild(spanUserName);
+            divUserData.appendChild(spanTimestamp);
+
+            this.node.classList.add(styles.userinfo);
+            userDataFragment.appendChild(divUserData);
+            break;
+        }
+        case false:
+            this.node.classList.add(styles.userData);
+            userDataFragment.appendChild(spanUserName);
+            break;
+        default:
+            this.node.appendChild(userDataFragment);
+        }
 
         this.node.appendChild(userDataFragment);
     }

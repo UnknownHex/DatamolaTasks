@@ -12,44 +12,84 @@
 */
 
 class TaskFeedView extends BaseView {
-    constructor(containerId, { caption }) {
+    constructor(containerId, tasklist) {
         super(containerId);
 
-        this.tableCaption = caption;
-        this.taskboardContent = document.createElement('div');
-        this.fragmentWithTasks = document.createDocumentFragment();
+        this.taskBoardsFragment = document.createDocumentFragment();
+        this.toDoBoard = new Taskboard({ caption: taskStatus.toDo });
+        this.inProgressBoard = new Taskboard({ caption: taskStatus.inProgress });
+        this.completeBoard = new Taskboard({ caption: taskStatus.complete });
+        this.tasklist = tasklist ?? [];
 
         this.init();
     }
 
     init() {
-        const taskboardFragment = document.createDocumentFragment();
-        const taskboard = document.createElement('section');
-        const taskboardHeader = document.createElement('div');
-        const taskboardCaption = document.createElement('span');
-        const expander = document.createElement('span');
+        const taskFeedFragment = document.createDocumentFragment();
+        const taskboardWrapper = document.createElement('div');
 
-        taskboard.classList.add(styles.taskboard);
-        taskboardHeader.classList.add(styles.taskboardHeader);
-        taskboardCaption.classList.add(styles.taskboardCaption);
-        expander.classList.add(styles.ico);
-        expander.classList.add(styles.iexpand);
-        this.taskboardContent.classList.add(styles.taskboardContent);
+        taskFeedFragment.appendChild(taskboardWrapper);
 
-        taskboardFragment.appendChild(taskboard);
+        taskboardWrapper.classList.add(styles.boardWrapper);
 
-        taskboard.appendChild(taskboardHeader);
-        taskboard.appendChild(this.taskboardContent);
+        this.inProgressBoard.node.classList.add(styles.inprogressTask);
+        this.completeBoard.node.classList.add(styles.completeTask);
 
-        taskboardHeader.appendChild(taskboardCaption);
-        taskboardHeader.appendChild(expander);
+        this.taskBoardsFragment.appendChild(this.toDoBoard.node);
+        this.taskBoardsFragment.appendChild(this.inProgressBoard.node);
+        this.taskBoardsFragment.appendChild(this.completeBoard.node);
 
-        taskboardCaption.textContent = this.tableCaption;
+        taskboardWrapper.appendChild(this.taskBoardsFragment);
 
-        this.render(taskboardFragment);
+        this.render(taskFeedFragment);
     }
 
-    update(tasklist) {
-        this.taskboardContent.children.forEach((child) => child.remove());
+    chooseTable(task) {
+        switch (task.status.toLowerCase()) {
+        case taskStatus.toDo.toLowerCase():
+            this.toDoBoard.drawTask(task);
+            break;
+        case taskStatus.inProgress.toLowerCase():
+            this.inProgressBoard.drawTask(task);
+            break;
+        case taskStatus.complete.toLowerCase():
+            this.completeBoard.drawTask(task);
+            break;
+        default:
+            break;
+        }
+    }
+
+    addTask(task) {
+        this.tasklist = [...this.tasklist, task];
+        this.chooseTable(task);
+
+        this.update();
+    }
+
+    updateTasks(tasklist) {
+        this.tasklist = tasklist;
+
+        this.tasklist.forEach((task) => {
+            this.chooseTable(task);
+        });
+
+        this.toDoBoard.clear();
+        this.inProgressBoard.clear();
+        this.completeBoard.clear();
+
+        this.update();
+    }
+
+    update() {
+        const taskFeedFragment = document.createDocumentFragment();
+        const taskboardWrapper = document.createElement('div');
+
+        taskFeedFragment.appendChild(taskboardWrapper);
+        taskboardWrapper.appendChild(this.taskBoardsFragment);
+
+        this.toDoBoard.update();
+        this.inProgressBoard.update();
+        this.completeBoard.update();
     }
 }

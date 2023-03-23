@@ -231,7 +231,7 @@ const fakeTasks = [
         createdAt: new Date('2023-03-15T04:54:22'),
         assignee: 'Игорёша',
         status: 'To Do',
-        priority: 'Med',
+        priority: 'Medium',
         isPrivate: true,
         comments: [{
             id: '658321',

@@ -4,25 +4,31 @@ setTimeout(() => {
     headerView.display({ user: 'Grenkaji Pania' });
 }, 3000);
 
-const taskFeedView = new TaskFeedView('main-mount-point', { caption: 'Complete' });
+const taskFeedView = new TaskFeedView('main-mount-point');
 
-const editBtn = new Button({
-    classNames: [
-        styles.btn,
-        styles.primary,
-        styles.onlyicon,
-    ],
-    icon: styles.icons.iedit,
-});
+let count = 0;
+const inserter = setInterval(() => {
+    if (fakeTasks.length - 1 < count) {
+        clearInterval(inserter);
+    } else {
+        taskFeedView.addTask(fakeTasks[count]);
+        count += 1;
+    }
+    // eslint-disable-next-line no-unused-expressions
+}, 120);
 
-const deleteBtn = new Button({
-    classNames: [
-        styles.btn,
-        styles.secondary,
-        styles.onlyicon,
-    ],
-    icon: styles.icons.idelete,
-});
+const oneTask = {
+    id: 'fgerg34',
+    name: '!!!',
+    description: '!',
+    createdAt: new Date('2023-03-15T01:10:07'),
+    assignee: 'Константина Гон',
+    status: 'Complete',
+    priority: 'Medium',
+    isPrivate: false,
+    comments: [],
+};
 
-document.body.appendChild(editBtn.node);
-document.body.appendChild(deleteBtn.node);
+setTimeout(() => {
+    taskFeedView.updateTasks(fakeTasks);
+}, 5000);

@@ -45,7 +45,6 @@ class UserPanel extends BaseElement {
             const signInBtn = new Button({
                 caption: 'sign in',
                 classNames: [styles.btn, styles.primary],
-                type: 'button',
             });
 
             this.node.appendChild(signInBtn.node);

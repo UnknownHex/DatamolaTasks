@@ -859,6 +859,11 @@ input:checked + .slider:after {
     gap: 6px;
 }
 
+.userinfo-data {
+    display: flex;
+    flex-direction: column;
+}
+
 .userinfo .avatar {
     box-shadow: var(--active-shadow) var(--primary300);
 }
@@ -1253,6 +1258,7 @@ input:checked + .slider:after {
     border: 1px solid var(--white);
     box-shadow: var(--basic-shadow) var(--primary300);
     margin: 0 0 5px 0;
+    flex: 1 0;
 }
 
 .taskboard-header {
@@ -1582,6 +1588,10 @@ input:checked + .slider:after {
 
     .action-bar .btn .ico {
         margin: 0;
+    }
+
+    .taskboard {
+        flex: 0 1 100%;
     }
 
 /* user-page */

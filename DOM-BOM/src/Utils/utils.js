@@ -101,3 +101,13 @@ const orderByDate = (tasklist, isAsc = true) => {
     const sorted = [...tasklist].sort((task1, task2) => task1.createdAt - task2.createdAt);
     return isAsc ? sorted : sorted.reverse();
 };
+
+const formatDate = (dateInst) => {
+    const date = dateInst.getDate() <= 9 ? `0${dateInst.getDate()}` : dateInst.getDate();
+    const month = MONTHS[dateInst.getMonth()];
+    const year = dateInst.getFullYear();
+    const hours = dateInst.getHours() <= 9 ? `0${dateInst.getHours()}` : dateInst.getHours();
+    const minutes = dateInst.getMinutes() <= 9 ? `0${dateInst.getMinutes()}` : dateInst.getMinutes();
+
+    return `${date} ${month} ${year}, ${hours}:${minutes}`;
+};

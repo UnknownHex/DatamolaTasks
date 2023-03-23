@@ -45,10 +45,12 @@
 */
 
 class TaskContainer extends BaseElement {
-    constructor({ task }) {
-        super();
+    constructor(task) {
+        super('article');
 
         this.taskEnt = task;
+
+        this.init();
     }
 
     init() {
@@ -60,8 +62,9 @@ class TaskContainer extends BaseElement {
         const taskCaption = document.createElement('div');
         const taskTextBlock = document.createElement('div');
         const taskActions = document.createElement('div');
-        // <button type="button" class="btn secondary onlyicon"><span class="ico idelete"></span></button>
-        // <button type="button" class="btn primary onlyicon"><span class="ico iedit"></span></button>
+        const taskInfo = new TaskInfo(this.taskEnt);
+        const userInfo = new UserData({ createdAt: this.taskEnt.createdAt, isInfo: true, user: this.taskEnt.assignee });
+
         const editBtn = new Button({
             classNames: [
                 styles.btn,
@@ -101,8 +104,15 @@ class TaskContainer extends BaseElement {
         taskTextBlock.appendChild(taskTitle);
         taskTextBlock.appendChild(taskCaption);
 
+        taskHeader.appendChild(taskInfo.node);
         taskHeader.appendChild(taskTextBlock);
 
+        taskPanel.appendChild(userInfo.node);
         taskPanel.appendChild(taskActions);
+
+        if (this.taskEnt.assignee === 'Карэнт Йусер') {
+            taskActions.appendChild(editBtn.node);
+            taskActions.appendChild(deleteBtn.node);
+        }
     }
 }
