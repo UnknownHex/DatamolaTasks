@@ -9,5 +9,6 @@ const errorslist = {
         wrongUser: 'You don\'t have permissions to remove or edit this task!',
         idNotFound: (id) => `ID "${id}" does not exist in our data!`,
         wrongFieldMsg: (key) => `${key.toUpperCase()} field is not valid!`,
+        ignoredFiledMsg: (key) => `${key.toUpperCase()} is wrong and will be ignored!`,
     },
 };

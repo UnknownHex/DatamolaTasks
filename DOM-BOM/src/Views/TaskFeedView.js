@@ -27,8 +27,13 @@ class TaskFeedView extends BaseView {
     init() {
         const taskFeedFragment = document.createDocumentFragment();
         const taskboardWrapper = document.createElement('div');
+        const main = document.createElement('main');
+        const container = new Container();
 
-        taskFeedFragment.appendChild(taskboardWrapper);
+        taskFeedFragment.appendChild(main);
+
+        main.appendChild(container.node);
+        container.node.appendChild(taskboardWrapper);
 
         taskboardWrapper.classList.add(styles.boardWrapper);
 
@@ -57,6 +62,16 @@ class TaskFeedView extends BaseView {
             break;
         default:
             break;
+        }
+    }
+
+    display({ tasklist, task }) {
+        if (Array.isArray(tasklist) && tasklist.length > 0) {
+            this.updateTasks(tasklist);
+        }
+
+        if (task instanceof Task) {
+            this.addTask(task);
         }
     }
 

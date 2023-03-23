@@ -1,13 +1,29 @@
 /* eslint-disable no-unused-vars */
-const validStatuses = ['to do', 'in progress', 'complete'];
-const validPriority = ['low', 'medium', 'high'];
-
 const isString = (param) => (typeof param === 'string');
 const isNumber = (param) => (typeof param === 'number' && !Number.isFinite(param));
 const isBoolean = (param) => (typeof param === 'boolean');
 const isDate = (param) => (Object.prototype.toString.call(param) === '[object Date]' && !Number.isNaN(param));
-const isNotEmpty = (param) => (param !== undefined && param.trim() !== '' && param !== null);
+const isNotEmpty = (param) => (param !== undefined && param !== '' && param !== null);
 const isLengthValid = (str, maxLen) => (str.length <= maxLen);
+
+const isValidKey = (key) => {
+    try {
+        const isValid = Object.keys(fieldKeys).includes(key);
+
+        if (!isValid) {
+            throw new CustomError({
+                name: errorslist.errorTypes.validationError,
+                message: errorslist.errorMessages.ignoredFiledMsg(key),
+            });
+        }
+
+        return isValid;
+    } catch (err) {
+        console.warn(err.shortMessage);
+        return false;
+    }
+};
+
 const isCurrentUser = (user, assignee) => {
     const isAllow = user === assignee;
 
@@ -28,15 +44,31 @@ const isCurrentUser = (user, assignee) => {
 };
 
 const isRightStatus = (param) => {
+    if (!isString(param)) {
+        throw new CustomError({
+            name: errorslist.errorTypes.validationError,
+            message: fieldKeys.status.tip,
+        });
+    }
+
     const status = param.toLowerCase();
+    const validStatuses = Object.values(taskStatus).map((st) => st.toLowerCase());
 
     return validStatuses.includes(status);
 };
 
 const isRightPriority = (param) => {
-    const priority = param.toLowerCase();
+    if (!isString(param)) {
+        throw new CustomError({
+            name: errorslist.errorTypes.validationError,
+            message: fieldKeys.priority.tip,
+        });
+    }
 
-    return validPriority.includes(priority);
+    const priority = param.toLowerCase();
+    const validPriorities = Object.values(taskPriority).map((pr) => pr.toLowerCase());
+
+    return validPriorities.includes(priority);
 };
 
 const checkAppropriate = (obj) => (!Object.values(obj).includes(false));
@@ -72,7 +104,10 @@ const analizeObjErrors = (obj) => {
 
 const filterTasks = (tasklist, filterOpt) => {
     const tasks = tasklist.slice();
-    const filterEnt = Object.entries(filterOpt);
+    const filterEnt = Object.entries(filterOpt).filter((opt) => {
+        const [key] = opt;
+        return isValidKey(key);
+    });
 
     const filteredTasks = tasks.filter((task) => {
         const filterResults = {};
@@ -103,11 +138,13 @@ const orderByDate = (tasklist, isAsc = true) => {
 };
 
 const formatDate = (dateInst) => {
-    const date = dateInst.getDate() <= 9 ? `0${dateInst.getDate()}` : dateInst.getDate();
+    const addZeroTo = (number) => (number > 9 ? number : `0${number}`);
+
+    const date = addZeroTo(dateInst.getDate());
     const month = MONTHS[dateInst.getMonth()];
     const year = dateInst.getFullYear();
-    const hours = dateInst.getHours() <= 9 ? `0${dateInst.getHours()}` : dateInst.getHours();
-    const minutes = dateInst.getMinutes() <= 9 ? `0${dateInst.getMinutes()}` : dateInst.getMinutes();
+    const hours = addZeroTo(dateInst.getHours());
+    const minutes = addZeroTo(dateInst.getMinutes());
 
     return `${date} ${month} ${year}, ${hours}:${minutes}`;
 };
