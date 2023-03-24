@@ -4,8 +4,8 @@ class TaskCollector {
     #tasklist;
 
     constructor(tasklist) {
-        // this.#user = 'Карэнт Йусер';
-        this.#user = 'Константина Гон';
+        this.#user = 'Карэнт Йусер';
+        // this.#user = 'Константина Гон';
         this.#tasklist = tasklist;
     }
 
@@ -15,6 +15,10 @@ class TaskCollector {
 
     get user() {
         return this.#user;
+    }
+
+    set user(user) {
+        isString(user) && isNotEmpty(user) ? this.#user = user : null; 
     }
 
     getPage(skip = 0, top = 10, filterOpt = null) {

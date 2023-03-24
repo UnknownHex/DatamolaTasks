@@ -5,6 +5,7 @@ class Taskboard extends BaseElement {
         this.boardStatus = caption;
         this.taskboardContent = document.createElement('div');
         this.fragmentWithTasks = document.createDocumentFragment();
+        this.view = false;
 
         this.init();
     }
@@ -33,6 +34,12 @@ class Taskboard extends BaseElement {
         taskboardCaption.textContent = this.boardStatus;
     }
 
+    changeView(isTableView) {
+        this.view = isTableView;
+
+        this.view // TO Do
+    }
+
     createContent() {
         this.taskboardContent.appendChild(this.fragmentWithTasks);
         this.taskboardContent.classList.add(styles.taskboardContent);
@@ -43,8 +50,8 @@ class Taskboard extends BaseElement {
         this.fragmentWithTasks.appendChild(taskView.node);
     }
 
-    update() {
-        this.createContent();
+    update({ isTableView }) {
+        this.createContent(isTableView);
         this.node.appendChild(this.taskboardContent);
     }
 
