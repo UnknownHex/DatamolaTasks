@@ -338,6 +338,7 @@ span.ico {
     padding: 0 5px;
     border-radius: 0;
     margin: 0;
+    text-transform: capitalize;
 }
 
 .btn-group .btn:first-child {
@@ -453,8 +454,15 @@ span.ico {
     position: relative;
     margin: 10px 0 0 0;
     min-width: 195px;
+    width: 100%;
     max-width: 500px;
     height: 32px;
+}
+
+.inp input[type="datetime-local"]::-webkit-inner-spin-button,
+.inp input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+    display: none;
+    -webkit-appearance: none;
 }
 
 .inp input,
@@ -1105,7 +1113,85 @@ input:checked + .slider:after {
     gap: .6rem;
 }
 
+/* ////////////////////////////////////////////////////////////////////////////////////////////// */
+/* TASK FILTER */
 
+.blur-wrapper {
+    position: absolute;
+    top: 0;
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    background-color: var(--dark);
+    opacity: .6;
+    z-index: 100;
+    filter: sepia(.5);
+    animation: openBlur .4s ease;
+}
+
+@keyframes openBlur {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: .6;
+    }
+}
+
+.task-filter {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 272px;
+    max-width: 450px;
+    width: 85vw;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 5px 20px 30px 20px;
+    margin: auto;
+    gap: 15px;
+    border-radius: 4px;
+    background-color: var(--white);
+    box-shadow: var(--basic-shadow) var(--primary300);
+    z-index: 101;
+}
+
+.task-filter .active {
+    pointer-events: all;
+}
+
+.task-filter .iclose:hover {
+    background-color: var(--dark);
+}
+
+.task-filter .iclose {
+    background-color: var(--gray-offensive);
+    pointer-events: all;
+}
+
+.field-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+
+.field-caption {
+    color: var(--primary700);
+}
+
+.ico.close {
+    position: absolute;
+    top: .8rem;
+    right: .8rem;
+}
+
+.close {
+}
 
 /* ////////////////////////////////////////////////////////////////////////////////////////////// */
 /* ACTIVE-FILTERS */
@@ -1225,7 +1311,7 @@ input:checked + .slider:after {
 
 .user-comment .userinfo {
     align-items: flex-start;
-    flex: 1 0 auto;
+    min-width: 15rem;
     border-right: 1px solid var(--primary300);
     padding: 0 10px 0 0;
 }
@@ -1438,13 +1524,16 @@ input:checked + .slider:after {
 .full-info {
     display: flex;
     flex-direction: row-reverse;
+    justify-content: space-between;
     gap: 40px;
+    margin-bottom: 40px;
 }
 
 .wrapper-short-info {
+    /* flex: 1 0 auto; */
     display: flex;
     flex-direction: column;
-    width: 155px;
+    /* width: 155px; */
     gap: 10px;
 }
 

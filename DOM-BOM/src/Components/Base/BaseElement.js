@@ -8,4 +8,8 @@ class BaseElement {
     get node() {
         return this.#node;
     }
+
+    get outerHTML() {
+        return this.#node.outerHTML;
+    }
 }

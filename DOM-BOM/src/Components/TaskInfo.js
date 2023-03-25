@@ -10,11 +10,12 @@
 */
 
 class TaskInfo extends BaseElement {
-    constructor(task) {
+    constructor(task, isFullpriority = false) {
         super();
 
         this.task = task;
         this.attrComments = 'attr-comments';
+        this.isFullPriority = isFullpriority;
 
         this.init();
     }
@@ -23,9 +24,7 @@ class TaskInfo extends BaseElement {
         const taskInfoFragment = document.createDocumentFragment();
         const privacyIcon = document.createElement('span');
         const priorityIcon = document.createElement('span');
-        const fullCommentsIcon = document.createElement('div');
-        const commentIcon = document.createElement('span');
-        const badge = document.createElement('span');
+        const commentIcon = new TaskComments(this.task.comments);
 
         this.node.classList.add(styles.taskInfo);
 
@@ -34,7 +33,9 @@ class TaskInfo extends BaseElement {
         privacyIcon.classList.add(privacyIconStyle);
 
         const [prioritySymbol] = this.task.priority.split('');
-        priorityIcon.textContent = prioritySymbol.toUpperCase();
+        priorityIcon.textContent = this.isFullPriority
+            ? this.task.priority.toUpperCase()
+            : prioritySymbol.toUpperCase();
 
         switch (this.task.priority) {
         case taskPriority.low:
@@ -50,21 +51,10 @@ class TaskInfo extends BaseElement {
             break;
         }
 
-        fullCommentsIcon.classList.add(styles.taskComments);
-
-        commentIcon.classList.add(styles.ico);
-        commentIcon.classList.add(styles.icons.icomment);
-
-        badge.classList.add(styles.badge);
-        badge.setAttribute(this.attrComments, this.task.comments.length);
-
         taskInfoFragment.appendChild(this.node);
-
-        fullCommentsIcon.appendChild(commentIcon);
-        fullCommentsIcon.appendChild(badge);
 
         this.node.appendChild(privacyIcon);
         this.node.appendChild(priorityIcon);
-        this.node.appendChild(fullCommentsIcon);
+        this.node.appendChild(commentIcon.node);
     }
 }

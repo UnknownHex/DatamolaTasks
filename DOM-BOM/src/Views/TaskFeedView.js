@@ -16,26 +16,24 @@ class TaskFeedView extends BaseView {
         super(containerId);
 
         this.taskBoardsFragment = document.createDocumentFragment();
+        this.taskboardWrapper = document.createElement('div');
+
+        this.container = new Container();
         this.toDoBoard = new Taskboard({ caption: taskStatus.toDo });
         this.inProgressBoard = new Taskboard({ caption: taskStatus.inProgress });
         this.completeBoard = new Taskboard({ caption: taskStatus.complete });
-        this.tasklist = tasklist ?? [];
 
         this.init();
     }
 
     init() {
         const taskFeedFragment = document.createDocumentFragment();
-        const taskboardWrapper = document.createElement('div');
-        const main = document.createElement('main');
-        const container = new Container();
 
-        taskFeedFragment.appendChild(main);
+        taskFeedFragment.appendChild(this.container.node);
 
-        main.appendChild(container.node);
-        container.node.appendChild(taskboardWrapper);
+        this.container.node.appendChild(this.taskboardWrapper);
 
-        taskboardWrapper.classList.add(styles.boardWrapper);
+        this.taskboardWrapper.classList.add(styles.boardWrapper);
 
         this.inProgressBoard.node.classList.add(styles.inprogressTask);
         this.completeBoard.node.classList.add(styles.completeTask);
@@ -44,7 +42,7 @@ class TaskFeedView extends BaseView {
         this.taskBoardsFragment.appendChild(this.inProgressBoard.node);
         this.taskBoardsFragment.appendChild(this.completeBoard.node);
 
-        taskboardWrapper.appendChild(this.taskBoardsFragment);
+        this.taskboardWrapper.appendChild(this.taskBoardsFragment);
 
         this.render(taskFeedFragment);
     }
@@ -65,46 +63,43 @@ class TaskFeedView extends BaseView {
         }
     }
 
-    display({ tasklist, task }) {
+    display({ tasklist, isTableView }) {
         if (Array.isArray(tasklist) && tasklist.length > 0) {
             this.updateTasks(tasklist);
         }
 
-        if (task instanceof Task) {
-            this.addTask(task);
-        }
-    }
+        this.clear();
+        this.changeView(isTableView);
 
-    addTask(task) {
-        this.tasklist = [...this.tasklist, task];
-        this.chooseTable(task);
+        const taskFeedFragment = document.createDocumentFragment();
+        this.container = new Container();
+        this.container.node.appendChild(this.taskboardWrapper);
+        taskFeedFragment.appendChild(this.container.node);
 
-        this.update();
+        this.render(taskFeedFragment);
     }
 
     updateTasks(tasklist) {
-        this.tasklist = tasklist;
-
-        this.tasklist.forEach((task) => {
+        tasklist.forEach((task) => {
             this.chooseTable(task);
         });
 
         this.toDoBoard.clear();
         this.inProgressBoard.clear();
         this.completeBoard.clear();
-
-        this.update();
     }
 
-    update() {
-        const taskFeedFragment = document.createDocumentFragment();
-        const taskboardWrapper = document.createElement('div');
+    changeView(isTableView) {
+        this.isTableView = isTableView;
 
-        taskFeedFragment.appendChild(taskboardWrapper);
-        taskboardWrapper.appendChild(this.taskBoardsFragment);
+        if (this.isTableView) {
+            this.taskboardWrapper.classList.add(styles.asTable);
+        } else {
+            this.taskboardWrapper.classList.remove(styles.asTable);
+        }
+    }
 
-        this.toDoBoard.update();
-        this.inProgressBoard.update();
-        this.completeBoard.update();
+    clear() {
+        this.container.node.remove();
     }
 }

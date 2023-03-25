@@ -116,14 +116,18 @@ const filterTasks = (tasklist, filterOpt) => {
             const [key, value] = opt;
 
             if (key.includes(fieldKeys.assignee.key)
-                || key.includes(fieldKeys.status.key)
-                || key.includes(fieldKeys.description.key)
-                || key.includes(fieldKeys.priority.key)) filterResults[key] = task[key].includes(value);
+                || key.includes(fieldKeys.description.key)) {
+                filterResults[key] = task[key].includes(value);
+            }
+
+            if (key.includes(fieldKeys.status.key)
+                || key.includes(fieldKeys.priority.key)
+                || key.includes(fieldKeys.isPrivate.key)) {
+                filterResults[key] = Array.isArray(value) ? value.includes(task[key]) : task[key] === value;
+            }
 
             if (key.includes(fieldKeys.dateFrom.key)) filterResults[key] = task.createdAt > value;
             if (key.includes(fieldKeys.dateTo.key)) filterResults[key] = task.createdAt < value;
-
-            if (key.includes(fieldKeys.isPrivate.key)) filterResults[key] = task[key] === value;
         });
 
         return checkAppropriate(filterResults);

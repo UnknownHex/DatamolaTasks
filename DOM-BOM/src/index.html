@@ -7,87 +7,45 @@
         <title>Task - 04 (JS Deep Dive)</title>
         <link rel="stylesheet" href="./assets/styles/styles.css">
 
+        <script defer src="./Models/Task.js"></script>
+        <script defer src="./Models/Comment.js"></script>
+
         <script defer src="./Shared/styles.js"></script>
         <script defer src="./Shared/consts.js"></script>
         <script defer src="./Shared/fakeTasks.js"></script>
+        <script defer src="./Shared/fakeUsers.js"></script>
         <script defer src="./Shared/fieldKeys.js"></script>
         <script defer src="./Shared/errorslist.js"></script>
-
+        
         <script defer src="./Utils/utils.js"></script>
-
-        <script src="./Models/Task.js"></script>
-
+        
         <script defer src="./Services/CustomError.js"></script>
+        <script defer src="./Services/TaskCollector.js"></script>
 
         <script defer src="./Components/Base/BaseElement.js"></script>
         <script defer src="./Components/Base/BaseView.js"></script>
     
         <script defer src="./Components/Container.js"></script>
+        <script defer src="./Components/MainSection.js"></script>
         <script defer src="./Components/Button.js"></script>
         <script defer src="./Components/UserData.js"></script>
         <script defer src="./Components/UserPanel.js"></script>
         <script defer src="./Components/Taskboard.js"></script>
         <script defer src="./Components/TaskInfo.js"></script>
+        <script defer src="./Components/TaskComments.js"></script>
         <script defer src="./Components/TaskContainer.js"></script>
+        <script defer src="./Components/CustomInput.js"></script>
+        <script defer src="./Components/Select.js"></script>
+        <script defer src="./Components/Blur.js"></script>
 
         <script defer src="./Views/HeaderView.js"></script>
         <script defer src="./Views/TaskFeedView.js"></script>
+        <script defer src="./Views/FilterView.js"></script>
+        <script defer src="./Views/TaskView.js"></script>
 
-        <script type="module" src="./index.js"></script>
+        <script defer src="./index.js"></script>
     </head>
     <body>
-        <div id="main-mount-point"></div>
-
-        <template id="task">
-            <div class="task-container">
-                <div class="task">
-                    <div class="task-header">
-                        <div class="task-info">
-                            <span class="ico iprivate-lock"></span>
-                            <span class="h-priority">H</span>
-                            <div class="task-comments">
-                                <span class="ico icomment"></span>
-                                <span class="badge" attr-comments="43"></span>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="task-title" contenteditable="true">Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quas pariatur, numquam libero laboriosam explicabo magni, sed commodi sapiente odio accusamus iure quis. Distinctio officia, sed repellat hic excepturi dolorem autem!</div>
-                            <div class="task-caption">Lorem ipsum dolor sit amet consectetur adipisicing elit. Tempora, nihil error blanditiis vitae maxime qui reiciendis? Sunt repellendus repellat ipsam itaque quasi, ab consectetur soluta, rerum, perspiciatis commodi dicta earum.</div>
-                        </div>
-                    </div>
-                    <div class="task-panel">
-                        <div class="userinfo">
-                            <div class="avatar">
-                                <img src="./assets/images/user-photo.avif"></img>
-                            </div>
-                            <div class="userinfo-data">
-                                <div class="user-name">Erin Schleifer</div>
-                                <div class="user-date">24.05.2023 14:24</div>
-                            </div>
-                        </div>
-                        <div class="task-actions">
-                            <button type="button" class="btn secondary onlyicon"><span class="ico idelete"></span></button>
-                            <button type="button" class="btn primary onlyicon"><span class="ico iedit"></span></button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </template>
+        <div id="mount-point"></div>
     </body>
-    <!-- <script src="./Services/CustomError.js"></script>
-    <script src="./Services/TaskCollector.js"></script>
-    
-    
-    <script src="./Models/Task.js"></script>
-    <script src="./Models/Comment.js"></script>
-    
-    
-    <script src="./Shared/fakeTasks.js"></script>
-    <script src="./Shared/errorslist.js"></script>
-    <script src="./Shared/fieldKeys.js"></script>
-
-    <script src="./Utils/utils.js"></script> -->
-
-    <!-- <script type="module" src="./testConsoleModule.js"></script> -->
 </html>

@@ -18,7 +18,7 @@ class TaskCollector {
     }
 
     set user(user) {
-        isString(user) && isNotEmpty(user) ? this.#user = user : null; 
+        isString(user) && isNotEmpty(user) ? this.#user = user : null;
     }
 
     getPage(skip = 0, top = 10, filterOpt = null) {

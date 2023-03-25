@@ -22,6 +22,13 @@ class Button extends BaseElement {
             this.node.classList.add(this.classes);
         }
 
+        if (this.caption) {
+            const capt = document.createElement('div');
+            capt.classList.add(styles.btnCaption);
+            capt.textContent = this.caption;
+            this.node.append(capt);
+        }
+
         if (this.isBurger) {
             const line = document.createElement('span');
             line.classList.add(styles.burgLine);
@@ -32,14 +39,12 @@ class Button extends BaseElement {
             this.node.appendChild(line);
             this.node.appendChild(line2nd);
             this.node.appendChild(line3rd);
-        } else if (this.classes.includes(styles.onlyicon)) {
+        } else if (this.classes.includes(styles.onlyicon) || this.icon) {
             const icon = document.createElement('span');
             icon.classList.add(styles.ico);
             icon.classList.add(this.icon);
 
             this.node.appendChild(icon);
-        } else {
-            this.node.textContent = this.caption;
         }
 
         if (this.onClick) {

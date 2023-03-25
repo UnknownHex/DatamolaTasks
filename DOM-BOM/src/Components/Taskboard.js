@@ -5,7 +5,6 @@ class Taskboard extends BaseElement {
         this.boardStatus = caption;
         this.taskboardContent = document.createElement('div');
         this.fragmentWithTasks = document.createDocumentFragment();
-        this.view = false;
 
         this.init();
     }
@@ -20,7 +19,7 @@ class Taskboard extends BaseElement {
         taskboardHeader.classList.add(styles.taskboardHeader);
         taskboardCaption.classList.add(styles.taskboardCaption);
         expander.classList.add(styles.ico);
-        expander.classList.add(styles.iexpand);
+        expander.classList.add(styles.icons.iexpand);
         this.taskboardContent.classList.add(styles.taskboardContent);
 
         taskboardFragment.appendChild(this.node);
@@ -34,12 +33,6 @@ class Taskboard extends BaseElement {
         taskboardCaption.textContent = this.boardStatus;
     }
 
-    changeView(isTableView) {
-        this.view = isTableView;
-
-        this.view // TO Do
-    }
-
     createContent() {
         this.taskboardContent.appendChild(this.fragmentWithTasks);
         this.taskboardContent.classList.add(styles.taskboardContent);
@@ -50,25 +43,15 @@ class Taskboard extends BaseElement {
         this.fragmentWithTasks.appendChild(taskView.node);
     }
 
-    update({ isTableView }) {
-        this.createContent(isTableView);
+    update() {
+        this.createContent();
         this.node.appendChild(this.taskboardContent);
     }
 
     clear() {
         this.taskboardContent.remove();
         this.taskboardContent = document.createElement('div');
-    }
 
-    // NEED TO TEST THIS METHOD!!!
-    drawTasks(tasklist) {
-        tasklist.forEach((task) => {
-            const taskView = new TaskContainer(task);
-
-            this.fragmentWithTasks.appendChild(taskView.node);
-        });
-
-        this.taskboardContent.appendChild(this.fragmentWithTasks);
-        console.log(this.fragmentWithTasks);
+        this.update();
     }
 }

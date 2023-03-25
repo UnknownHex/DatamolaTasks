@@ -6,12 +6,22 @@ const styles = {
     logoWrapper: 'logo-wrapper',
     logo: 'logo',
     appCaption: 'app-caption',
+
+    main: 'main',
+
     btn: 'btn',
+    btnCaption: 'btn-caption',
     burger: 'burger',
     primary: 'primary',
     secondary: 'secondary',
     onlyicon: 'onlyicon',
     burgLine: 'burg-line',
+    btnGroup: 'btn-group',
+    hprio: 'hprio',
+    mprio: 'mprio',
+    lprio: 'lprio',
+    active: 'active',
+
     userPanel: 'user-panel',
     notification: 'notification',
     userData: 'user-data',
@@ -21,6 +31,7 @@ const styles = {
 
     boardWrapper: 'board-wrapper',
     taskboard: 'taskboard',
+    asTable: 'as-table',
     taskboardHeader: 'taskboard-header',
     taskboardCaption: 'taskboard-caption',
     taskboardContent: 'taskboard-content',
@@ -31,6 +42,7 @@ const styles = {
     taskInfo: 'task-info',
     taskComments: 'task-comments',
     taskTitle: 'task-title',
+    taskDescription: 'task-description',
     taskCaption: 'task-caption',
     taskPanel: 'task-panel',
     taskActions: 'task-actions',
@@ -46,6 +58,30 @@ const styles = {
 
     inprogressTask: 'inprogress-task',
     completeTask: 'complete-task',
+
+    inp: 'inp',
+    inpCaption: 'inp-caption',
+    sel: 'sel',
+    border: 'border',
+
+    taskFilter: 'task-filter',
+    close: 'close',
+
+    blurWrapper: 'blur-wrapper',
+    fieldContainer: 'field-container',
+    fieldCaption: 'field-caption',
+    filled: 'filled',
+
+    commentsSection: 'comments-section',
+    commentsContainer: 'comments-container',
+    userComment: 'user-comment',
+    commentText: 'comment-text',
+    spoiler: 'spoiler',
+    textInfo: 'text-info',
+
+    wrapperShortInfo: 'wrapper-short-info',
+    fullInfo: 'full-info',
+    todoType: 'todo-type',
 
     ico: 'ico',
     icons: {

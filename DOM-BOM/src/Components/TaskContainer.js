@@ -63,7 +63,13 @@ class TaskContainer extends BaseElement {
         const taskTextBlock = document.createElement('div');
         const taskActions = document.createElement('div');
         const taskInfo = new TaskInfo(this.taskEnt);
-        const userInfo = new UserData({ createdAt: this.taskEnt.createdAt, isInfo: true, user: this.taskEnt.assignee });
+        const [avatara] = fakeUsers.filter((user) => (this.taskEnt.assignee === user.name));
+        const userInfo = new UserData({
+            createdAt: this.taskEnt.createdAt,
+            isInfo: true,
+            user: this.taskEnt.assignee,
+            avatara: avatara.img,
+        });
 
         const editBtn = new Button({
             classNames: [
