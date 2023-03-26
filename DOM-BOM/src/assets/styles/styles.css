@@ -7,13 +7,17 @@
     --primary: #106CC5;
     --primary700: #0C4D8E;
     --primary300: #65ACF2;
+    --primary100: #ebf1f7;
     --secondary: #86598D;
     --secondary700: #614066;
     --secondary300: #BD9EC2;
     --disabled: #C7DEFA;
     --error: #CD6A6A;
+    --error300: #f2e8e8;
     --warning: #D7C467;
+    --warning300: #efede5;
     --success: #80BD66;
+    --success300: #ebf2e9;
 
     --gray-main: #E9E9E9;
     --gray-offensive: #B6B6B6;
@@ -710,7 +714,107 @@ input:checked + .slider:after {
     transform: translateX(24px);
 }
 
+/* //////////////////////// */
+/* NOTIFICATION */
+.notification-box {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    right: 0;
+    top: 0;
+    max-width: 18rem;
+    padding: 4rem 1rem 1rem 1rem;
+    height: 100vh;
+    pointer-events: none;
+}
 
+.hidden {
+    display: none;
+}
+
+.notifly {
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: end;
+    border-radius: 4px;
+    max-width: 255px;
+    width: 255px;
+    color: var(--dark);
+
+    animation: 4s showNotifly .3s ease-in-out;
+}
+
+.notifly p {
+    align-self: flex-start;
+    font-size: .9rem;
+    margin: 0;
+    word-break: break-word;
+}
+
+.notifly time {
+    font-size: .6rem;
+    font-weight: 500;
+    font-style: italic;
+}
+
+.succ-noti {
+    background: var(--success300);
+    box-shadow: var(--basic-shadow) var(--success);
+
+}
+
+.err-noti {
+    background: var(--error300);
+    box-shadow: var(--basic-shadow) var(--error);
+
+    animation: 5s showNotifly .3s ease-in-out;
+}
+
+.warn-noti {
+    background: var(--warning300);
+    box-shadow: var(--basic-shadow) var(--warning);
+
+    animation: 5s showNotifly .3s ease-in-out;
+}
+
+.info-noti {
+    top: 165px;
+    background: var(--primary100);
+    box-shadow: var(--basic-shadow) var(--primary300);
+
+    animation: 5s showNotifly .3s ease-in-out;
+}
+
+.focus-succ {
+ color: var(--success);
+ font-weight: 500;
+}
+
+.focus-Info {
+ color: var(--primary);
+ font-weight: 500;
+}
+
+.focus-err {
+ color: var(--error);
+ font-weight: 500;
+}
+
+.focus-warn {
+ color: var(--warning);
+ font-weight: 500;
+}
+
+@keyframes showNotifly {
+    80% {
+        opacity: 1;
+    }
+    100% {
+        opacity: 0;
+    }
+}
 
 /* //////////////////////////////////////////////////// */
 /* //////////////////////////////////////////////////// */

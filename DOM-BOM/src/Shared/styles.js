@@ -85,6 +85,18 @@ const styles = {
     fullInfo: 'full-info',
     todoType: 'todo-type',
 
+    notificationBox: 'notification-box',
+    hidden: 'hidden',
+    notifly: 'notifly',
+    errNoti: 'err-noti',
+    warnNoti: 'warn-noti',
+    infoNoti: 'info-noti',
+    succNoti: 'succ-noti',
+    focusSucc: 'focus-succ',
+    focusInfo: 'focus-Info',
+    focusErr: 'focus-err',
+    focusWarn: 'focus-warn',
+
     ico: 'ico',
     icons: {
         idelete: 'idelete',

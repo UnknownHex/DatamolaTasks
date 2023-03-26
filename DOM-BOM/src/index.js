@@ -21,6 +21,8 @@ const taskFeedView = new TaskFeedView('main-content');
 const filterView = new FilterView('mount-point');
 const taskView = new TaskView('main-content');
 
+const notificationView = new NotificationView('mount-point');
+
 const showTaskFeedPage = (tasklist, currentUser) => {
     mainSection.clear();
     taskFeedView.display({
@@ -57,14 +59,30 @@ const editOneTask = {
 
 // setCurrentUser(user: string) - добавляет текущего пользователя в хидер и в модель.
 const setCurrentUser = (user) => {
-    taskCollection.user = user;
-    headerView.display({ user: taskCollection.user });
+    const tmpUser = taskCollection.user;
 
-    showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+    taskCollection.user = user;
+
+    if (tmpUser !== taskCollection.user) {
+        headerView.display({ user: taskCollection.user });
+        showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+
+        taskCollection.user
+            ? NotificationView.createNotifly({
+                type: notiflyVariants.infoNoti,
+                message: notiflyMessages.info.greeting(taskCollection.user),
+            })
+            : NotificationView.createNotifly({
+                type: notiflyVariants.infoNoti,
+                message: notiflyMessages.info.bye(tmpUser),
+            });
+    }
 };
 
 // addTask(task: Task) - добавляет новую таску в модель и перерисовывает доску с задачами.
 const addTask = (task) => {
+    if (!taskCollection.user) return;
+
     const isAdded = taskCollection.add(
         task.name,
         task.description,
@@ -74,7 +92,14 @@ const addTask = (task) => {
         task.isPrivate,
     );
 
-    isAdded && showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+    if (isAdded) {
+        showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+
+        NotificationView.createNotifly({
+            type: notiflyVariants.succNoti,
+            message: notiflyMessages.success.taskAdded(task.name, taskCollection.user),
+        });
+    }
 };
 
 // editTask(id: string, task: Task) - редактирует таску в модели и перерисовывает доску с задачами.
@@ -89,14 +114,28 @@ const editTask = (id, task) => {
         task.isPrivate,
     );
 
-    isEdited && showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+    if (isEdited) {
+        showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+
+        NotificationView.createNotifly({
+            type: notiflyVariants.succNoti,
+            message: notiflyMessages.success.taskUpdated(id, taskCollection.user),
+        });
+    }
 };
 
 // removeTask(id: string) - удаляет таску из модели и перерисовывает доску с задачами.
 const removeTask = (id) => {
     const isRemoved = taskCollection.remove(id);
 
-    isRemoved && showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+    if (isRemoved) {
+        showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+
+        NotificationView.createNotifly({
+            type: notiflyVariants.succNoti,
+            message: notiflyMessages.success.taskRemoved(id, taskCollection.user),
+        });
+    }
 };
 
 // getFeed(skip?: number, top?: number, filterConfig?: Object)
@@ -146,17 +185,17 @@ const inValidTask = {
 let taskId = '';
 
 setTimeout(() => {
-    addTask(oneTask);
-    taskId = taskCollection.tasklist[0].id;
-    taskCollection.addAll([fakeTasks[22], fakeTasks[8], fakeTasks[9]]);
+    console.log('"Константина Гон" signed up;');
+    setCurrentUser('Константина Гон');
 }, 100);
 
 setTimeout(() => {
-    console.log('"Константина Гон" signed up;');
-    setCurrentUser('Константина Гон');
+    addTask(oneTask);
+    taskId = taskCollection.tasklist[0].id;
 }, 1100);
 
 setTimeout(() => {
+    taskCollection.addAll([fakeTasks[22], fakeTasks[8], fakeTasks[9]]);
     console.log('\n"Константина Гон" edit her task;');
     editTask(taskId, editOneTask);
 }, 2100);
@@ -204,37 +243,45 @@ setTimeout(() => {
     getFeed();
     console.log('Get from 10 to 25;');
     getFeed(10, 15);
-}, 10300);
-
-setTimeout(() => {
     filterView.display({
         filterOpt,
         avaliableUsers: fakeTasks,
     });
+}, 10300);
+
+setTimeout(() => {
     console.log('\n"Константина Гон" apply filters;');
     console.log('Get only [med, low] priority tasks;');
     getFeed(0, 30, filterOpt);
 }, 11300);
 
 setTimeout(() => {
-    filterView.clear();
+    // filterView.clear();
     filterOpt.priority = taskPriority.high;
     filterView.display({
         filterOpt,
         avaliableUsers: fakeTasks,
     });
     console.log('Get only [high] priority tasks;');
+}, 12300);
+
+setTimeout(() => {
     getFeed(0, 30, filterOpt);
-}, 14300);
+}, 13300);
 
 setTimeout(() => {
     filterView.clear();
     console.log(`\n"Константина Гон" go to task page with ID ${fakeTasks[8].id};`);
     showTask(fakeTasks[8].id);
-}, 16300);
+}, 14300);
 
 setTimeout(() => {
     const rUUID = crypto.randomUUID();
     console.log(`\n"Константина Гон" go to task page with unavaliable ID: ${rUUID};`);
     showTask(rUUID);
-}, 18300);
+}, 15300);
+
+setTimeout(() => {
+    console.log('\n"Константина Гон" logged our;');
+    setCurrentUser(null);
+}, 16300);

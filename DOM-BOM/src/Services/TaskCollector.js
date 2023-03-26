@@ -17,7 +17,18 @@ class TaskCollector {
     }
 
     set user(user) {
-        this.#user = user;
+        try {
+            if (isString(user) || user === null) {
+                this.#user = user;
+            } else {
+                throw new CustomError({
+                    name: errorslist.errorTypes.validationError,
+                    message: errorslist.errorMessages.wrongFieldMsg('user'),
+                });
+            }
+        } catch (err) {
+            if (!(err instanceof CustomError)) console.warn(err);
+        }
     }
 
     getPage(skip = 0, top = 10, filterOpt = null) {
