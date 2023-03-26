@@ -13,15 +13,17 @@ class Select extends BaseElement {
         this.node.classList.add(styles.sel);
 
         this.node.innerHTML = `
-        <select required>
-            <option value="${this.assignee}" disabled selected ${this.assignee || 'hidden'}>${this.assignee}</option>
+            <select required>
+                <option value="${this.assignee}" disabled selected ${this.assignee || 'hidden'}>
+                    ${this.assignee}
+                </option>
             ${this.avaliableUsers.map((user) => (`
                 <option value=${user.login}>${user.name}</option>
             `)).join('')}
-        </select>
-        <button class="ico iexpand"></button>
-        <span class="border"></span>
-        <label class="inp-caption">Select ASSIGNEE</label>
+            </select>
+            <button class="${styles.ico} ${styles.icons.iexpand}"></button>
+            <span class="${styles.border}"></span>
+            <label class="${styles.inpCaption}">Select ASSIGNEE...</label>
         `;
     }
 }

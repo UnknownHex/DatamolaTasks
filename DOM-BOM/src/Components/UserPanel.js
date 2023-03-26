@@ -32,6 +32,7 @@ class UserPanel extends BaseElement {
                 caption: 'logout',
                 classNames: [styles.btn, styles.primary],
                 type: 'button',
+                onClick: () => setCurrentUser(null),
             });
 
             notification.classList.add(styles.notification);
@@ -43,9 +44,16 @@ class UserPanel extends BaseElement {
 
             this.node.append(userPanelFragment);
         } else {
+            const promptUserName = () => {
+                console.log('U can choose from this registered persons:');
+                fakeUsers.forEach((user) => console.log('\t', user.name));
+                const tmpUser = prompt();
+                setCurrentUser(tmpUser);
+            };
             const signInBtn = new Button({
                 caption: 'sign in',
                 classNames: [styles.btn, styles.primary],
+                onClick: promptUserName,
             });
 
             this.node.appendChild(signInBtn.node);

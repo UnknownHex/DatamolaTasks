@@ -5,6 +5,7 @@ class Taskboard extends BaseElement {
         this.boardStatus = caption;
         this.taskboardContent = document.createElement('div');
         this.fragmentWithTasks = document.createDocumentFragment();
+        this.noDataHere = 'No data here yet...';
 
         this.init();
     }
@@ -31,27 +32,30 @@ class Taskboard extends BaseElement {
         taskboardHeader.appendChild(expander);
 
         taskboardCaption.textContent = this.boardStatus;
+
+        if (this.taskboardContent.childNodes.length < 1) {
+            this.taskboardContent.append(this.noDataHere);
+        }
     }
 
-    createContent() {
-        this.taskboardContent.appendChild(this.fragmentWithTasks);
-        this.taskboardContent.classList.add(styles.taskboardContent);
-    }
-
-    drawTask(task) {
-        const taskView = new TaskContainer(task);
+    drawTask(task, isAllow) {
+        const taskView = new TaskContainer(task, isAllow);
         this.fragmentWithTasks.appendChild(taskView.node);
     }
 
     update() {
-        this.createContent();
+        if (this.taskboardContent.childNodes.length < 1) {
+            this.taskboardContent.append(this.noDataHere);
+        }
+
         this.node.appendChild(this.taskboardContent);
     }
 
     clear() {
         this.taskboardContent.remove();
-        this.taskboardContent = document.createElement('div');
 
-        this.update();
+        this.taskboardContent = document.createElement('div');
+        this.taskboardContent.appendChild(this.fragmentWithTasks);
+        this.taskboardContent.classList.add(styles.taskboardContent);
     }
 }

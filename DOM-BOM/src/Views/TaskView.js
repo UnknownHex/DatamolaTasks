@@ -6,31 +6,41 @@ class TaskView extends BaseView {
         this.taskViewFragmen = document.createDocumentFragment();
     }
 
-    init(task, isAllow) {
+    init(task, currentUser) {
         const [avatara] = fakeUsers.filter((user) => (task.assignee === user.name));
-        const [myAva] = fakeUsers.filter((user) => (user.name === 'Карэнт Йусер'));
+        const [myAva] = fakeUsers.filter((user) => (user.name === currentUser));
         const assigneeInfo = new UserData({
             user: task.assignee,
             createdAt: task.createdAt,
             isInfo: true,
-            avatara: avatara.img,
+            avatara: avatara?.img,
         });
         const userinfo = new UserData({
-            user: 'Карэнт Йусер',
+            user: currentUser,
             createdAt: task.createdAt,
             isInfo: true,
-            avatara: myAva.img,
+            avatara: myAva?.img,
         });
 
         const taskInfo = new TaskInfo(task, true);
-
         const taskComments = new TaskComments(task.comments);
 
-        this.container.node.innerHTML = `
-            <div class="br-bar">
-                <a href="/" class="link">Back to main page</a>
-            </div>
+        const brBar = document.createElement('div');
+        const backToFeedLink = document.createElement('a');
 
+        brBar.appendChild(backToFeedLink);
+        brBar.classList.add(styles.brBar);
+        backToFeedLink.classList.add(styles.link);
+
+        backToFeedLink.textContent = 'Back to TaskFeed';
+        backToFeedLink.setAttribute('href', '');
+
+        backToFeedLink.addEventListener('click', (event) => {
+            event.preventDefault();
+            showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+        });
+
+        this.container.node.innerHTML = `
             <div class="${styles.fullInfo}">
 
                 <div class="${styles.wrapperShortInfo}">
@@ -39,7 +49,7 @@ class TaskView extends BaseView {
                     ${taskInfo.outerHTML}
                     ${assigneeInfo.outerHTML}
 
-                    ${isAllow ? `
+                    ${isCurrentUser(task.assignee, currentUser) ? `
                         <div class="${styles.taskActions}">
                             <button type="button" class="btn secondary onlyicon">
                                 <span class="ico idelete"></span>
@@ -76,7 +86,8 @@ class TaskView extends BaseView {
                     ${this.showComments({ comments: task.comments })}
                 </div>
 
-                <div class="add-comment-block">
+        ${currentUser
+        ? `<div class="add-comment-block">
                     <div class="comment-data">
 
                         ${userinfo.outerHTML}
@@ -92,9 +103,13 @@ class TaskView extends BaseView {
                         <textarea required></textarea>
                         <label class="inp-caption">You comment...</label>
                     </div>
-                </div>
+                </div>`
+        : ''}
+
             </div>
         `;
+
+        this.container.node.prepend(brBar);
 
         this.taskViewFragmen.appendChild(this.container.node);
         this.render(this.taskViewFragmen);
@@ -124,8 +139,8 @@ class TaskView extends BaseView {
         }).join('');
     }
 
-    display({ task, isAllow }) {
-        this.init(task, isAllow);
+    display({ task, currentUser }) {
+        this.init(task, currentUser);
     }
 
     clear() {

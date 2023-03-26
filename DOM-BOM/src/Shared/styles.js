@@ -1,5 +1,7 @@
 const styles = {
     container: 'container',
+    link: 'link',
+    brBar: 'br-bar',
 
     header: 'header',
     headerWrapper: 'header-wrapper',

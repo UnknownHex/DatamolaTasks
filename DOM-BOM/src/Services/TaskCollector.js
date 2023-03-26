@@ -4,8 +4,7 @@ class TaskCollector {
     #tasklist;
 
     constructor(tasklist) {
-        this.#user = 'Карэнт Йусер';
-        // this.#user = 'Константина Гон';
+        this.#user = null;
         this.#tasklist = tasklist;
     }
 
@@ -18,16 +17,18 @@ class TaskCollector {
     }
 
     set user(user) {
-        isString(user) && isNotEmpty(user) ? this.#user = user : null;
+        this.#user = user;
     }
 
     getPage(skip = 0, top = 10, filterOpt = null) {
-        const filteredTasks = filterOpt ? filterTasks(this.tasklist, filterOpt) : null;
-        const tasks = filterOpt ? filteredTasks : this.tasklist;
+        const isFilters = filterOpt && Object.keys(filterOpt).length > 0;
+        const filteredTasks = isFilters
+            ? filterTasks(this.tasklist, filterOpt)
+            : null;
+        const tasks = isFilters ? filteredTasks : this.tasklist;
         const sortedTasks = orderByDate(tasks);
 
         const resTasks = sortedTasks.splice(skip, top);
-
         return resTasks;
     }
 
@@ -60,7 +61,7 @@ class TaskCollector {
         }
     }
 
-    static #verify(obj) {
+    static verify(obj) {
         const verified = Task.validate(obj);
         const isValid = checkAppropriate(verified);
 
@@ -70,7 +71,7 @@ class TaskCollector {
     add(name, description, assignee, status, priority, isPrivate) {
         const taskObj = new Task(name, description, assignee, status, priority, isPrivate);
 
-        const isValid = TaskCollector.#verify(taskObj);
+        const isValid = TaskCollector.verify(taskObj);
 
         if (isValid) {
             this.#tasklist = [...this.tasklist, taskObj];
@@ -82,19 +83,21 @@ class TaskCollector {
     edit(id, name, description, assignee, status, priority, isPrivate) {
         const editableTask = this.get(id);
 
-        if (!editableTask || !isCurrentUser(this.user, editableTask.assignee)) return false;
+        if (!editableTask || !isCurrentUser(this.user, editableTask.assignee, false)) return false;
 
         const updatedTask = {
-            ...editableTask,
+            id: editableTask.id,
             name: name ?? editableTask.name,
             description: description ?? editableTask.description,
             assignee: assignee ?? editableTask.assignee,
             status: status ?? editableTask.status,
             priority: priority ?? editableTask.priority,
             isPrivate: isPrivate ?? editableTask.isPrivate,
+            createdAt: editableTask.createdAt,
+            comments: editableTask.comments,
         };
 
-        const isValid = TaskCollector.#verify(updatedTask);
+        const isValid = TaskCollector.verify(updatedTask);
 
         if (isValid) {
             editableTask.name = updatedTask.name;
@@ -110,7 +113,7 @@ class TaskCollector {
 
     remove(id) {
         const removableTask = this.get(id);
-        if (!removableTask || !isCurrentUser(this.user, removableTask.assignee)) return false;
+        if (!removableTask || !isCurrentUser(this.user, removableTask.assignee, false)) return false;
 
         const indexOfRemTask = this.tasklist.indexOf(removableTask);
         this.#tasklist = [...this.tasklist.slice(0, indexOfRemTask), ...this.tasklist.slice(indexOfRemTask + 1)];
@@ -137,7 +140,7 @@ class TaskCollector {
 
     addAll(tasks) {
         const invalidTasks = tasks.filter((task) => {
-            const isTaskValid = TaskCollector.#verify(task);
+            const isTaskValid = TaskCollector.verify(task);
 
             if (isTaskValid) {
                 this.#tasklist = [...this.tasklist, task];
@@ -145,7 +148,6 @@ class TaskCollector {
 
             return !isTaskValid;
         });
-
         return invalidTasks;
     }
 

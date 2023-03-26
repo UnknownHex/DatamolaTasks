@@ -6,11 +6,11 @@ const fieldKeys = {
     },
     name: {
         key: 'name',
-        tip: `NAME must be a not empty and less than ${Task.titleMaxLength} characters;`,
+        tip: `NAME must be a not empty string and less than ${Task.titleMaxLength} characters;`,
     },
     assignee: {
         key: 'assignee',
-        tip: 'ASSIGNEE must be a not empty;',
+        tip: 'ASSIGNEE must be a not empty and string;',
     },
     dateFrom: {
         key: 'dateFrom',

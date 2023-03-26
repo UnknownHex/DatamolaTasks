@@ -1,5 +1,5 @@
 /* eslint-disable no-unused-vars */
-const isString = (param) => (typeof param === 'string');
+const isString = (param) => (typeof param === 'string' && param.trim(param) !== '');
 const isNumber = (param) => (typeof param === 'number' && !Number.isFinite(param));
 const isBoolean = (param) => (typeof param === 'boolean');
 const isDate = (param) => (Object.prototype.toString.call(param) === '[object Date]' && !Number.isNaN(param));
@@ -24,10 +24,10 @@ const isValidKey = (key) => {
     }
 };
 
-const isCurrentUser = (user, assignee) => {
+const isCurrentUser = (user, assignee, silent = true) => {
     const isAllow = user === assignee;
 
-    if (!isAllow) {
+    if (!isAllow && !silent) {
         const error = {
             name: errorslist.errorTypes.accessDeny,
             message: errorslist.errorMessages.wrongUser,

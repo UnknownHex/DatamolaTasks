@@ -28,7 +28,10 @@ class TaskInfo extends BaseElement {
 
         this.node.classList.add(styles.taskInfo);
 
-        const privacyIconStyle = this.task.isPrivate ? styles.icons.iprivateLock : styles.icons.ipublicEarth;
+        const privacyIconStyle = this.task.isPrivate
+            ? styles.icons.iprivateLock
+            : styles.icons.ipublicEarth;
+
         privacyIcon.classList.add(styles.ico);
         privacyIcon.classList.add(privacyIconStyle);
 

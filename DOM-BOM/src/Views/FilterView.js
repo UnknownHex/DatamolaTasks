@@ -13,7 +13,17 @@ class FilterView extends BaseView {
     }
 
     display({ filterOpt, avaliableUsers }) {
-        if (!filterOpt) return;
+        if (!filterOpt || !avaliableUsers) {
+            console.warn(`FilterView example: 
+                filterView.display({
+                    filterOpt: { status: '${taskStatus.inProgress}' },
+                    avaliableUsers: fakeUsers,
+                })
+            `);
+
+            return;
+        }
+
         this.clear();
 
         const {

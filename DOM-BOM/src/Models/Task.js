@@ -103,7 +103,7 @@ class Task {
 
         const verified = {
             id: isString(id) && isNotEmpty(id),
-            assignee: isNotEmpty(assignee),
+            assignee: isNotEmpty(assignee) && isString(assignee),
             name: isString(name) && isNotEmpty(name) && isLengthValid(name, Task.titleMaxLength),
             description:
                 isString(description)

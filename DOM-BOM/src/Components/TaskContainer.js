@@ -32,23 +32,14 @@
             </div>
         </div>
     </div>
-
-    #id;
-    #createdAt;
-    #name;
-    #description;
-    #assignee;
-    #status;
-    #priority;
-    #isPrivate;
-    #comments;
 */
 
 class TaskContainer extends BaseElement {
-    constructor(task) {
+    constructor(task, isAllow) {
         super('article');
 
         this.taskEnt = task;
+        this.isAllow = isAllow;
 
         this.init();
     }
@@ -68,7 +59,7 @@ class TaskContainer extends BaseElement {
             createdAt: this.taskEnt.createdAt,
             isInfo: true,
             user: this.taskEnt.assignee,
-            avatara: avatara.img,
+            avatara: avatara?.img,
         });
 
         const editBtn = new Button({
@@ -116,9 +107,11 @@ class TaskContainer extends BaseElement {
         taskPanel.appendChild(userInfo.node);
         taskPanel.appendChild(taskActions);
 
-        if (this.taskEnt.assignee === 'Карэнт Йусер') {
+        if (this.isAllow) {
             taskActions.appendChild(editBtn.node);
             taskActions.appendChild(deleteBtn.node);
         }
+
+        this.node.addEventListener('click', showTask.bind(this, this.taskEnt.id));
     }
 }

@@ -15,4 +15,8 @@ class MainSection extends BaseElement {
     appendIn(id) {
         document.querySelector(`#${id}`).appendChild(this.node);
     }
+
+    clear() {
+        this.node.firstChild.remove();
+    }
 }
