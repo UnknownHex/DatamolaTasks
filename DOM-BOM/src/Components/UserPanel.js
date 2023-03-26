@@ -47,7 +47,7 @@ class UserPanel extends BaseElement {
             const promptUserName = () => {
                 console.log('U can choose from this registered persons:');
                 fakeUsers.forEach((user) => console.log('\t', user.name));
-                const tmpUser = prompt();
+                const tmpUser = prompt('Enter user name. (See in debugpanel)', ['Карэнт Йусер']);
                 setCurrentUser(tmpUser);
             };
             const signInBtn = new Button({
