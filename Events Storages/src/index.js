@@ -1,43 +1,138 @@
-// class App {
-//     constructor() {
-//         this.init();
-//     }
+class App {
+    constructor() {
+        this.init();
+    }
 
-//     init() {
-//         const headerView = new HeaderView('main-mount-point');
-//         const mainContent = new MainSection('main-content');
-//         const taskFeedView = new TaskFeedView('main-content');
-//         const filterView = new FilterView('main-mount-point');
-//         const taskView = new TaskView('main-mount-point');
-//     }
-// }
+    init() {
+        this.taskCollection = new TaskCollector([]);
+        this.storage = new LocalStorage(this.taskCollection);
 
-const taskCollection = new TaskCollector([]);
+        this.headerView = new HeaderView('mount-point');
 
-const headerView = new HeaderView('mount-point');
-const mainSection = new MainSection('main-content');
-mainSection.appendIn('mount-point');
-const taskFeedView = new TaskFeedView('main-content');
-const filterView = new FilterView('mount-point');
-const taskView = new TaskView('main-content');
+        this.mainSection = new MainSection('main-content');
+        this.mainSection.appendIn('mount-point');
 
-const notificationView = new NotificationView('mount-point');
+        this.taskFeedView = new TaskFeedView('main-content');
 
-const showTaskFeedPage = (tasklist, currentUser) => {
-    mainSection.clear();
-    taskFeedView.display({
-        tasklist,
-        currentUser,
-    });
-};
+        this.filterView = new FilterView('mount-point');
+        this.taskView = new TaskView('main-content');
 
-const showTaskPage = (task, currentUser) => {
-    mainSection.clear();
-    taskView.display({
-        task,
-        currentUser,
-    });
-};
+        this.notificationView = new NotificationView('mount-point');
+    }
+
+    showTaskFeedPage(tasklist, currentUser) {
+        this.mainSection.clear();
+        this.taskFeedView.display({
+            tasklist,
+            currentUser,
+        });
+    }
+
+    showTaskPage(task, currentUser) {
+        this.mainSection.clear();
+        this.taskView.display({
+            task,
+            currentUser,
+        });
+    }
+
+    showFilter() {
+
+    }
+
+    setCurrentUser(user) {
+        const tmpUser = this.taskCollection.user;
+
+        this.taskCollection.user = user;
+
+        if (tmpUser !== this.taskCollection.user) {
+            this.headerView.display({ user: this.taskCollection.user });
+            this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+
+            this.taskCollection.user
+                ? this.NotificationView.createNotifly({
+                    type: notiflyVariants.infoNoti,
+                    message: notiflyMessages.info.greeting(this.taskCollection.user),
+                })
+                : this.NotificationView.createNotifly({
+                    type: notiflyVariants.infoNoti,
+                    message: notiflyMessages.info.bye(tmpUser),
+                });
+        }
+    }
+
+    addTask(task) {
+        if (!this.taskCollection.user) return;
+
+        const isAdded = this.taskCollection.add(
+            task.name,
+            task.description,
+            task.assignee,
+            task.status,
+            task.priority,
+            task.isPrivate,
+        );
+
+        if (isAdded) {
+            this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+
+            this.NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.taskAdded(task.name, this.taskCollection.user),
+            });
+        }
+    }
+
+    editTask(id, task) {
+        const isEdited = this.taskCollection.edit(
+            id,
+            task.name,
+            task.description,
+            task.assignee,
+            task.status,
+            task.priority,
+            task.isPrivate,
+        );
+
+        if (isEdited) {
+            this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+
+            this.NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.taskUpdated(id, this.taskCollection.user),
+            });
+        }
+    }
+
+    removeTask(id) {
+        const isRemoved = this.taskCollection.remove(id);
+
+        if (isRemoved) {
+            this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+
+            this.NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.taskRemoved(id, this.taskCollection.user),
+            });
+        }
+    }
+
+    getFeed(skip, top, filterConfig) {
+        const filteredTasks = this.taskCollection.getPage(skip, top, filterConfig);
+
+        this.showTaskFeedPage(filteredTasks, this.taskCollection.user);
+
+        console.log(filteredTasks); // Need only for testlog in console!
+    }
+
+    showTask(id) {
+        const foundTask = this.taskCollection.get(id);
+
+        foundTask && this.showTaskPage(foundTask, this.taskCollection.user);
+    }
+}
+
+const app = new App();
 
 const oneTask = {
     name: 'Супердлинноеназваниетаскипридуманноемеганеординарррнымразработчикомэтогомира!',
@@ -58,102 +153,6 @@ const editOneTask = {
 };
 
 // setCurrentUser(user: string) - добавляет текущего пользователя в хидер и в модель.
-const setCurrentUser = (user) => {
-    const tmpUser = taskCollection.user;
-
-    taskCollection.user = user;
-
-    if (tmpUser !== taskCollection.user) {
-        headerView.display({ user: taskCollection.user });
-        showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
-
-        taskCollection.user
-            ? NotificationView.createNotifly({
-                type: notiflyVariants.infoNoti,
-                message: notiflyMessages.info.greeting(taskCollection.user),
-            })
-            : NotificationView.createNotifly({
-                type: notiflyVariants.infoNoti,
-                message: notiflyMessages.info.bye(tmpUser),
-            });
-    }
-};
-
-// addTask(task: Task) - добавляет новую таску в модель и перерисовывает доску с задачами.
-const addTask = (task) => {
-    if (!taskCollection.user) return;
-
-    const isAdded = taskCollection.add(
-        task.name,
-        task.description,
-        task.assignee,
-        task.status,
-        task.priority,
-        task.isPrivate,
-    );
-
-    if (isAdded) {
-        showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
-
-        NotificationView.createNotifly({
-            type: notiflyVariants.succNoti,
-            message: notiflyMessages.success.taskAdded(task.name, taskCollection.user),
-        });
-    }
-};
-
-// editTask(id: string, task: Task) - редактирует таску в модели и перерисовывает доску с задачами.
-const editTask = (id, task) => {
-    const isEdited = taskCollection.edit(
-        id,
-        task.name,
-        task.description,
-        task.assignee,
-        task.status,
-        task.priority,
-        task.isPrivate,
-    );
-
-    if (isEdited) {
-        showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
-
-        NotificationView.createNotifly({
-            type: notiflyVariants.succNoti,
-            message: notiflyMessages.success.taskUpdated(id, taskCollection.user),
-        });
-    }
-};
-
-// removeTask(id: string) - удаляет таску из модели и перерисовывает доску с задачами.
-const removeTask = (id) => {
-    const isRemoved = taskCollection.remove(id);
-
-    if (isRemoved) {
-        showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
-
-        NotificationView.createNotifly({
-            type: notiflyVariants.succNoti,
-            message: notiflyMessages.success.taskRemoved(id, taskCollection.user),
-        });
-    }
-};
-
-// getFeed(skip?: number, top?: number, filterConfig?: Object)
-//      - вызывает getPage с параметрами в модели и отображает соответствующую доску с задачами.
-const getFeed = (skip, top, filterConfig) => {
-    const filteredTasks = taskCollection.getPage(skip, top, filterConfig);
-
-    showTaskFeedPage(filteredTasks, taskCollection.user);
-
-    console.log(filteredTasks); // Need only for testlog in console!
-};
-
-// showTask(id: string) - получить таску по айди из модели и отобразить соответствующий TaskView.
-const showTask = (id) => {
-    const foundTask = taskCollection.get(id);
-
-    foundTask && showTaskPage(foundTask, taskCollection.user);
-};
 
 const filterOpt = {
     // dateTo: '2020-01-01 00:00',

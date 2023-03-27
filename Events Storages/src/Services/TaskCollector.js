@@ -12,6 +12,10 @@ class TaskCollector {
         return this.#tasklist;
     }
 
+    set tasklist(tasklist) {
+        this.#tasklist = tasklist;
+    }
+
     get user() {
         return this.#user;
     }
