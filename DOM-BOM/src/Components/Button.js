@@ -1,6 +1,6 @@
 class Button extends BaseElement {
     constructor({
-        caption, type, classNames, onClick, isBurger, icon,
+        caption, name, type, classNames, onClick, isBurger, icon,
     }) {
         super('button');
         this.caption = caption;
@@ -9,6 +9,7 @@ class Button extends BaseElement {
         this.isBurger = isBurger ?? false;
         this.onClick = onClick;
         this.icon = icon;
+        this.name = name;
 
         this.init();
     }
@@ -27,6 +28,10 @@ class Button extends BaseElement {
             capt.classList.add(styles.btnCaption);
             capt.textContent = this.caption;
             this.node.append(capt);
+        }
+
+        if (this.name) {
+            this.node.setAttribute('name', this.name);
         }
 
         if (this.isBurger) {

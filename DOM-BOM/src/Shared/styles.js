@@ -31,6 +31,9 @@ const styles = {
     userName: 'user-name',
     userDate: 'user-date',
 
+    actionBar: 'action-bar',
+    barGroup: 'bar-group',
+
     boardWrapper: 'board-wrapper',
     taskboard: 'taskboard',
     asTable: 'as-table',

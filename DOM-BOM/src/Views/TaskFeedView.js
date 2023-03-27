@@ -34,6 +34,9 @@ class TaskFeedView extends BaseView {
 
         taskFeedFragment.appendChild(this.container.node);
 
+        const actionBar = new ActionBar();
+
+        this.container.node.appendChild(actionBar.node);
         this.container.node.appendChild(this.taskboardWrapper);
 
         this.taskboardWrapper.classList.add(styles.boardWrapper);
@@ -74,8 +77,13 @@ class TaskFeedView extends BaseView {
 
         const taskFeedFragment = document.createDocumentFragment();
         this.container = new Container();
-        this.container.node.appendChild(this.taskboardWrapper);
+
         taskFeedFragment.appendChild(this.container.node);
+
+        const actionBar = new ActionBar();
+
+        this.container.node.appendChild(actionBar.node);
+        this.container.node.appendChild(this.taskboardWrapper);
 
         this.render(taskFeedFragment);
     }

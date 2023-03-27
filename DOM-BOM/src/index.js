@@ -158,7 +158,7 @@ const showTask = (id) => {
 const filterOpt = {
     // dateTo: '2020-01-01 00:00',
     // dateFrom: '2021',
-    // assignee: 'Карэнт Йусер',
+    assignee: 'Карэнт Йусер',
     // status: ['Complete'],
     priority: [taskPriority.low, taskPriority.medium],
     // isPrivate: [],
