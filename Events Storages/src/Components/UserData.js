@@ -29,7 +29,6 @@ class UserData extends BaseElement {
         this.isInfo = !!isInfo;
         this.createdAt = createdAt;
         this.avatara = avatara ?? `./assets/base-avas/body-${Math.floor(Math.random() * 4) + 1}.png`;
-
         this.init();
     }
 
@@ -56,7 +55,7 @@ class UserData extends BaseElement {
             const divUserData = document.createElement('div');
             const spanTimestamp = document.createElement('span');
             const time = document.createElement('time');
-            const dateFormat = formatDate(this.createdAt);
+            const dateFormat = formatDate(new Date(this.createdAt));
 
             divUserData.classList.add(styles.userinfoData);
             spanTimestamp.classList.add(styles.userDate);

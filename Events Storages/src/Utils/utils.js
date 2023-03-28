@@ -5,6 +5,61 @@ const isBoolean = (param) => (typeof param === 'boolean');
 const isDate = (param) => (Object.prototype.toString.call(param) === '[object Date]' && !Number.isNaN(param));
 const isNotEmpty = (param) => (param !== undefined && param !== '' && param !== null);
 const isLengthValid = (str, maxLen) => (str.length <= maxLen);
+const isMinLenValid = (str, minLen) => (str.length > minLen);
+
+const isLoginValid = (login) => {
+    try {
+        const regTmplt = /^[A-Za-z_]+/;
+        const [found] = login.match(regTmplt) || [];
+        const isValid = found === login;
+
+
+        if (!isValid) {
+            throw new CustomError({
+                name: errorslist.errorTypes.validationError,
+                message: errorslist.errorMessages.wrongLogin,
+            });
+        }
+
+        return isValid;
+    } catch (err) {
+        console.warn(err.shortMessage);
+        return false;
+    }
+}
+
+const isLoginFree = (login, userlist) => {
+    try {
+        const index = userlist.findIndex((user) => {
+            return user.login.toLowerCase() === login.toLowerCase();
+        });
+
+        console.log(index);
+
+        const isValid = index === -1;
+
+        if (!isValid) {
+            throw new CustomError({
+                name: errorslist.errorTypes.validationError,
+                message: errorslist.errorMessages.existingLogin(login),
+            });
+        }
+
+        return isValid;
+    } catch (err) {
+        if (err instanceof CustomError) console.warn(err.shortMessage);
+        console.log(err);
+        return false;
+    }
+}
+
+const isPassConfirmed = (fPass, sPass) => {
+    return fPass === sPass;
+}
+
+const isChangePassAllow = (curPass, newPass) => {
+    return curPass !== newPass;
+}
 
 const isValidKey = (key) => {
     try {
@@ -78,6 +133,7 @@ const analizeObjErrors = (obj) => {
 
     const result = objEnt.map((entry) => {
         const [key, value] = entry;
+        console.log(key, value);
         if (!value) {
             const error = {
                 name: errorslist.errorTypes.validationError,
@@ -117,17 +173,21 @@ const filterTasks = (tasklist, filterOpt) => {
 
             if (key.includes(fieldKeys.assignee.key)
                 || key.includes(fieldKeys.description.key)) {
-                filterResults[key] = task[key].includes(value);
+                filterResults[key] = !value || task[key].includes(value);
             }
 
             if (key.includes(fieldKeys.status.key)
                 || key.includes(fieldKeys.priority.key)
                 || key.includes(fieldKeys.isPrivate.key)) {
-                filterResults[key] = Array.isArray(value) ? value.includes(task[key]) : task[key] === value;
+                filterResults[key] = Array.isArray(value) && value.length > 0 ? value.includes(task[key]) : true;
             }
 
-            if (key.includes(fieldKeys.dateFrom.key)) filterResults[key] = task.createdAt > value;
-            if (key.includes(fieldKeys.dateTo.key)) filterResults[key] = task.createdAt < value;
+            if (key.includes(fieldKeys.dateFrom.key)) {
+                filterResults[key] = new Date(task.createdAt) > value;
+            };
+            if (key.includes(fieldKeys.dateTo.key)) {
+                filterResults[key] = new Date(task.createdAt) < new Date(value);
+            };
         });
 
         return checkAppropriate(filterResults);
@@ -137,7 +197,7 @@ const filterTasks = (tasklist, filterOpt) => {
 };
 
 const orderByDate = (tasklist, isAsc = true) => {
-    const sorted = [...tasklist].sort((task1, task2) => task1.createdAt - task2.createdAt);
+    const sorted = [...tasklist].sort((task1, task2) => new Date(task1.createdAt) - new Date(task2.createdAt));
     return isAsc ? sorted : sorted.reverse();
 };
 

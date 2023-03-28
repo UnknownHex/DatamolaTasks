@@ -112,6 +112,6 @@ class TaskContainer extends BaseElement {
             taskActions.appendChild(deleteBtn.node);
         }
 
-        this.node.addEventListener('click', showTask.bind(this, this.taskEnt.id));
+        // this.node.addEventListener('click', showTask.bind(this, this.taskEnt.id));
     }
 }

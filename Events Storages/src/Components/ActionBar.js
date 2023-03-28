@@ -1,5 +1,5 @@
 class ActionBar extends BaseElement {
-    constructor() {
+    constructor(eventDelegation) {
         super('section');
 
         this.fragment = document.createDocumentFragment();
@@ -22,18 +22,11 @@ class ActionBar extends BaseElement {
             label: 'Search',
             isRequired: true,
         });
-        const filterBtn = new Button({
+        this.filterBtn = new Button({
             caption: 'Filter',
             icon: styles.icons.ifilter,
             classNames: [styles.btn, styles.primary],
-            onClick: () => filterView.display({
-                filterOpt: {
-                    assignee: 'Rost',
-                    isPrivate: [],
-                    priority: ['High', 'Low'],
-                },
-                avaliableUsers: fakeUsers,
-            }),
+            onClick: (e) => e.target.dispatchEvent(customEvents.showFilters.action),
         });
         const addTaskBtn = new Button({
             caption: 'Add task',
@@ -41,7 +34,7 @@ class ActionBar extends BaseElement {
             classNames: [styles.btn, styles.primary],
         });
         searchGroup.appendChild(searchInp.node);
-        searchGroup.appendChild(filterBtn.node);
+        searchGroup.appendChild(this.filterBtn.node);
         searchGroup.appendChild(addTaskBtn.node);
 
         const engBtn = new Button({ caption: 'eng', classNames: [styles.btn, styles.primary], name: 'eng-lang' });

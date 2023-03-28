@@ -6,7 +6,7 @@
     --dark: #333333;
     --primary: #106CC5;
     --primary700: #0C4D8E;
-    --primary300: #65ACF2;
+    --primary300: #65acf2;
     --primary100: #ebf1f7;
     --secondary: #86598D;
     --secondary700: #614066;
@@ -21,6 +21,8 @@
 
     --gray-main: #E9E9E9;
     --gray-offensive: #B6B6B6;
+
+    --blur: rgb(51 51 51 / 55%);
 
     --basic-shadow: 1px 1px 8px;
     --hover-shadow: 1px 1px 12px;
@@ -222,17 +224,19 @@ span.ico {
 
 .burger.btn {
     display: none;
+    max-width: ;
     flex-direction: column;
 }
 
 .btn {
     display: flex;
+    flex: 1 0 auto;
     position: relative;
     justify-content: center;
     align-items: center;
     text-transform: uppercase;
     padding: 2px 24px 2px 24px;
-    width: auto;
+    min-width: 2rem;
     background: var(--white);
     border: none;
     cursor: pointer;
@@ -262,13 +266,17 @@ span.ico {
     background-color: var(--secondary300);
 }
 
-.primary:hover,
-.hprio:hover,
-.mprio:hover,
-.lprio:hover {
+.primary:hover {
     box-shadow: var(--hover-shadow) var(--primary);
     color: var(--primary300);
     transition: var(--transition-all-in);
+}
+
+.field-container .primary:hover,
+.field-container .hprio:hover,
+.field-container .mprio:hover,
+.field-container .lprio:hover {
+    opacity: .7;
 }
 
 .primary.filled:hover {
@@ -346,6 +354,10 @@ span.ico {
     text-transform: capitalize;
 }
 
+.btn-group > .btn-caption {
+    display: block;
+}
+
 .btn-group .btn:first-child {
     border-radius: 4px 0 0 4px;
 }
@@ -405,19 +417,19 @@ span.ico {
     box-shadow: var(--basic-shadow) var(--primary300);
 }
 
-.active.hprio {
+.primary.active.hprio {
     background: var(--error);
     color: var(--white);
     box-shadow: var(--basic-shadow) var(--error);
 }
 
-.active.mprio {
+.primary.active.mprio {
     background: var(--warning);
     color: var(--white);
     box-shadow: var(--basic-shadow) var(--warning);
 }
 
-.active.lprio {
+.primary.active.lprio {
     background: var(--success);
     color: var(--white);
     box-shadow: var(--basic-shadow) var(--success);
@@ -1228,19 +1240,21 @@ input:checked + .slider:after {
     display: block;
     width: 100vw;
     height: 100vh;
-    background-color: var(--dark);
-    opacity: .6;
+    background-color: transparent;
+    /* opacity: .6; */
     z-index: 100;
-    filter: sepia(.5);
-    animation: openBlur .4s ease;
+    /* filter: sepia(.5); */
+    animation: openBlur .6s ease forwards;
 }
 
 @keyframes openBlur {
     from {
-        opacity: 0;
+        background-color: transparent;
+        box-shadow: inset var(--basic-shadow) var(--dark);
     }
     to {
-        opacity: .6;
+        background-color: var(--blur);
+        box-shadow: inset var(--hover-shadow) var(--dark);
     }
 }
 
@@ -1796,8 +1810,12 @@ input:checked + .slider:after {
         height: 32px;
     }
 
-    .action-bar .btn .btn-caption {
+    .action-bar .btn-caption {
         display: none;
+    }
+
+    .btn-group .btn-caption {
+        display: block;
     }
 
     .action-bar .btn .ico {

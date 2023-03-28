@@ -11,7 +11,7 @@ class ButtonGroup extends BaseElement {
 
     init() {
         if (!Array.isArray(this.buttons)) {
-            throw new Error('buttons" must be a list! ( Array<Button>, Button[] )');
+            throw new Error('"buttons" must be a list! ( Array<Button>, Button[] )');
         }
 
         const fragment = document.createDocumentFragment();

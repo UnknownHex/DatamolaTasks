@@ -1,6 +1,6 @@
 class CustomInput extends BaseElement {
     constructor({
-        label, type, value, icon, name, placeholder, isRequired, isDate, onClick, onFocus, onBlur,
+        label, type, value, icon, name, placeholder, isRequired, isDate, onClick, onChange, onFocus, onBlur,
     }) {
         super();
 
@@ -12,6 +12,7 @@ class CustomInput extends BaseElement {
         this.isRequired = isRequired;
         this.placeholder = placeholder;
         this.onClick = onClick;
+        this.onChange = onChange;
         this.isDate = isDate;
 
         this.init();
@@ -38,6 +39,10 @@ class CustomInput extends BaseElement {
                 this.value = e.target.value !== '' ? e.target.value : this.value;
                 e.target.value = formatDate(new Date(this.value));
             });
+        }
+
+        if (this.onChange) {
+            input.addEventListener('change', this.onChange);
         }
 
         if (this.isRequired) {

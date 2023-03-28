@@ -1,6 +1,6 @@
 class Button extends BaseElement {
     constructor({
-        caption, name, type, classNames, onClick, isBurger, icon,
+        caption, name, type, classNames, onClick, isBurger, icon, dataset,
     }) {
         super('button');
         this.caption = caption;
@@ -10,6 +10,7 @@ class Button extends BaseElement {
         this.onClick = onClick;
         this.icon = icon;
         this.name = name;
+        this.dataset = dataset;
 
         this.init();
     }
@@ -32,6 +33,10 @@ class Button extends BaseElement {
 
         if (this.name) {
             this.node.setAttribute('name', this.name);
+        }
+
+        if (this.dataset) {
+            this.node.dataset.data = this.dataset;
         }
 
         if (this.isBurger) {

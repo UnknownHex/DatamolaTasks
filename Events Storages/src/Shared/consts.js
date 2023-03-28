@@ -2,6 +2,36 @@ const consts = {
     appName: 'APPLICATION',
 };
 
+const customEvents = {
+    confirmFilters: {
+        caption: 'confirm-filters',
+        action: new CustomEvent('confirm-filters', { bubbles: true }),
+    },
+    clearFilters: {
+        caption: 'clear-filters',
+        action: new CustomEvent('clear-filters', { bubbles: true }),
+    },
+    getFilterParam: {
+        caption: 'get-filter-param',
+        action: (target) => (
+            new CustomEvent(
+                'get-filter-param',
+                { bubbles: true, detail: { dataset: target.dataset, name: target.name } },
+            )
+        ),
+    },
+    getSelectParam: {
+        caption: 'get-select-data',
+        action: (target) => (
+            new CustomEvent('get-select-data', { bubbles: true, detail: { value: target.value, name: target.name } })
+        ),
+    },
+    showFilters: {
+        caption: 'show-filters',
+        action: new CustomEvent('show-filters', { bubbles: true }),
+    },
+};
+
 const taskStatus = {
     toDo: 'To Do',
     inProgress: 'In Progress',

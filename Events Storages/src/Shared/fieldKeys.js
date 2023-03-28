@@ -36,8 +36,22 @@ const fieldKeys = {
         key: 'description',
         tip: `DESCRIPTION - not empty and less than ${Task.descriptionMaxLength} characters;`,
     },
+
     text: {
         key: 'text',
         tip: `TEXT must be a not empty and less than ${Comment.textMaxLength} characters;`,
     },
+
+    username: {
+        tip: `USERNAME NAME must be a not empty string and less than ${User.usernameLen} characters;`,
+    },
+    login: {
+        tip: 'LOGIN must consist only cyrylic simbols and _;'
+    },
+    password: {
+        tip: 'PASSWORD must greater than 4;'
+    },
+    passwordConfirm: {
+        tip: 'PASSWORDS is not simple!'
+    }
 };

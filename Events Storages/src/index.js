@@ -1,11 +1,13 @@
 class App {
     constructor() {
         this.init();
+        this.initListeners();
     }
 
     init() {
-        this.taskCollection = new TaskCollector([]);
-        this.storage = new LocalStorage(this.taskCollection);
+        this.taskCollection = new TaskCollector(fakeTasks);
+        this.userCollection = new UserCollector(fakeUsers);
+        this.storage = new LocalStorage(this.taskCollection, this.userCollection);
 
         this.headerView = new HeaderView('mount-point');
 
@@ -14,10 +16,99 @@ class App {
 
         this.taskFeedView = new TaskFeedView('main-content');
 
+        this.filterBadge1 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.low });
+        this.filterBadge1.appendIn('mount-point');
+        this.filterBadge2 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.medium });
+        this.filterBadge2.appendIn('mount-point');
+        this.filterBadge3 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.high });
+        this.filterBadge3.appendIn('mount-point');
+        this.filterBadge4 = new FilterBadge({ key: fieldKeys.status.key, value: taskStatus.toDo });
+        this.filterBadge4.appendIn('mount-point');
+        this.filterBadge5 = new FilterBadge({ key: fieldKeys.status.key, value: taskStatus.inProgress });
+        this.filterBadge5.appendIn('mount-point');
+
         this.filterView = new FilterView('mount-point');
         this.taskView = new TaskView('main-content');
 
         this.notificationView = new NotificationView('mount-point');
+    }
+
+    initListeners() {
+        const main = document.querySelector('#mount-point');
+
+        main.addEventListener(customEvents.showFilters.caption, this.showFilter.bind(this));
+        main.addEventListener(customEvents.getSelectParam.caption, this.changeInputParams.bind(this));
+        main.addEventListener(customEvents.getFilterParam.caption, this.changeButtonParams.bind(this));
+        main.addEventListener(customEvents.clearFilters.caption, this.clearFilters.bind(this));
+        main.addEventListener(customEvents.confirmFilters.caption, this.confirmFilters.bind(this));
+    }
+
+    changeInputParams(e) {
+        const paramName = e.detail.name;
+        const paramValue = e.detail.value;
+        console.log(paramName, ":", paramValue);
+
+        switch (paramName) {
+            case fieldKeys.assignee.key:
+                const user = paramValue ? this.userCollection.get(paramValue) : null;
+                this.storage.setAssignee(user?.name);
+                break;
+            case fieldKeys.dateFrom.key:
+                console.log('save date:', paramValue, new Date(paramValue));
+                this.storage.setDateFrom(paramValue);
+                break;
+            case fieldKeys.dateTo.key:
+                console.log('save date:', paramValue, new Date(paramValue));
+                this.storage.setDateTo(paramValue);
+                break;
+            default:
+                break;
+            }
+
+        console.log(`\naction: ${customEvents.getSelectParam.caption}`, this.storage.activeFilters);
+    }
+
+    changeButtonParams(e) {
+        const paramName = e.detail.name;
+            const paramValue = e.detail.dataset.data;
+
+            if (paramName) {
+                e.stopPropagation();
+            }
+
+            switch (paramName) {
+            case fieldKeys.assignee.key:
+                this.storage.setAssignee(paramValue);
+                break;
+            case fieldKeys.isPrivate.key:
+                this.storage.setPrivate(!!paramValue);
+                break;
+            case fieldKeys.priority.key:
+                this.storage.setPriority(paramValue);
+                break;
+            case fieldKeys.status.key:
+                this.storage.setStatus(paramValue);
+                break;
+            default:
+                break;
+            }
+
+            console.log(`\naction: ${customEvents.getFilterParam.caption}`, this.storage.activeFilters);
+    }
+
+    clearFilters() {
+        this.storage.setToDefaults();
+        this.storage.saveStoredData();
+        this.showFilter();
+
+        console.log(`\naction: ${customEvents.clearFilters.caption}`, this.storage.activeFilters);
+    }
+
+    confirmFilters() {
+        console.log(this.storage.activeFilters);
+        this.getFeed(0, 10, this.storage.activeFilters);
+
+        console.log(`\naction: ${customEvents.confirmFilters.caption}`);
     }
 
     showTaskFeedPage(tasklist, currentUser) {
@@ -37,7 +128,12 @@ class App {
     }
 
     showFilter() {
-
+        this.filterView.display({
+            filterOpt: this.storage.activeFilters,
+            avaliableUsers: this.storage.userCollector.userlist,
+        });
+        // console.log(this.storage.filterOptions);
+        // console.log(this.storage.activeFilters);
     }
 
     setCurrentUser(user) {
@@ -48,6 +144,8 @@ class App {
         if (tmpUser !== this.taskCollection.user) {
             this.headerView.display({ user: this.taskCollection.user });
             this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+
+            this.storage.saveStoredData();
 
             this.taskCollection.user
                 ? this.NotificationView.createNotifly({
@@ -119,7 +217,7 @@ class App {
 
     getFeed(skip, top, filterConfig) {
         const filteredTasks = this.taskCollection.getPage(skip, top, filterConfig);
-
+        console.log(filterConfig);
         this.showTaskFeedPage(filteredTasks, this.taskCollection.user);
 
         console.log(filteredTasks); // Need only for testlog in console!

@@ -34,6 +34,10 @@ const styles = {
     actionBar: 'action-bar',
     barGroup: 'bar-group',
 
+    activeFilters :'active-filters',
+    filterBadge :'filter-badge',
+    text :'text',
+
     boardWrapper: 'board-wrapper',
     taskboard: 'taskboard',
     asTable: 'as-table',

@@ -1,10 +1,7 @@
-// eslint-disable-next-line no-unused-vars
 class TaskCollector {
-    #user;
     #tasklist;
 
     constructor(tasklist) {
-        this.#user = null;
         this.#tasklist = tasklist;
     }
 
@@ -14,25 +11,6 @@ class TaskCollector {
 
     set tasklist(tasklist) {
         this.#tasklist = tasklist;
-    }
-
-    get user() {
-        return this.#user;
-    }
-
-    set user(user) {
-        try {
-            if (isString(user) || user === null) {
-                this.#user = user;
-            } else {
-                throw new CustomError({
-                    name: errorslist.errorTypes.validationError,
-                    message: errorslist.errorMessages.wrongFieldMsg('user'),
-                });
-            }
-        } catch (err) {
-            if (!(err instanceof CustomError)) console.warn(err);
-        }
     }
 
     getPage(skip = 0, top = 10, filterOpt = null) {

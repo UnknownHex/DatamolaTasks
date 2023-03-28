@@ -1,20 +1,24 @@
 class LocalStorage {
-    constructor(taskCollector) {
+    constructor(taskCollector, userCollector) {
         this.storage = localStorage;
 
-        this.user = null;
+        this.userCollector = userCollector;
         this.taskCollector = taskCollector;
 
         this.filterString = null;
-        this.filterOptions = {
-            assignee: null,
-            status: new Set(),
-            priority: new Set(),
-            private: new Set(),
-        };
+        this.setToDefaults();
+        // this.filterOptions = {
+        //     assignee: null,
+        //     status: new Set(),
+        //     priority: new Set(),
+        //     private: new Set(),
+        //     startDate: '',
+        //     endDate: '',
+        // };
 
         this.storageKeys = {
-            user: 'user',
+            currentUser: 'currentUser',
+            // mainKey: this.userCollector.user,
             tasklist: 'tasklist',
 
             filterString: 'filterString',
@@ -25,7 +29,6 @@ class LocalStorage {
     }
 
     init() {
-        // this.storage.clear();
         const storageLength = this.storage.length;
 
         if (storageLength === 0) {
@@ -35,20 +38,18 @@ class LocalStorage {
 
         if (storageLength > 0) {
             this.loadStoredData();
-            this.#loadFilterOptions();
         }
     }
 
-    saveStoredData() {
-        this.saveToStore(this.storageKeys.user, this.user);
-        this.saveToStore(this.storageKeys.tasklist, this.taskCollector.tasklist);
-        this.saveToStore(this.storageKeys.filterString, this.filterString);
-    }
-
-    loadStoredData() {
-        this.user = this.loadFromStore(this.storageKeys.user);
-        this.taskCollector.tasklist = this.loadFromStore(this.storageKeys.tasklist);
-        this.filterString = this.loadFromStore(this.storageKeys.filterString);
+    get activeFilters() {
+        return {
+            assignee: this.filterOptions.assignee,
+            status: Array.from(this.filterOptions.status),
+            priority: Array.from(this.filterOptions.priority),
+            isPrivate: Array.from(this.filterOptions.private),
+            dateFrom: this.filterOptions.dateFrom,
+            dateTo: this.filterOptions.dateTo || new Date(),
+        };
     }
 
     #saveFilterOptions() {
@@ -57,6 +58,8 @@ class LocalStorage {
             status: Array.from(this.filterOptions.status),
             priority: Array.from(this.filterOptions.priority),
             private: Array.from(this.filterOptions.private),
+            dateFrom: new Date(this.filterOptions.dateFrom),
+            dateTo: new Date(this.filterOptions.dateTo),
         });
     }
 
@@ -73,6 +76,20 @@ class LocalStorage {
         this.#saveFilterOptions();
     }
 
+    saveStoredData() {
+        this.saveToStore(this.storageKeys.currentUser, this.userCollector.user);
+        this.saveToStore(this.storageKeys.tasklist, this.taskCollector.tasklist);
+        this.saveToStore(this.storageKeys.filterString, this.filterString);
+        this.#saveFilterOptions();
+    }
+
+    loadStoredData() {
+        this.userCollector.user = this.loadFromStore(this.storageKeys.currentUser);
+        this.taskCollector.tasklist = this.loadFromStore(this.storageKeys.tasklist);
+        this.filterString = this.loadFromStore(this.storageKeys.filterString);
+        this.#loadFilterOptions();
+    }
+
     saveToStore(key, data) {
         this.storage.setItem(key, JSON.stringify(data));
     }
@@ -87,7 +104,7 @@ class LocalStorage {
 
     setAssignee(assignee) {
         this.filterOptions.assignee = assignee || null;
-        this.saveToStore(this.storageKeys.assignee, this.filterOptions.assignee);
+        this.#saveFilterOptions();
     }
 
     setTasklist(tasklist) {
@@ -110,5 +127,28 @@ class LocalStorage {
 
     setPrivate(isPrivate) {
         this.#checkSetValues(this.filterOptions.private, isPrivate);
+    }
+
+    setDateFrom(date) {
+        console.log(date);
+        this.filterOptions.dateFrom = new Date(date);
+        this.#saveFilterOptions();
+    }
+
+    setDateTo(date) {
+        this.filterOptions.dateTo = new Date(date);
+        this.#saveFilterOptions();
+    }
+
+    setToDefaults() {
+        this.filterString = null;
+        this.filterOptions = {
+            assignee: null,
+            status: new Set(),
+            priority: new Set(),
+            private: new Set(),
+            dateFrom: new Date('1999'),
+            dateTo: null,
+        };
     }
 }
