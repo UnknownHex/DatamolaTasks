@@ -1,0 +1,45 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#tic-tac-toe {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    max-width: 20rem;
+    margin: auto;
+}
+
+.cell {
+    position: relative;
+    padding: 2rem;
+    /* max-width: 4rem; */
+    /* max-height: 4rem; */
+    border: 1px solid #aaa;
+    cursor: pointer;
+}
+
+.cross,
+.nought {
+    pointer-events: none;
+}
+
+.cross::before {
+    position: absolute;
+    content: "X";
+}
+
+.nought::before {
+    position: absolute;
+    content: "0";
+}
+
+.cell-numb::after {
+    content: attr(data-numb);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: .5rem;
+    font-weight: 500;
+}
