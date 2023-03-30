@@ -45,17 +45,14 @@ class FilterBadge extends BaseElement {
         }
 
         if (this.key === fieldKeys.status.key) {
-            if (this.value === taskStatus.toDo) {
-                // text.textContent = this.value;
-            }
-            if (this.value === taskStatus.inProgress) {
-                // text.textContent = this.value;
-            }
-            if (this.value === taskStatus.complete) {
-                // text.textContent = this.value;
-            }
-            ico.classList.remove(styles.ico);
+            ico.classList.add(styles.icons.iaddTask);
             text.textContent = this.value;
+        }
+
+        if (this.key === fieldKeys.dateFrom.key
+            || this.key === fieldKeys.dateTo.key) {
+            ico.classList.add(styles.icons.idateTime);
+            text.textContent = formatDate(new Date(this.value));
         }
         
         const close = document.createElement('span');

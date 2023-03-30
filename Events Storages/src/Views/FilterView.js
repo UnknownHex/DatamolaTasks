@@ -134,11 +134,6 @@ class FilterView extends BaseView {
             caption: 'confirm',
             type: 'submit',
             classNames: [styles.btn, styles.primary, styles.filled],
-            // onClick: (e) => {
-            //     // e.target.preventDefault();
-            //     console.log(e);
-            //     console.log('STOP PROPAGATION!');
-            // },
         });
         const resetBtn = new Button({
             caption: 'reset',

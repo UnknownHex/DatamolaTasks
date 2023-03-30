@@ -183,10 +183,11 @@ const filterTasks = (tasklist, filterOpt) => {
             }
 
             if (key.includes(fieldKeys.dateFrom.key)) {
-                filterResults[key] = new Date(task.createdAt) > value;
+                console.log(key, value);
+                filterResults[key] = value ? new Date(task.createdAt) > value : true;
             };
             if (key.includes(fieldKeys.dateTo.key)) {
-                filterResults[key] = new Date(task.createdAt) < new Date(value);
+                filterResults[key] = value ? new Date(task.createdAt) < new Date(value) : true;
             };
         });
 

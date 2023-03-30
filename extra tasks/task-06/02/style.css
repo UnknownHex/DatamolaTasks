@@ -6,16 +6,23 @@
 
 #tic-tac-toe {
     display: grid;
+    padding: 1.5rem;
     grid-template-columns: 1fr 1fr 1fr;
     max-width: 20rem;
     margin: auto;
 }
 
+.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .cell {
     position: relative;
     padding: 2rem;
-    /* max-width: 4rem; */
-    /* max-height: 4rem; */
+    font-family: sans-serif;
+    font-size: 2rem;
     border: 1px solid #aaa;
     cursor: pointer;
 }
@@ -35,6 +42,13 @@
     content: "0";
 }
 
+.cross::before,
+.nought::before {
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+}
+
 .cell-numb::after {
     content: attr(data-numb);
     position: absolute;
@@ -42,4 +56,8 @@
     right: 5px;
     font-size: .5rem;
     font-weight: 500;
+}
+
+.negame {
+    margin: auto;
 }

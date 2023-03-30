@@ -48,7 +48,7 @@ class LocalStorage {
             priority: Array.from(this.filterOptions.priority),
             isPrivate: Array.from(this.filterOptions.private),
             dateFrom: this.filterOptions.dateFrom,
-            dateTo: this.filterOptions.dateTo || new Date(),
+            dateTo: this.filterOptions.dateTo,
         };
     }
 
@@ -58,17 +58,20 @@ class LocalStorage {
             status: Array.from(this.filterOptions.status),
             priority: Array.from(this.filterOptions.priority),
             private: Array.from(this.filterOptions.private),
-            dateFrom: new Date(this.filterOptions.dateFrom),
-            dateTo: new Date(this.filterOptions.dateTo),
+            dateFrom: this.filterOptions.dateFrom,
+            dateTo: this.filterOptions.dateTo,
         });
     }
 
     #loadFilterOptions() {
         const lastFilters = this.loadFromStore(this.storageKeys.filterOptions);
+        console.log(lastFilters);
         this.filterOptions.assignee = lastFilters.assignee;
         this.filterOptions.status = new Set(lastFilters.status);
         this.filterOptions.priority = new Set(lastFilters.priority);
         this.filterOptions.private = new Set(lastFilters.private);
+        this.filterOptions.dateFrom = lastFilters.dateFrom;
+        this.filterOptions.dateTo = lastFilters.dateTo;
     }
 
     #checkSetValues(set, value) {
@@ -147,7 +150,7 @@ class LocalStorage {
             status: new Set(),
             priority: new Set(),
             private: new Set(),
-            dateFrom: new Date('1999'),
+            dateFrom: null,
             dateTo: null,
         };
     }

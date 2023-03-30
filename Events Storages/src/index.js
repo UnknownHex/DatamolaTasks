@@ -16,19 +16,29 @@ class App {
 
         this.taskFeedView = new TaskFeedView('main-content');
 
-        this.filterBadge1 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.low });
-        this.filterBadge1.appendIn('mount-point');
-        this.filterBadge2 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.medium });
-        this.filterBadge2.appendIn('mount-point');
-        this.filterBadge3 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.high });
-        this.filterBadge3.appendIn('mount-point');
-        this.filterBadge4 = new FilterBadge({ key: fieldKeys.status.key, value: taskStatus.toDo });
-        this.filterBadge4.appendIn('mount-point');
-        this.filterBadge5 = new FilterBadge({ key: fieldKeys.status.key, value: taskStatus.inProgress });
-        this.filterBadge5.appendIn('mount-point');
+        this.activeFiltersBar = new ActiveFiltersBar(this.storage.activeFilters);
+
+        // this.filterBadge0 = new FilterBadge({ key: fieldKeys.assignee.key, value: 'Бельская' });
+        // this.filterBadge0.appendIn('mount-point');
+        // this.filterBadge1 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.low });
+        // this.filterBadge1.appendIn('mount-point');
+        // this.filterBadge2 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.medium });
+        // this.filterBadge2.appendIn('mount-point');
+        // this.filterBadge3 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.high });
+        // this.filterBadge3.appendIn('mount-point');
+        // this.filterBadge4 = new FilterBadge({ key: fieldKeys.status.key, value: taskStatus.toDo });
+        // this.filterBadge4.appendIn('mount-point');
+        // this.filterBadge5 = new FilterBadge({ key: fieldKeys.status.key, value: taskStatus.inProgress });
+        // this.filterBadge5.appendIn('mount-point');
+        // this.filterBadge7 = new FilterBadge({ key: fieldKeys.dateFrom.key, value: this.storage.activeFilters.dateFrom });
+        // this.filterBadge7.appendIn('mount-point');
+        // this.filterBadge6 = new FilterBadge({ key: fieldKeys.dateTo.key, value: this.storage.activeFilters.dateTo });
+        // this.filterBadge6.appendIn('mount-point');
 
         this.filterView = new FilterView('mount-point');
         this.taskView = new TaskView('main-content');
+
+        this.mainSection.node.appendChild(this.activeFiltersBar.node);
 
         this.notificationView = new NotificationView('mount-point');
     }

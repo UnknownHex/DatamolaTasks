@@ -105,7 +105,7 @@ const generateList = (partOfList) => {
 const generateListItems = (partOfList) => {
     const createLi = (data = null) => {
         const li = document.createElement('li');
-        li.insertAdjacentHTML('beforeend', data || '');
+        li.insertAdjacentHTML('beforeend', `<span>${data}</span>` || '');
         return li;
     };
 
@@ -127,10 +127,17 @@ const createList = (title, list) => {
     const main = document.createElement('div');
 
     main.appendChild(generateList(list));
+    main.id = 'list-container';
     header.insertAdjacentHTML('beforeend', title);
 
     document.body.appendChild(header);
     document.body.appendChild(main);
+
+    main.addEventListener('click', (e) => {
+        if (e.target.tagName === 'SPAN' && e.target.nextElementSibling?.closest('ul')) {
+            e.target.nextElementSibling.classList.toggle('hide');
+        }
+    });
 };
 
 createList('List title here...', defList);
