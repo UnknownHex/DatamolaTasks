@@ -13,7 +13,6 @@ class ActiveFiltersBar extends BaseElement {
 
         Object.entries(this.activeFilters).forEach((option) => {
             const [key, value] = option;
-            console.log(key, value);
 
             if (!value) return;
 

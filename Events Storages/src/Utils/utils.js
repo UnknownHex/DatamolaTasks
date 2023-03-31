@@ -174,7 +174,6 @@ const filterTasks = (tasklist, filterOpt) => {
             }
 
             if (key.includes(fieldKeys.dateFrom.key)) {
-                console.log(key, value);
                 filterResults[key] = value ? new Date(task.createdAt) > value : true;
             }
             if (key.includes(fieldKeys.dateTo.key)) {

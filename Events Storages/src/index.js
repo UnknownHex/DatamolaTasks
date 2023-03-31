@@ -50,7 +50,7 @@ class App {
             this.storage.setDateFrom(null);
             break;
         case fieldKeys.dateTo.key:
-            this.storage.setDateFrom(null);
+            this.storage.setDateTo(null);
             break;
         case fieldKeys.status.key:
             this.storage.setStatus(value);
@@ -81,21 +81,22 @@ class App {
         console.log(paramName, ':', paramValue);
 
         switch (paramName) {
-            case fieldKeys.assignee.key:
-                const user = paramValue ? this.userCollection.get(paramValue) : null;
-                this.storage.setAssignee(user?.name);
-                break;
-            case fieldKeys.dateFrom.key:
-                console.log('save date:', paramValue, new Date(paramValue));
-                this.storage.setDateFrom(paramValue);
-                break;
-            case fieldKeys.dateTo.key:
-                console.log('save date:', paramValue, new Date(paramValue));
-                this.storage.setDateTo(paramValue);
-                break;
-            default:
-                break;
-            }
+        case fieldKeys.assignee.key: {
+            const user = paramValue ? this.userCollection.get(paramValue) : null;
+            this.storage.setAssignee(user?.name);
+            break;
+        }
+        case fieldKeys.dateFrom.key:
+            console.log('save date:', paramValue, new Date(paramValue));
+            this.storage.setDateFrom(paramValue);
+            break;
+        case fieldKeys.dateTo.key:
+            console.log('save date:', paramValue, new Date(paramValue));
+            this.storage.setDateTo(paramValue);
+            break;
+        default:
+            break;
+        }
 
         console.log(`\naction: ${customEvents.getSelectParam.caption}`, this.storage.activeFilters);
     }

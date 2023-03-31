@@ -53,9 +53,8 @@ class FilterBadge extends BaseElement {
 
         if ((this.key === fieldKeys.dateFrom.key
             || this.key === fieldKeys.dateTo.key)) {
-            const date = new Date(this.value);
             ico.classList.add(styles.icons.idateTime);
-            text.textContent = formatDate(date);
+            text.textContent = formatDate(new Date(this.value));
         }
 
         const close = document.createElement('span');

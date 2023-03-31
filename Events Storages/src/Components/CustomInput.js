@@ -27,18 +27,21 @@ class CustomInput extends BaseElement {
         input.setAttribute('type', 'text');
 
         if (this.isDate) {
-            input.value = null; // || formatDate(new Date(this.value));
-
             input.addEventListener('click', (e) => {
                 e.target.type = 'datetime-local';
+                console.log(e.target.value);
                 e.target.showPicker();
             });
 
             input.addEventListener('blur', (e) => {
+                console.log('preBlur(target):', e.target.value);
+                console.log('preBlur(this):', this.value);
+                this.value = e.target.value;
                 e.target.type = 'text';
-                this.value = e.target.value !== '' ? e.target.value : this.value;
-                e.target.value = null; // formatDate(new Date(this.value));
+                e.target.value = this.value ? formatDate(new Date(this.value)) : null;
             });
+
+            input.value = this.value ? formatDate(new Date(this.value)) : null;
         }
 
         if (this.onChange) {

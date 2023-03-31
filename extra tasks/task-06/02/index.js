@@ -135,10 +135,6 @@ class TicTacToe {
         }
     }
 
-    showInfo() {
-
-    }
-
     setPlayerLabel(target) {
         target.classList.add(this.isPlayerTurn ? 'cross' : 'nought');
     }

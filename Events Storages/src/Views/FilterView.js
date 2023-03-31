@@ -47,6 +47,7 @@ class FilterView extends BaseView {
             name: fieldKeys.assignee.key,
             onChange: (e) => e.target.dispatchEvent(customEvents.getSelectParam.action(e.target)),
         });
+        console.log('CREAATE CUSTOM DATE...', dateFrom);
         const startDate = new CustomInput({
             name: fieldKeys.dateFrom.key,
             type: 'datetime-local',
@@ -54,7 +55,7 @@ class FilterView extends BaseView {
             label: 'Start date',
             isDate: true,
             isRequired: true, // mind this
-            // value: new Date(dateFrom) || new Date('2000-01-01T00:00'),
+            value: dateFrom,
             onChange: (e) => e.target.dispatchEvent(customEvents.getSelectParam.action(e.target)),
         });
 
@@ -65,7 +66,7 @@ class FilterView extends BaseView {
             label: 'End date',
             isDate: true,
             isRequired: true, // mind this
-            // value: dateTo ? new Date(dateTo) : Date.now(),
+            value: dateTo,
             onChange: (e) => e.target.dispatchEvent(customEvents.getSelectParam.action(e.target)),
         });
 
