@@ -3,6 +3,13 @@ const consts = {
 };
 
 const customEvents = {
+    cancelFilterParam: {
+        caption: 'cancel-filter-param',
+        action: new CustomEvent(
+            'cancel-filter-param',
+            { bubbles: true },
+        ),
+    },
     confirmFilters: {
         caption: 'confirm-filters',
         action: new CustomEvent('confirm-filters', { bubbles: true }),

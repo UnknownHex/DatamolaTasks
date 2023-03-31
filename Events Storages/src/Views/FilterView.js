@@ -24,6 +24,8 @@ class FilterView extends BaseView {
             return;
         }
 
+        console.log('In filter:', filterOpt);
+
         this.clear();
 
         const {
@@ -52,7 +54,7 @@ class FilterView extends BaseView {
             label: 'Start date',
             isDate: true,
             isRequired: true, // mind this
-            value: new Date(dateFrom) || new Date('2000-01-01T00:00'),
+            // value: new Date(dateFrom) || new Date('2000-01-01T00:00'),
             onChange: (e) => e.target.dispatchEvent(customEvents.getSelectParam.action(e.target)),
         });
 
@@ -63,7 +65,7 @@ class FilterView extends BaseView {
             label: 'End date',
             isDate: true,
             isRequired: true, // mind this
-            value: dateTo ? new Date(dateTo) : Date.now(),
+            // value: dateTo ? new Date(dateTo) : Date.now(),
             onChange: (e) => e.target.dispatchEvent(customEvents.getSelectParam.action(e.target)),
         });
 
@@ -132,8 +134,10 @@ class FilterView extends BaseView {
         const actionContainer = fieldContainer.cloneNode();
         const confirmBtn = new Button({
             caption: 'confirm',
-            type: 'submit',
             classNames: [styles.btn, styles.primary, styles.filled],
+            onClick: (e) => {
+                e.target.dispatchEvent(customEvents.confirmFilters.action);
+            },
         });
         const resetBtn = new Button({
             caption: 'reset',
@@ -208,11 +212,6 @@ class FilterView extends BaseView {
                     .dispatchEvent(customEvents.getFilterParam.action(e.target.closest('button')));
                 e.target.closest('button').classList.toggle(styles.active);
             }
-        });
-
-        this.filter.addEventListener('submit', (e) => {
-            e.preventDefault();
-            e.target.dispatchEvent(customEvents.confirmFilters.action);
         });
 
         this.render(this.filterFragment);

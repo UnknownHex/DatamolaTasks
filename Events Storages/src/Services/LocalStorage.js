@@ -1,9 +1,11 @@
 class LocalStorage {
-    constructor(taskCollector, userCollector) {
+    constructor() {
         this.storage = localStorage;
 
-        this.userCollector = userCollector;
-        this.taskCollector = taskCollector;
+        this.currentUser = null;
+
+        this.userCollector = [];
+        this.taskCollector = [];
 
         this.filterString = null;
         this.setToDefaults();
@@ -20,6 +22,7 @@ class LocalStorage {
             currentUser: 'currentUser',
             // mainKey: this.userCollector.user,
             tasklist: 'tasklist',
+            userlist: 'userlist',
 
             filterString: 'filterString',
             filterOptions: 'filterOptions',
@@ -30,11 +33,6 @@ class LocalStorage {
 
     init() {
         const storageLength = this.storage.length;
-
-        if (storageLength === 0) {
-            this.saveStoredData();
-            this.#saveFilterOptions();
-        }
 
         if (storageLength > 0) {
             this.loadStoredData();
@@ -65,13 +63,12 @@ class LocalStorage {
 
     #loadFilterOptions() {
         const lastFilters = this.loadFromStore(this.storageKeys.filterOptions);
-        console.log(lastFilters);
-        this.filterOptions.assignee = lastFilters.assignee;
-        this.filterOptions.status = new Set(lastFilters.status);
-        this.filterOptions.priority = new Set(lastFilters.priority);
-        this.filterOptions.private = new Set(lastFilters.private);
-        this.filterOptions.dateFrom = lastFilters.dateFrom;
-        this.filterOptions.dateTo = lastFilters.dateTo;
+        this.filterOptions.assignee = lastFilters?.assignee;
+        this.filterOptions.status = new Set(lastFilters?.status);
+        this.filterOptions.priority = new Set(lastFilters?.priority);
+        this.filterOptions.private = new Set(lastFilters?.private);
+        this.filterOptions.dateFrom = lastFilters?.dateFrom;
+        this.filterOptions.dateTo = lastFilters?.dateTo;
     }
 
     #checkSetValues(set, value) {
@@ -80,15 +77,17 @@ class LocalStorage {
     }
 
     saveStoredData() {
-        this.saveToStore(this.storageKeys.currentUser, this.userCollector.user);
-        this.saveToStore(this.storageKeys.tasklist, this.taskCollector.tasklist);
+        this.saveToStore(this.storageKeys.currentUser, this.currentUser);
+        this.saveToStore(this.storageKeys.tasklist, this.taskCollector);
+        this.saveToStore(this.storageKeys.userlist, this.userCollector);
         this.saveToStore(this.storageKeys.filterString, this.filterString);
         this.#saveFilterOptions();
     }
 
     loadStoredData() {
         this.userCollector.user = this.loadFromStore(this.storageKeys.currentUser);
-        this.taskCollector.tasklist = this.loadFromStore(this.storageKeys.tasklist);
+        this.taskCollector = this.loadFromStore(this.storageKeys.tasklist);
+        this.userCollector = this.loadFromStore(this.storageKeys.userlist);
         this.filterString = this.loadFromStore(this.storageKeys.filterString);
         this.#loadFilterOptions();
     }
@@ -133,13 +132,12 @@ class LocalStorage {
     }
 
     setDateFrom(date) {
-        console.log(date);
-        this.filterOptions.dateFrom = new Date(date);
+        this.filterOptions.dateFrom = date === null ? null : new Date(date);
         this.#saveFilterOptions();
     }
 
     setDateTo(date) {
-        this.filterOptions.dateTo = new Date(date);
+        this.filterOptions.dateTo = date === null ? null : new Date(date);
         this.#saveFilterOptions();
     }
 

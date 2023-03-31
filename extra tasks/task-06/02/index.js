@@ -124,12 +124,14 @@ class TicTacToe {
         const freeCells = this.getFreeCells();
         if (!this.endGameStatus) {
             const uiChoose = Math.floor(Math.random() * freeCells.length);
-            
-            if (freeCells.length > 0) {
-                freeCells[uiChoose].classList.add(this.nought);
-            }
-
-            this.changeTurn(this.nought);         
+            const timeout = setTimeout(() => {
+                if (freeCells.length > 0) {
+                    freeCells[uiChoose].classList.add(this.nought);
+                }
+    
+                this.changeTurn(this.nought);
+                clearTimeout(timeout);
+            }, 400);
         }
     }
 }

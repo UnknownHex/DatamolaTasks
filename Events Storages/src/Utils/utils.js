@@ -13,7 +13,6 @@ const isLoginValid = (login) => {
         const [found] = login.match(regTmplt) || [];
         const isValid = found === login;
 
-
         if (!isValid) {
             throw new CustomError({
                 name: errorslist.errorTypes.validationError,
@@ -26,15 +25,11 @@ const isLoginValid = (login) => {
         console.warn(err.shortMessage);
         return false;
     }
-}
+};
 
 const isLoginFree = (login, userlist) => {
     try {
-        const index = userlist.findIndex((user) => {
-            return user.login.toLowerCase() === login.toLowerCase();
-        });
-
-        console.log(index);
+        const index = userlist.findIndex((user) => user.login.toLowerCase() === login.toLowerCase());
 
         const isValid = index === -1;
 
@@ -51,15 +46,11 @@ const isLoginFree = (login, userlist) => {
         console.log(err);
         return false;
     }
-}
+};
 
-const isPassConfirmed = (fPass, sPass) => {
-    return fPass === sPass;
-}
+const isPassConfirmed = (fPass, sPass) => (fPass === sPass);
 
-const isChangePassAllow = (curPass, newPass) => {
-    return curPass !== newPass;
-}
+const isChangePassAllow = (curPass, newPass) => (curPass !== newPass);
 
 const isValidKey = (key) => {
     try {
@@ -185,10 +176,10 @@ const filterTasks = (tasklist, filterOpt) => {
             if (key.includes(fieldKeys.dateFrom.key)) {
                 console.log(key, value);
                 filterResults[key] = value ? new Date(task.createdAt) > value : true;
-            };
+            }
             if (key.includes(fieldKeys.dateTo.key)) {
                 filterResults[key] = value ? new Date(task.createdAt) < new Date(value) : true;
-            };
+            }
         });
 
         return checkAppropriate(filterResults);

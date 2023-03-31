@@ -67,7 +67,9 @@ class TaskFeedView extends BaseView {
         }
     }
 
-    display({ tasklist, isTableView, currentUser }) {
+    display({
+        tasklist, isTableView, currentUser, filterOpt,
+    }) {
         if (Array.isArray(tasklist) && tasklist.length > 0) {
             this.updateTasks(tasklist, currentUser);
         }
@@ -75,14 +77,16 @@ class TaskFeedView extends BaseView {
         this.clear();
         this.changeView(isTableView);
 
-        const taskFeedFragment = document.createDocumentFragment();
         this.container = new Container();
+        const taskFeedFragment = document.createDocumentFragment();
+        const activeFiltersBar = new ActiveFiltersBar(filterOpt);
 
         taskFeedFragment.appendChild(this.container.node);
 
         const actionBar = new ActionBar();
 
         this.container.node.appendChild(actionBar.node);
+        this.container.node.appendChild(activeFiltersBar.node);
         this.container.node.appendChild(this.taskboardWrapper);
 
         this.render(taskFeedFragment);

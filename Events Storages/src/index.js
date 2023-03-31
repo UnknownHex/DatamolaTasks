@@ -5,9 +5,10 @@ class App {
     }
 
     init() {
-        this.taskCollection = new TaskCollector(fakeTasks);
-        this.userCollection = new UserCollector(fakeUsers);
-        this.storage = new LocalStorage(this.taskCollection, this.userCollection);
+        this.storage = new LocalStorage();
+
+        this.taskCollection = new TaskCollector(this.storage.taskCollector);
+        this.userCollection = new UserCollector(this.storage.userCollector);
 
         this.headerView = new HeaderView('mount-point');
 
@@ -16,31 +17,14 @@ class App {
 
         this.taskFeedView = new TaskFeedView('main-content');
 
-        this.activeFiltersBar = new ActiveFiltersBar(this.storage.activeFilters);
-
-        // this.filterBadge0 = new FilterBadge({ key: fieldKeys.assignee.key, value: 'Бельская' });
-        // this.filterBadge0.appendIn('mount-point');
-        // this.filterBadge1 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.low });
-        // this.filterBadge1.appendIn('mount-point');
-        // this.filterBadge2 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.medium });
-        // this.filterBadge2.appendIn('mount-point');
-        // this.filterBadge3 = new FilterBadge({ key: fieldKeys.priority.key, value: taskPriority.high });
-        // this.filterBadge3.appendIn('mount-point');
-        // this.filterBadge4 = new FilterBadge({ key: fieldKeys.status.key, value: taskStatus.toDo });
-        // this.filterBadge4.appendIn('mount-point');
-        // this.filterBadge5 = new FilterBadge({ key: fieldKeys.status.key, value: taskStatus.inProgress });
-        // this.filterBadge5.appendIn('mount-point');
-        // this.filterBadge7 = new FilterBadge({ key: fieldKeys.dateFrom.key, value: this.storage.activeFilters.dateFrom });
-        // this.filterBadge7.appendIn('mount-point');
-        // this.filterBadge6 = new FilterBadge({ key: fieldKeys.dateTo.key, value: this.storage.activeFilters.dateTo });
-        // this.filterBadge6.appendIn('mount-point');
-
         this.filterView = new FilterView('mount-point');
         this.taskView = new TaskView('main-content');
 
-        this.mainSection.node.appendChild(this.activeFiltersBar.node);
-
         this.notificationView = new NotificationView('mount-point');
+
+        // this.storage.saveToStore(this.storage.storageKeys.tasklist, fakeTasks);
+        // this.storage.saveToStore(this.storage.storageKeys.userlist, fakeUsers);
+        this.getFeed(0, this.taskCollection.tasklist.length, this.storage.activeFilters);
     }
 
     initListeners() {
@@ -51,12 +35,50 @@ class App {
         main.addEventListener(customEvents.getFilterParam.caption, this.changeButtonParams.bind(this));
         main.addEventListener(customEvents.clearFilters.caption, this.clearFilters.bind(this));
         main.addEventListener(customEvents.confirmFilters.caption, this.confirmFilters.bind(this));
+        main.addEventListener(customEvents.cancelFilterParam.caption, this.cancelFilterParam.bind(this));
+    }
+
+    cancelFilterParam({ target }) {
+        const { key, value } = target.dataset;
+
+        switch (key) {
+        case fieldKeys.assignee.key: {
+            this.storage.setAssignee(null);
+            break;
+        }
+        case fieldKeys.dateFrom.key:
+            this.storage.setDateFrom(null);
+            break;
+        case fieldKeys.dateTo.key:
+            this.storage.setDateFrom(null);
+            break;
+        case fieldKeys.status.key:
+            this.storage.setStatus(value);
+            break;
+        case fieldKeys.priority.key:
+            this.storage.setPriority(value);
+            break;
+        case fieldKeys.isPrivate.key:
+            this.storage.setPrivate(value === 'true');
+            break;
+        default:
+            break;
+        }
+
+        console.log(this.storage.activeFilters);
+        this.getFeed(0, 10, this.storage.activeFilters);
+
+        // this.showTaskFeedPage({
+        //     tasklist: this.taskCollection.tasklist,
+        //     currentUser: this.taskCollection.user,
+        //     activeFilters: this.storage.activeFilters,
+        // });
     }
 
     changeInputParams(e) {
         const paramName = e.detail.name;
         const paramValue = e.detail.value;
-        console.log(paramName, ":", paramValue);
+        console.log(paramName, ':', paramValue);
 
         switch (paramName) {
             case fieldKeys.assignee.key:
@@ -80,30 +102,31 @@ class App {
 
     changeButtonParams(e) {
         const paramName = e.detail.name;
-            const paramValue = e.detail.dataset.data;
+        const paramValue = e.detail.dataset.data;
 
-            if (paramName) {
-                e.stopPropagation();
-            }
+        if (paramName) {
+            e.stopPropagation();
+        }
 
-            switch (paramName) {
-            case fieldKeys.assignee.key:
-                this.storage.setAssignee(paramValue);
-                break;
-            case fieldKeys.isPrivate.key:
-                this.storage.setPrivate(!!paramValue);
-                break;
-            case fieldKeys.priority.key:
-                this.storage.setPriority(paramValue);
-                break;
-            case fieldKeys.status.key:
-                this.storage.setStatus(paramValue);
-                break;
-            default:
-                break;
-            }
+        switch (paramName) {
+        case fieldKeys.assignee.key:
+            this.storage.setAssignee(paramValue);
+            break;
+        case fieldKeys.isPrivate.key:
+            this.storage.setPrivate(!!paramValue);
+            break;
+        case fieldKeys.priority.key:
+            this.storage.setPriority(paramValue);
+            break;
+        case fieldKeys.status.key:
+            this.storage.setStatus(paramValue);
+            break;
+        default:
+            break;
+        }
 
-            console.log(`\naction: ${customEvents.getFilterParam.caption}`, this.storage.activeFilters);
+        console.log(`\naction: ${customEvents.getFilterParam.caption}`, this.storage.activeFilters);
+        console.log(e.detail);
     }
 
     clearFilters() {
@@ -121,11 +144,12 @@ class App {
         console.log(`\naction: ${customEvents.confirmFilters.caption}`);
     }
 
-    showTaskFeedPage(tasklist, currentUser) {
+    showTaskFeedPage({ tasklist, currentUser, activeFilters }) {
         this.mainSection.clear();
         this.taskFeedView.display({
             tasklist,
             currentUser,
+            filterOpt: activeFilters,
         });
     }
 
@@ -138,9 +162,10 @@ class App {
     }
 
     showFilter() {
+        console.log('In storage:', this.storage.activeFilters);
         this.filterView.display({
             filterOpt: this.storage.activeFilters,
-            avaliableUsers: this.storage.userCollector.userlist,
+            avaliableUsers: this.storage.userCollector,
         });
         // console.log(this.storage.filterOptions);
         // console.log(this.storage.activeFilters);
@@ -153,7 +178,10 @@ class App {
 
         if (tmpUser !== this.taskCollection.user) {
             this.headerView.display({ user: this.taskCollection.user });
-            this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+            this.showTaskFeedPage({
+                tasklist: this.taskCollection.tasklist,
+                currentUser: this.taskCollection.user,
+            });
 
             this.storage.saveStoredData();
 
@@ -182,7 +210,11 @@ class App {
         );
 
         if (isAdded) {
-            this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+            this.showTaskFeedPage({
+                tasklist: this.taskCollection.tasklist,
+                currentUser: this.taskCollection.user,
+                activeFilters: this.storage.activeFilters,
+            });
 
             this.NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
@@ -203,7 +235,11 @@ class App {
         );
 
         if (isEdited) {
-            this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+            this.showTaskFeedPage({
+                tasklist: this.taskCollection.tasklist,
+                currentUser: this.taskCollection.user,
+                activeFilters: this.storage.activeFilters,
+            });
 
             this.NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
@@ -216,7 +252,11 @@ class App {
         const isRemoved = this.taskCollection.remove(id);
 
         if (isRemoved) {
-            this.showTaskFeedPage(this.taskCollection.tasklist, this.taskCollection.user);
+            this.showTaskFeedPage({
+                tasklist: this.taskCollection.tasklist,
+                currentUser: this.taskCollection.user,
+                activeFilters: this.storage.activeFilters,
+            });
 
             this.NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
@@ -227,8 +267,12 @@ class App {
 
     getFeed(skip, top, filterConfig) {
         const filteredTasks = this.taskCollection.getPage(skip, top, filterConfig);
-        console.log(filterConfig);
-        this.showTaskFeedPage(filteredTasks, this.taskCollection.user);
+
+        this.showTaskFeedPage({
+            tasklist: filteredTasks,
+            currentUser: this.taskCollection.user,
+            activeFilters: this.storage.activeFilters,
+        });
 
         console.log(filteredTasks); // Need only for testlog in console!
     }

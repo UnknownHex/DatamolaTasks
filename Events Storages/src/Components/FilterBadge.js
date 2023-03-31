@@ -9,20 +9,22 @@ class FilterBadge extends BaseElement {
     }
 
     init() {
-        const tmpl = document.createDocumentFragment();
+        if (this.value === null || this.value.length < 1) return;
 
+        const tmpl = document.createDocumentFragment();
         const ico = document.createElement('span');
         ico.classList.add(styles.ico);
 
         const text = document.createElement('span');
         text.textContent = this.value;
-        
+
         if (this.key === fieldKeys.assignee.key) {
             ico.classList.add(styles.icons.iavatar);
         }
-        
+
         if (this.key === fieldKeys.isPrivate.key) {
-            const icon = this.value ? styles.icons.iprivateLock : styles.icons.ipublicEarth;
+            const isPrivate = this.value.toString() === 'true';
+            const icon = isPrivate ? styles.icons.iprivateLock : styles.icons.ipublicEarth;
             ico.classList.add(icon);
             text.textContent = '';
         }
@@ -49,12 +51,13 @@ class FilterBadge extends BaseElement {
             text.textContent = this.value;
         }
 
-        if (this.key === fieldKeys.dateFrom.key
-            || this.key === fieldKeys.dateTo.key) {
+        if ((this.key === fieldKeys.dateFrom.key
+            || this.key === fieldKeys.dateTo.key)) {
+            const date = new Date(this.value);
             ico.classList.add(styles.icons.idateTime);
-            text.textContent = formatDate(new Date(this.value));
+            text.textContent = formatDate(date);
         }
-        
+
         const close = document.createElement('span');
         close.classList.add(styles.ico);
         close.classList.add(styles.icons.iclose);

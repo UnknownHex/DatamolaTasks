@@ -27,7 +27,7 @@ class CustomInput extends BaseElement {
         input.setAttribute('type', 'text');
 
         if (this.isDate) {
-            input.value = formatDate(new Date(this.value));
+            input.value = null; // || formatDate(new Date(this.value));
 
             input.addEventListener('click', (e) => {
                 e.target.type = 'datetime-local';
@@ -37,7 +37,7 @@ class CustomInput extends BaseElement {
             input.addEventListener('blur', (e) => {
                 e.target.type = 'text';
                 this.value = e.target.value !== '' ? e.target.value : this.value;
-                e.target.value = formatDate(new Date(this.value));
+                e.target.value = null; // formatDate(new Date(this.value));
             });
         }
 

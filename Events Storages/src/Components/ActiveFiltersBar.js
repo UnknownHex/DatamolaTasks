@@ -15,11 +15,25 @@ class ActiveFiltersBar extends BaseElement {
             const [key, value] = option;
             console.log(key, value);
 
-            const badge = new FilterBadge({ key, value });
+            if (!value) return;
 
-            fragment.appendChild(badge.node);
+            if (Array.isArray(value)) {
+                value.forEach((val) => {
+                    const badge = new FilterBadge({ key, value: val });
+                    fragment.appendChild(badge.node);
+                });
+            } else {
+                const badge = new FilterBadge({ key, value });
+                fragment.appendChild(badge.node);
+            }
         });
 
         this.node.appendChild(fragment);
+
+        this.node.addEventListener('click', ({ target }) => {
+            if (target.classList.contains(styles.icons.iclose)) {
+                target.parentNode.dispatchEvent(customEvents.cancelFilterParam.action);
+            }
+        });
     }
 }
