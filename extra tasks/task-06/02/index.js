@@ -7,6 +7,7 @@ class TicTacToe {
         
         this.nought = 'nought';
         this.cross = 'cross';
+        this.drop = 'drop';
         
         this.isPlayerTurn = true;
         this.endGameStatus = false;
@@ -20,8 +21,6 @@ class TicTacToe {
             cell.dataset.numb = idx;
         });
 
-        console.log(this.cells);
-
         this.container.addEventListener('click', (event) => {
             if (event.target.classList.contains('cell')) {
                 this.isPlayerTurn && !this.endGameStatus && this.playerMove(event.target);
@@ -32,15 +31,47 @@ class TicTacToe {
     }
 
     startNewGame() {
+        this.endGameStatus = true;
+        this.btn.disabled = true;
+        
+        const promiseList = [];
         this.cells.forEach((cell) => {
-            cell.classList.remove(this.nought);
-            cell.classList.remove(this.cross);
+            if (!cell.classList.contains(this.cross) && !cell.classList.contains(this.nought)) return;
+            const prom = new Promise((res) => {
+                const generateTimeMs = Math.floor(Math.random() * 400) + 30;
+                const timeout = setTimeout(() => {
+                    const listener = () => {
+                        cell.classList.remove(this.nought);
+                        cell.classList.remove(this.cross);
+                        cell.classList.remove(this.drop);
+                        cell.removeEventListener('animationend', listener);
+                    };
+                    cell.classList.add(this.drop);
+                    cell.addEventListener('animationend', listener);
+                    res();
+                    clearTimeout(timeout);
+                    
+                }, generateTimeMs);
+            });
+
+            promiseList.push(prom);
         });
 
+        Promise.allSettled(promiseList).then(() => {
+            setTimeout(() => {
+                this.setDefaults();
+            }, promiseList.length > 0 ? 400 : 20);
+        });
+    }
+
+    setDefaults() {
         this.isPlayerTurn = true;
         this.endGameStatus = false;
 
         this.info.textContent = '';
+        this.info.classList.remove(this.nought);
+        this.info.classList.remove(this.cross);
+        this.btn.disabled = false;
     }
 
     checkWin(move) {
@@ -50,7 +81,8 @@ class TicTacToe {
             || this.checkColums(move);
 
         if (this.endGameStatus) {
-            this.info.textContent = `${move} win!`
+            this.info.textContent = `${move}: winner!`;
+            this.info.classList.add(move);
         };
 
         if (this.getFreeCells().length < 1 && !this.endGameStatus) {
