@@ -1199,8 +1199,8 @@ input:checked + .slider:after {
 
 .mailto {
     display: inline-block;
-    mask: url("./assets/icons/mailto.svg") center center/cover no-repeat;
-    -webkit-mask: url("./assets/icons/mailto.svg") center center/cover no-repeat;
+    mask: url("./src/assets/icons/mailto.svg") center center/cover no-repeat;
+    -webkit-mask: url("../icons/mailto.svg") center center/cover no-repeat;
     background-color: var(--dark);
     width: 41px;
     height: 41px;
@@ -1453,7 +1453,7 @@ input:checked + .slider:after {
     justify-content: space-between;
     gap: 20px;
     width: 100%;
-    height: calc(100vh - 48px - 82px - 22px);
+    /* height: calc(100vh - 48px - 82px - 22px); */
     /* height: 50vh; */
     padding: 10px 0 0 0;
     /* overflow: hidden; */

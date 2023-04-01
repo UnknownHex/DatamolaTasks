@@ -32,7 +32,9 @@ class UserPanel extends BaseElement {
                 caption: 'logout',
                 classNames: [styles.btn, styles.primary],
                 type: 'button',
-                onClick: () => setCurrentUser(null),
+                onClick: (e) => {
+                    e.target.dispatchEvent(customEvents.logoutUser.action);
+                },
             });
 
             notification.classList.add(styles.notification);

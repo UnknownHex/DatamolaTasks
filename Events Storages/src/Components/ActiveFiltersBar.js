@@ -11,7 +11,7 @@ class ActiveFiltersBar extends BaseElement {
         this.node.classList.add(styles.activeFilters);
         const fragment = document.createDocumentFragment();
 
-        Object.entries(this.activeFilters).forEach((option) => {
+        Object.entries(this.activeFilters || []).forEach((option) => {
             const [key, value] = option;
 
             if (!value) return;

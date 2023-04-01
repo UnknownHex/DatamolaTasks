@@ -24,8 +24,6 @@ class FilterView extends BaseView {
             return;
         }
 
-        console.log('In filter:', filterOpt);
-
         this.clear();
 
         const {
@@ -47,7 +45,6 @@ class FilterView extends BaseView {
             name: fieldKeys.assignee.key,
             onChange: (e) => e.target.dispatchEvent(customEvents.getSelectParam.action(e.target)),
         });
-        console.log('CREAATE CUSTOM DATE...', dateFrom);
         const startDate = new CustomInput({
             name: fieldKeys.dateFrom.key,
             type: 'datetime-local',

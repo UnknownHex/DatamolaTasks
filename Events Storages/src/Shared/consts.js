@@ -1,8 +1,14 @@
 const consts = {
-    appName: 'APPLICATION',
+    appName: 'OUTY',
+    version: '0.5',
+    update: '02.04.2023',
 };
 
 const customEvents = {
+    logoutUser: {
+        caption: 'logout-system',
+        action: new CustomEvent('logout-system', { bubbles: true }),
+    },
     cancelFilterParam: {
         caption: 'cancel-filter-param',
         action: new CustomEvent(

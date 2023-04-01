@@ -104,6 +104,15 @@ const styles = {
     focusErr: 'focus-err',
     focusWarn: 'focus-warn',
 
+    footer: 'footer',
+    footerWrapper: 'footer-wrapper',
+    appName: 'app-name',
+    caption: 'caption',
+    version: 'version',
+    contact: 'contact',
+    copyright: 'copyright',
+    mailTo: 'mailto',
+
     ico: 'ico',
     icons: {
         idelete: 'idelete',
@@ -126,6 +135,7 @@ const styles = {
         iexit: 'iexit',
         ieyeSlash: 'ieye-slash',
         imoon: 'imoon',
+        imailto: 'mailto',
         isun: 'isun',
         iviewHorizontal: 'iview-horizontal',
         iviewVertical: 'iview-vertical',

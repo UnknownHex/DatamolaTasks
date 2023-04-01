@@ -5,6 +5,8 @@ class App {
     }
 
     init() {
+        this.appContainer = document.querySelector('#mount-point');
+
         this.storage = new LocalStorage();
 
         this.taskCollection = new TaskCollector(this.storage.taskCollector);
@@ -22,20 +24,29 @@ class App {
 
         this.notificationView = new NotificationView('mount-point');
 
+        this.footer = new FooterView('mount-point');
+
         // this.storage.saveToStore(this.storage.storageKeys.tasklist, fakeTasks);
         // this.storage.saveToStore(this.storage.storageKeys.userlist, fakeUsers);
         this.getFeed(0, this.taskCollection.tasklist.length, this.storage.activeFilters);
+        if (this.storage.currentUser) {
+            this.setCurrentUser(this.storage.currentUser);
+        }
     }
 
     initListeners() {
-        const main = document.querySelector('#mount-point');
+        this.appContainer.addEventListener(customEvents.showFilters.caption, this.showFilter.bind(this));
+        this.appContainer.addEventListener(customEvents.getSelectParam.caption, this.changeInputParams.bind(this));
+        this.appContainer.addEventListener(customEvents.getFilterParam.caption, this.changeButtonParams.bind(this));
+        this.appContainer.addEventListener(customEvents.clearFilters.caption, this.clearFilters.bind(this));
+        this.appContainer.addEventListener(customEvents.confirmFilters.caption, this.confirmFilters.bind(this));
+        this.appContainer.addEventListener(customEvents.cancelFilterParam.caption, this.cancelFilterParam.bind(this));
+        this.appContainer.addEventListener(customEvents.logoutUser.caption, this.logoutUser.bind(this));
+    }
 
-        main.addEventListener(customEvents.showFilters.caption, this.showFilter.bind(this));
-        main.addEventListener(customEvents.getSelectParam.caption, this.changeInputParams.bind(this));
-        main.addEventListener(customEvents.getFilterParam.caption, this.changeButtonParams.bind(this));
-        main.addEventListener(customEvents.clearFilters.caption, this.clearFilters.bind(this));
-        main.addEventListener(customEvents.confirmFilters.caption, this.confirmFilters.bind(this));
-        main.addEventListener(customEvents.cancelFilterParam.caption, this.cancelFilterParam.bind(this));
+    logoutUser() {
+        this.setCurrentUser(null);
+        this.storage.setToDefaults();
     }
 
     cancelFilterParam({ target }) {
@@ -173,25 +184,24 @@ class App {
     }
 
     setCurrentUser(user) {
-        const tmpUser = this.taskCollection.user;
+        const tmpUser = this.userCollection.user;
 
-        this.taskCollection.user = user;
-
-        if (tmpUser !== this.taskCollection.user) {
-            this.headerView.display({ user: this.taskCollection.user });
+        this.userCollection.user = user;
+        if (tmpUser !== this.userCollection.user) {
+            this.headerView.display({ user: this.userCollection.user });
             this.showTaskFeedPage({
                 tasklist: this.taskCollection.tasklist,
-                currentUser: this.taskCollection.user,
+                currentUser: this.userCollection.user,
             });
 
-            this.storage.saveStoredData();
+            this.storage.setCurrentUser(user);
 
-            this.taskCollection.user
-                ? this.NotificationView.createNotifly({
+            this.userCollection.user
+                ? NotificationView.createNotifly({
                     type: notiflyVariants.infoNoti,
-                    message: notiflyMessages.info.greeting(this.taskCollection.user),
+                    message: notiflyMessages.info.greeting(this.userCollection.user),
                 })
-                : this.NotificationView.createNotifly({
+                : NotificationView.createNotifly({
                     type: notiflyVariants.infoNoti,
                     message: notiflyMessages.info.bye(tmpUser),
                 });

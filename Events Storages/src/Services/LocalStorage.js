@@ -85,7 +85,7 @@ class LocalStorage {
     }
 
     loadStoredData() {
-        this.userCollector.user = this.loadFromStore(this.storageKeys.currentUser);
+        this.currentUser = this.loadFromStore(this.storageKeys.currentUser);
         this.taskCollector = this.loadFromStore(this.storageKeys.tasklist);
         this.userCollector = this.loadFromStore(this.storageKeys.userlist);
         this.filterString = this.loadFromStore(this.storageKeys.filterString);
@@ -102,6 +102,10 @@ class LocalStorage {
 
     clearStorage() {
         this.storage.clear();
+    }
+
+    setCurrentUser(user) {
+        this.saveToStore(this.storageKeys.currentUser, user);
     }
 
     setAssignee(assignee) {
