@@ -72,6 +72,7 @@ const styles = {
     inpCaption: 'inp-caption',
     sel: 'sel',
     border: 'border',
+    wrong: 'wrong',
 
     taskFilter: 'task-filter',
     close: 'close',

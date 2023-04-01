@@ -50,7 +50,7 @@ class LocalStorage {
         };
     }
 
-    #saveFilterOptions() {
+    saveFilterOptions() {
         this.saveToStore(this.storageKeys.filterOptions, {
             assignee: this.filterOptions.assignee,
             status: Array.from(this.filterOptions.status),
@@ -61,7 +61,7 @@ class LocalStorage {
         });
     }
 
-    #loadFilterOptions() {
+    loadFilterOptions() {
         const lastFilters = this.loadFromStore(this.storageKeys.filterOptions);
         this.filterOptions.assignee = lastFilters?.assignee;
         this.filterOptions.status = new Set(lastFilters?.status);
@@ -73,7 +73,7 @@ class LocalStorage {
 
     #checkSetValues(set, value) {
         set.has(value) ? set.delete(value) : set.add(value);
-        this.#saveFilterOptions();
+        this.saveFilterOptions();
     }
 
     saveStoredData() {
@@ -81,7 +81,7 @@ class LocalStorage {
         this.saveToStore(this.storageKeys.tasklist, this.taskCollector);
         this.saveToStore(this.storageKeys.userlist, this.userCollector);
         this.saveToStore(this.storageKeys.filterString, this.filterString);
-        this.#saveFilterOptions();
+        this.saveFilterOptions();
     }
 
     loadStoredData() {
@@ -89,7 +89,7 @@ class LocalStorage {
         this.taskCollector = this.loadFromStore(this.storageKeys.tasklist);
         this.userCollector = this.loadFromStore(this.storageKeys.userlist);
         this.filterString = this.loadFromStore(this.storageKeys.filterString);
-        this.#loadFilterOptions();
+        this.loadFilterOptions();
     }
 
     saveToStore(key, data) {
@@ -110,7 +110,7 @@ class LocalStorage {
 
     setAssignee(assignee) {
         this.filterOptions.assignee = assignee || null;
-        this.#saveFilterOptions();
+        this.saveFilterOptions();
     }
 
     setTasklist(tasklist) {
@@ -137,12 +137,12 @@ class LocalStorage {
 
     setDateFrom(date) {
         this.filterOptions.dateFrom = date === null ? null : new Date(date);
-        this.#saveFilterOptions();
+        this.saveFilterOptions();
     }
 
     setDateTo(date) {
         this.filterOptions.dateTo = date === null ? null : new Date(date);
-        this.#saveFilterOptions();
+        this.saveFilterOptions();
     }
 
     setToDefaults() {

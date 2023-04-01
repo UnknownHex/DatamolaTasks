@@ -5,6 +5,24 @@ const consts = {
 };
 
 const customEvents = {
+    closeModal: {
+        caption: 'close-modal',
+        action: new CustomEvent('close-modal', { bubbles: true }),
+    },
+    showModal: {
+        caption: 'show-modal',
+        action: new CustomEvent('show-modal', { bubbles: true }),
+    },
+    loginUser: {
+        caption: 'login-user',
+        action: ({ login, password }) => new CustomEvent(
+            'login-user',
+            {
+                bubbles: true,
+                detail: { login, password },
+            },
+        ),
+    },
     logoutUser: {
         caption: 'logout-system',
         action: new CustomEvent('logout-system', { bubbles: true }),

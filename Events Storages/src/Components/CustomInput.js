@@ -15,57 +15,69 @@ class CustomInput extends BaseElement {
         this.onChange = onChange;
         this.isDate = isDate;
 
+        this.input = document.createElement('input');
         this.init();
     }
 
     init() {
         this.node.classList.add(styles.inp);
-        const input = document.createElement('input');
         const inputBtn = new Button({ classNames: [styles.ico, this.icon] });
         const label = document.createElement('label');
 
-        input.setAttribute('type', 'text');
+        this.input.setAttribute('type', this.type || 'text');
+
+        if (this.type === 'password') {
+            inputBtn.node.addEventListener('mousedown', () => {
+                this.input.type = 'text';
+            });
+            inputBtn.node.addEventListener('mouseup', () => {
+                this.input.type = this.type;
+            });
+            inputBtn.node.addEventListener('mouseout', () => {
+                this.input.type = this.type;
+            });
+        }
 
         if (this.isDate) {
-            input.addEventListener('click', (e) => {
+            this.input.addEventListener('click', (e) => {
                 e.target.type = 'datetime-local';
-                console.log(e.target.value);
                 e.target.showPicker();
             });
 
-            input.addEventListener('blur', (e) => {
-                console.log('preBlur(target):', e.target.value);
-                console.log('preBlur(this):', this.value);
+            this.input.addEventListener('blur', (e) => {
                 this.value = e.target.value;
                 e.target.type = 'text';
                 e.target.value = this.value ? formatDate(new Date(this.value)) : null;
             });
 
-            input.value = this.value ? formatDate(new Date(this.value)) : null;
+            this.input.value = this.value ? formatDate(new Date(this.value)) : null;
         }
 
         if (this.onChange) {
-            input.addEventListener('change', this.onChange);
+            this.input.addEventListener('change', this.onChange);
         }
 
         if (this.isRequired) {
-            input.setAttribute('required', this.isRequired);
+            this.input.setAttribute('required', this.isRequired);
         }
 
         if (this.name) {
-            input.setAttribute('name', this.name);
+            this.input.setAttribute('name', this.name);
         }
 
         if (this.placeholder) {
-            input.setAttribute('name', this.placeholder);
+            this.input.setAttribute('name', this.placeholder);
         }
 
-        this.node.appendChild(input);
+        this.node.appendChild(this.input);
 
         label.classList.add(styles.inpCaption);
         label.textContent = this.label;
 
-        this.node.appendChild(inputBtn.node);
+        if (this.icon) {
+            this.node.appendChild(inputBtn.node);
+        }
+
         this.node.appendChild(label);
     }
 }

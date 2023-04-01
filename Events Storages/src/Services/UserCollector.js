@@ -12,7 +12,6 @@ class UserCollector {
     }
 
     set user(user) {
-        console.log('TRY TO SET USER:', user);
         try {
             if (isString(user) || user === null) {
                 this.#user = user;

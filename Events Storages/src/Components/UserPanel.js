@@ -46,16 +46,12 @@ class UserPanel extends BaseElement {
 
             this.node.append(userPanelFragment);
         } else {
-            const promptUserName = () => {
-                console.log('U can choose from this registered persons:');
-                fakeUsers.forEach((user) => console.log('\t', user.name));
-                const tmpUser = prompt('Enter user name. (See in debugpanel)', ['Карэнт Йусер']);
-                setCurrentUser(tmpUser);
-            };
             const signInBtn = new Button({
                 caption: 'sign in',
                 classNames: [styles.btn, styles.primary],
-                onClick: promptUserName,
+                onClick: (event) => {
+                    event.target.dispatchEvent(customEvents.showModal.action);
+                },
             });
 
             this.node.appendChild(signInBtn.node);

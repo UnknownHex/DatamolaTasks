@@ -20,10 +20,25 @@ const isLoginValid = (login) => {
             });
         }
 
-        return isValid;
+        return {
+            status: 200,
+            code: 'provisionally',
+            isValid,
+        };
     } catch (err) {
-        console.warn(err.shortMessage);
-        return false;
+        if (err instanceof CustomError) {
+            console.warn(err.shortMessage);
+        } else {
+            console.log(err);
+        }
+
+        return {
+            status: 400,
+            err: {
+                message: err?.shortMessage || err.message,
+            },
+            isValid: false,
+        };
     }
 };
 
@@ -40,11 +55,25 @@ const isLoginFree = (login, userlist) => {
             });
         }
 
-        return isValid;
+        return {
+            status: 200,
+            code: 'provisionally',
+            isValid,
+        };
     } catch (err) {
-        if (err instanceof CustomError) console.warn(err.shortMessage);
-        console.log(err);
-        return false;
+        if (err instanceof CustomError) {
+            console.warn(err.shortMessage);
+        } else {
+            console.log(err);
+        }
+
+        return {
+            status: 400,
+            err: {
+                message: err?.shortMessage || err.message,
+            },
+            isValid: false,
+        };
     }
 };
 

@@ -4,6 +4,29 @@ class App {
         this.initListeners();
     }
 
+    createBlur() {
+        const blur = new Blur();
+        this.appContainer.style = 'max-height: 100vh; overflow: hidden;';
+        this.appContainer.appendChild(blur.node);
+
+        blur.node.addEventListener('mousedown', (event) => {
+            event.target.classList.contains(styles.blurWrapper) && this.clearBlur(blur.node);
+        });
+
+        blur.node.addEventListener(customEvents.closeModal.caption, this.clearBlur.bind(this, blur.node));
+
+        return blur.node;
+    }
+
+    clearBlur(node) {
+        this.appContainer.removeAttribute('style');
+        node.remove();
+    }
+
+    test() {
+
+    }
+
     init() {
         this.appContainer = document.querySelector('#mount-point');
 
@@ -12,23 +35,24 @@ class App {
         this.taskCollection = new TaskCollector(this.storage.taskCollector);
         this.userCollection = new UserCollector(this.storage.userCollector);
 
-        this.headerView = new HeaderView('mount-point');
+        this.headerView = new HeaderView(this.appContainer.id);
 
         this.mainSection = new MainSection('main-content');
-        this.mainSection.appendIn('mount-point');
+        this.mainSection.appendIn(this.appContainer.id);
 
         this.taskFeedView = new TaskFeedView('main-content');
 
-        this.filterView = new FilterView('mount-point');
-        this.taskView = new TaskView('main-content');
+        this.filterView = new FilterView(this.appContainer.id);
+        this.taskView = new TaskView(this.appContainer.id);
 
-        this.notificationView = new NotificationView('mount-point');
+        this.notificationView = new NotificationView(this.appContainer.id);
 
-        this.footer = new FooterView('mount-point');
+        this.footer = new FooterView(this.appContainer.id);
 
         // this.storage.saveToStore(this.storage.storageKeys.tasklist, fakeTasks);
         // this.storage.saveToStore(this.storage.storageKeys.userlist, fakeUsers);
         this.getFeed(0, this.taskCollection.tasklist.length, this.storage.activeFilters);
+
         if (this.storage.currentUser) {
             this.setCurrentUser(this.storage.currentUser);
         }
@@ -41,12 +65,70 @@ class App {
         this.appContainer.addEventListener(customEvents.clearFilters.caption, this.clearFilters.bind(this));
         this.appContainer.addEventListener(customEvents.confirmFilters.caption, this.confirmFilters.bind(this));
         this.appContainer.addEventListener(customEvents.cancelFilterParam.caption, this.cancelFilterParam.bind(this));
+        this.appContainer.addEventListener(customEvents.loginUser.caption, this.loginUser.bind(this));
         this.appContainer.addEventListener(customEvents.logoutUser.caption, this.logoutUser.bind(this));
+        this.appContainer.addEventListener(customEvents.showModal.caption, this.showAuthorization.bind(this));
+    }
+
+    showAuthorization() {
+        const blur = this.createBlur();
+        const authorizationView = new AuthorizationView(this.appContainer.id);
+
+        blur.appendChild(authorizationView.authForm);
+    }
+
+    loginUser(event) {
+        const { login, password } = event.detail;
+
+        const [user] = this.userCollection.userlist.filter((userEnt) => (
+            userEnt.login.toLowerCase() === login.input.value?.toLowerCase()
+        ));
+
+        const isPassCorrect = user?.password === password.input.value;
+        if (!user || !isPassCorrect) {
+            NotificationView.createNotifly({
+                message: 'Wrong login or password...',
+                type: notiflyVariants.errNoti,
+            });
+
+            const blink = (e) => {
+                console.log(e.target);
+                e.target.parentNode.classList.remove(styles.wrong);
+                e.target.parentNode.removeEventListener('animationend', blink);
+            };
+
+            login.node.addEventListener('animationend', blink);
+            login.node.classList.add(styles.wrong);
+
+            password.node.addEventListener('animationend', blink);
+            password.node.classList.add(styles.wrong);
+
+            return;
+        }
+
+        this.setCurrentUser(user.name);
+        event.target.dispatchEvent(customEvents.closeModal.action);
+    }
+
+    registerUser() {
+        const loginFreeRequest = isLoginFree(login, this.userCollection.userlist);
+        const loginValidRequest = isLoginValid(login);
+
+        console.log(loginFreeRequest, loginValidRequest);
+
+        if (loginFreeRequest.status > 300) {
+            NotificationView.createNotifly({ message: loginFreeRequest.err.message, type: notiflyVariants.errNoti });
+            return;
+        }
+
+        if (loginValidRequest.status > 300) {
+            NotificationView.createNotifly({ message: loginValidRequest.err.message, type: notiflyVariants.errNoti });
+            return;
+        }
     }
 
     logoutUser() {
         this.setCurrentUser(null);
-        this.storage.setToDefaults();
     }
 
     cancelFilterParam({ target }) {
@@ -144,7 +226,10 @@ class App {
     clearFilters() {
         this.storage.setToDefaults();
         this.storage.saveStoredData();
-        this.showFilter();
+        this.filterView.display({
+            filterOpt: this.storage.activeFilters,
+            avaliableUsers: this.storage.userCollector,
+        });
 
         console.log(`\naction: ${customEvents.clearFilters.caption}`, this.storage.activeFilters);
     }
@@ -179,6 +264,7 @@ class App {
             filterOpt: this.storage.activeFilters,
             avaliableUsers: this.storage.userCollector,
         });
+
         // console.log(this.storage.filterOptions);
         // console.log(this.storage.activeFilters);
     }
@@ -194,7 +280,9 @@ class App {
                 currentUser: this.userCollection.user,
             });
 
+            this.storage.setToDefaults();
             this.storage.setCurrentUser(user);
+            this.storage.saveFilterOptions();
 
             this.userCollection.user
                 ? NotificationView.createNotifly({

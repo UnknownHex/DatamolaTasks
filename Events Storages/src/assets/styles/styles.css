@@ -492,7 +492,7 @@ span.ico {
     box-shadow: var(--basic-shadow) var(--primary300);
     padding: 5px 36px 0px 6px;
     border: none;
-    transition: var(--transition-all-out);
+    transition: var(--transition-all-out), font-size 0s linear;
 }
 
 .inp textarea {
@@ -564,6 +564,19 @@ span.ico {
 .inp textarea:focus ~ .inp-caption {
     color: var(--primary);
     transition: var(--transition-all-in);
+}
+
+.inp.wrong input {
+    animation: blink .3s 4 linear;
+}
+
+@keyframes blink {
+    from {
+        box-shadow: var(--active-shadow) var(--primary300);
+    }
+    to {
+        box-shadow: var(--basic-shadow) var(--error);
+    }
 }
 
 /* SELECT INP */
@@ -737,8 +750,9 @@ input:checked + .slider:after {
     right: 0;
     top: 0;
     max-width: 18rem;
-    padding: 4rem 1rem 1rem 1rem;
-    height: 100vh;
+    padding: 2rem 1rem 1rem 1rem;
+    height: 90vh;
+    z-index: 101;
     pointer-events: none;
 }
 
@@ -755,6 +769,7 @@ input:checked + .slider:after {
     max-width: 255px;
     width: 255px;
     color: var(--dark);
+    z-index: 101;
 
     animation: 4s showNotifly .3s ease-in-out;
 }
@@ -1453,7 +1468,7 @@ input:checked + .slider:after {
     justify-content: space-between;
     gap: 20px;
     width: 100%;
-    /* height: calc(100vh - 48px - 82px - 22px); */
+    max-height: calc(100vh - 48px - 82px - 22px);
     /* height: 50vh; */
     padding: 10px 0 0 0;
     /* overflow: hidden; */
@@ -1555,6 +1570,34 @@ input:checked + .slider:after {
     display: flex;
 }
 
+/* ///////////////////////////////////////////////// */
+/* MODAL */
+.modal-frame {
+    position: absolute;
+    top: 15%;
+    right: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 550px;
+    max-height: 90vh;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    margin: auto;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-radius: 4px;
+    transform: translate(50%, 0);
+    background-color: var(--white);
+    box-shadow: var(--basic-shadow) var(--primary300);
+    z-index: 101;
+}
+
+.modal-frame h3 {
+    color: var(--primary700);
+    margin: 0;
+}
 
 /* USER PAAGE */
 /* //////////////////////////////////////////////// */
@@ -1838,6 +1881,10 @@ input:checked + .slider:after {
         padding: 0 10px;
     }
 
+    .modal-frame {
+        max-width: 320px;
+    }
+
     .burger.btn {
         display: flex;
     }
@@ -1909,6 +1956,10 @@ input:checked + .slider:after {
 @media (max-width: 520px) {
     .container {
         padding: 0 10px;
+    }
+
+    .modal-frame {
+        max-width: 280px;
     }
 
     .appname {

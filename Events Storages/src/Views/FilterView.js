@@ -47,7 +47,6 @@ class FilterView extends BaseView {
         });
         const startDate = new CustomInput({
             name: fieldKeys.dateFrom.key,
-            type: 'datetime-local',
             icon: styles.icons.idateTime,
             label: 'Start date',
             isDate: true,
@@ -58,7 +57,6 @@ class FilterView extends BaseView {
 
         const endDate = new CustomInput({
             name: fieldKeys.dateTo.key,
-            type: 'datetime-local',
             icon: styles.icons.idateTime,
             label: 'End date',
             isDate: true,
@@ -145,8 +143,8 @@ class FilterView extends BaseView {
                 e.target.dispatchEvent(customEvents.clearFilters.action);
             },
         });
-        actionContainer.appendChild(confirmBtn.node);
         actionContainer.appendChild(resetBtn.node);
+        actionContainer.appendChild(confirmBtn.node);
 
         const statusButtonGroup = document.createElement('div');
         const toDoBtn = new Button({
@@ -213,5 +211,6 @@ class FilterView extends BaseView {
         });
 
         this.render(this.filterFragment);
+        // parentNode.appendChild(this.filter);
     }
 }
