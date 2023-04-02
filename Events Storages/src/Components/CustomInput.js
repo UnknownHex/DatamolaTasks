@@ -19,12 +19,24 @@ class CustomInput extends BaseElement {
         this.init();
     }
 
+    blink() {
+        const blink = () => {
+            // console.log(e.target);
+            this.node.classList.remove(styles.wrong);
+            this.node.removeEventListener('animationend', blink);
+        };
+
+        this.node.addEventListener('animationend', blink);
+        this.node.classList.add(styles.wrong);
+    }
+
     init() {
         this.node.classList.add(styles.inp);
         const inputBtn = new Button({ classNames: [styles.ico, this.icon] });
         const label = document.createElement('label');
 
         this.input.setAttribute('type', this.type || 'text');
+        label.setAttribute('for', this.name);
 
         if (this.type === 'password') {
             inputBtn.node.addEventListener('mousedown', () => {

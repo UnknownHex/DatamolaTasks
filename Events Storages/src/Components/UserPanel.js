@@ -12,7 +12,7 @@
 */
 
 class UserPanel extends BaseElement {
-    constructor({ user }) {
+    constructor(user) {
         super();
 
         this.user = user ?? null;
@@ -24,10 +24,10 @@ class UserPanel extends BaseElement {
         this.node.classList.add(styles.userPanel);
 
         if (this.user) {
-            const [avatara] = fakeUsers.filter((user) => (this.user === user.name));
+            const avatara = this.user?.img;
             const userPanelFragment = document.createDocumentFragment();
             const notification = document.createElement('div');
-            const userData = new UserData({ user: this.user, avatara: avatara?.img });
+            const userData = new UserData({ user: this.user, avatara });
             const logoutBtn = new Button({
                 caption: 'logout',
                 classNames: [styles.btn, styles.primary],
@@ -58,7 +58,7 @@ class UserPanel extends BaseElement {
         }
     }
 
-    update({ user, avatara }) {
+    update(user) {
         this.user = user ?? null;
 
         while (this.node.firstChild) {

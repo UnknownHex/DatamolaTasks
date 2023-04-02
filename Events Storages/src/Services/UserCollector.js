@@ -64,18 +64,19 @@ class UserCollector {
     }
 
     static verify(obj) {
-        const verified = User.validate(obj);
-        const isValid = checkAppropriate(verified);
+        const checkData = User.validate(obj);
+        const isValid = checkAppropriate(checkData.verified);
 
-        return isValid;
+        return { isValid, checkData };
     }
 
     add(username, login, password, img) {
-        const userObj = new User({ username, login, password, img });
+        const userObj = new User({
+            username, login, password, img,
+        });
 
         const isValid = UserCollector.verify(userObj);
         const isFree = isLoginFree(login, this.#userlist);
-
 
         if (isValid && isFree) {
             this.#userlist = [...this.#userlist, userObj];

@@ -2,6 +2,8 @@ class App {
     constructor() {
         this.init();
         this.initListeners();
+
+        this.test();
     }
 
     createBlur() {
@@ -24,7 +26,8 @@ class App {
     }
 
     test() {
-
+        this.mainSection.clear();
+        const registrationView = new RegistrationView('main-content');
     }
 
     init() {
@@ -49,12 +52,15 @@ class App {
 
         this.footer = new FooterView(this.appContainer.id);
 
+        // uncomment next 2 lines for the first start or add users and tasks manually...
+        //
         // this.storage.saveToStore(this.storage.storageKeys.tasklist, fakeTasks);
         // this.storage.saveToStore(this.storage.storageKeys.userlist, fakeUsers);
         this.getFeed(0, this.taskCollection.tasklist.length, this.storage.activeFilters);
 
-        if (this.storage.currentUser) {
-            this.setCurrentUser(this.storage.currentUser);
+        if (this.storage.currentUserId) {
+            const user = this.userCollection.get(this.storage.currentUserId);
+            this.setCurrentUser(user || null);
         }
     }
 
@@ -68,6 +74,7 @@ class App {
         this.appContainer.addEventListener(customEvents.loginUser.caption, this.loginUser.bind(this));
         this.appContainer.addEventListener(customEvents.logoutUser.caption, this.logoutUser.bind(this));
         this.appContainer.addEventListener(customEvents.showModal.caption, this.showAuthorization.bind(this));
+        this.appContainer.addEventListener(customEvents.registerUser.caption, this.registerUser.bind(this));
     }
 
     showAuthorization() {
@@ -92,7 +99,6 @@ class App {
             });
 
             const blink = (e) => {
-                console.log(e.target);
                 e.target.parentNode.classList.remove(styles.wrong);
                 e.target.parentNode.removeEventListener('animationend', blink);
             };
@@ -106,28 +112,58 @@ class App {
             return;
         }
 
-        this.setCurrentUser(user.name);
+        this.setCurrentUser(user);
         event.target.dispatchEvent(customEvents.closeModal.action);
     }
 
-    registerUser() {
-        const loginFreeRequest = isLoginFree(login, this.userCollection.userlist);
-        const loginValidRequest = isLoginValid(login);
+    registerUser(event) {
+        // { login, name, pass, confirm, img, imgBlob }
+        const {
+            login,
+            name,
+            pass,
+            confirm,
+            img,
+            imgBlob,
+        } = event.detail;
 
-        console.log(loginFreeRequest, loginValidRequest);
+        const loginFreeRequest = isLoginFree(login.input.value, this.userCollection.userlist);
+        const loginValidRequest = isLoginValid(login.input.value);
+        const passRequest = isPassConfirmed(pass.input.value, confirm.input.value);
 
-        if (loginFreeRequest.status > 300) {
+        const isOk = { continue: true };
+
+        if (loginFreeRequest.status >= 400) {
             NotificationView.createNotifly({ message: loginFreeRequest.err.message, type: notiflyVariants.errNoti });
-            return;
+            isOk.continue = false;
+            login.blink();
         }
 
-        if (loginValidRequest.status > 300) {
+        if (loginValidRequest.status >= 400) {
             NotificationView.createNotifly({ message: loginValidRequest.err.message, type: notiflyVariants.errNoti });
-            return;
+            isOk.continue = false;
+            login.blink();
         }
+
+        if (passRequest.status >= 400) {
+            NotificationView.createNotifly({ message: passRequest.err.message, type: notiflyVariants.errNoti });
+            isOk.continue = false;
+            pass.blink();
+            confirm.blink();
+        }
+
+        const userData = {
+            login: login.input.value,
+            pass: pass.input.value,
+            name: name.input.value,
+            img,
+        };
+
+        isOk.continue && this.addUser(userData);
     }
 
     logoutUser() {
+        console.log('LOGOUT user;');
         this.setCurrentUser(null);
     }
 
@@ -262,7 +298,7 @@ class App {
         console.log('In storage:', this.storage.activeFilters);
         this.filterView.display({
             filterOpt: this.storage.activeFilters,
-            avaliableUsers: this.storage.userCollector,
+            avaliableUsers: this.userCollection.userlist,
         });
 
         // console.log(this.storage.filterOptions);
@@ -271,10 +307,12 @@ class App {
 
     setCurrentUser(user) {
         const tmpUser = this.userCollection.user;
+        console.log(user);
 
-        this.userCollection.user = user;
+        this.userCollection.user = user?.name || null;
         if (tmpUser !== this.userCollection.user) {
-            this.headerView.display({ user: this.userCollection.user });
+            this.headerView.display(user);
+            console.log(user);
             this.showTaskFeedPage({
                 tasklist: this.taskCollection.tasklist,
                 currentUser: this.userCollection.user,
@@ -296,8 +334,25 @@ class App {
         }
     }
 
+    addUser({ login, name, pass, img }) {
+        const isRegistered = this.userCollection.add(name, login, pass, img);
+
+        console.log(isRegistered);
+
+        if (isRegistered) {
+            NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.userAdded,
+            });
+
+            console.log(notiflyMessages.success.userAdded);
+        }
+
+        console.log(this.userCollection.userlist);
+    }
+
     addTask(task) {
-        if (!this.taskCollection.user) return;
+        if (!this.userCollection.user) return;
 
         const isAdded = this.taskCollection.add(
             task.name,
@@ -311,13 +366,13 @@ class App {
         if (isAdded) {
             this.showTaskFeedPage({
                 tasklist: this.taskCollection.tasklist,
-                currentUser: this.taskCollection.user,
+                currentUser: this.userCollection.user,
                 activeFilters: this.storage.activeFilters,
             });
 
             this.NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
-                message: notiflyMessages.success.taskAdded(task.name, this.taskCollection.user),
+                message: notiflyMessages.success.taskAdded(task.name, this.userCollection.user),
             });
         }
     }
@@ -369,7 +424,7 @@ class App {
 
         this.showTaskFeedPage({
             tasklist: filteredTasks,
-            currentUser: this.taskCollection.user,
+            currentUser: this.userCollection.user,
             activeFilters: this.storage.activeFilters,
         });
 
@@ -402,136 +457,3 @@ const editOneTask = {
     priority: taskPriority.high,
     isPrivate: true,
 };
-
-// setCurrentUser(user: string) - добавляет текущего пользователя в хидер и в модель.
-
-const filterOpt = {
-    // dateTo: '2020-01-01 00:00',
-    // dateFrom: '2021',
-    assignee: 'Карэнт Йусер',
-    // status: ['Complete'],
-    priority: [taskPriority.low, taskPriority.medium],
-    // isPrivate: [],
-};
-
-//
-//
-//
-//
-//
-//
-//
-//
-
-const inValidTask = {
-    name: 'Супердлинноеназваниетаскипридуманноемеганеординарррнымразработчикомэтогомира!',
-    description: 'Неменееизощренноеописаниевсехдеталейработынадпоставленнойтаскойотширокодушевноготаскгивера!',
-    assignee: 123,
-    status: 'Complete',
-    priority: 'Medium',
-    isPrivate: '',
-};
-
-// let taskId = '';
-
-// setTimeout(() => {
-//     console.log('"Константина Гон" signed up;');
-//     setCurrentUser('Константина Гон');
-// }, 100);
-
-// setTimeout(() => {
-//     addTask(oneTask);
-//     taskId = taskCollection.tasklist[0].id;
-// }, 1100);
-
-// setTimeout(() => {
-//     taskCollection.addAll([fakeTasks[22], fakeTasks[8], fakeTasks[9]]);
-//     console.log('\n"Константина Гон" edit her task;');
-//     editTask(taskId, editOneTask);
-// }, 2100);
-
-// setTimeout(() => {
-//     console.log('\n"Инна Катеринина" logged in;');
-//     setCurrentUser('Инна Катеринина');
-// }, 3100);
-
-// setTimeout(() => {
-//     console.log('\n"Инна Катеринина" try to edit task with wrong params;');
-//     editTask(taskId, inValidTask);
-//     console.log('\n"Инна Катеринина" edit with valid params;');
-//     editTask(taskId, oneTask);
-// }, 4100);
-
-// setTimeout(() => {
-//     console.log('\n"Константина Гон" returned to system;');
-//     setCurrentUser('Константина Гон');
-// }, 5100);
-
-// setTimeout(() => {
-//     console.log('\n"Константина Гон" try to delete task;');
-//     removeTask(taskId);
-// }, 6100);
-
-// setTimeout(() => {
-//     console.log('\n"Константина Гон" try to delete task with wrong ID;');
-//     removeTask(taskId);
-// }, 7100);
-
-// setTimeout(() => {
-//     console.log('\n"Константина Гон" try to delete task by "Инна Катеринина" owner;');
-//     removeTask(fakeTasks[8].id);
-// }, 8100);
-
-// setTimeout(() => {
-//     console.log('\nLoad all tasks...');
-//     taskCollection.addAll(fakeTasks);
-// }, 9100);
-
-// setTimeout(() => {
-//     console.log('\n"Константина Гон" apply filters;');
-//     console.log('Get first 10 tasks;');
-//     getFeed();
-//     console.log('Get from 10 to 25;');
-//     getFeed(10, 15);
-//     filterView.display({
-//         filterOpt,
-//         avaliableUsers: fakeTasks,
-//     });
-// }, 10300);
-
-// setTimeout(() => {
-//     console.log('\n"Константина Гон" apply filters;');
-//     console.log('Get only [med, low] priority tasks;');
-//     getFeed(0, 30, filterOpt);
-// }, 11300);
-
-// setTimeout(() => {
-//     // filterView.clear();
-//     filterOpt.priority = taskPriority.high;
-//     filterView.display({
-//         filterOpt,
-//         avaliableUsers: fakeTasks,
-//     });
-//     console.log('Get only [high] priority tasks;');
-// }, 12300);
-
-// setTimeout(() => {
-//     getFeed(0, 30, filterOpt);
-// }, 13300);
-
-// setTimeout(() => {
-//     filterView.clear();
-//     console.log(`\n"Константина Гон" go to task page with ID ${fakeTasks[8].id};`);
-//     showTask(fakeTasks[8].id);
-// }, 14300);
-
-// setTimeout(() => {
-//     const rUUID = crypto.randomUUID();
-//     console.log(`\n"Константина Гон" go to task page with unavaliable ID: ${rUUID};`);
-//     showTask(rUUID);
-// }, 15300);
-
-// setTimeout(() => {
-//     console.log('\n"Константина Гон" logged our;');
-//     setCurrentUser(null);
-// }, 16300);

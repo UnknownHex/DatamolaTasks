@@ -5,7 +5,7 @@ class Button extends BaseElement {
         super('button');
         this.caption = caption;
         this.type = type ?? 'button';
-        this.classes = classNames ?? '';
+        this.classes = classNames ?? ['btn', 'primary'];
         this.isBurger = isBurger ?? false;
         this.onClick = onClick;
         this.icon = icon;

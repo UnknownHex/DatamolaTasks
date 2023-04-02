@@ -12,6 +12,7 @@
     --secondary700: #614066;
     --secondary300: #BD9EC2;
     --disabled: #C7DEFA;
+    --error700: #aa0a0a;
     --error: #CD6A6A;
     --error300: #f2e8e8;
     --warning: #D7C467;
@@ -246,6 +247,7 @@ span.ico {
 
 .primary,
 .secondary {
+    max-height: 32px;
     min-height: 32px;
     border-radius: 4px;
     color: var(--primary300);
@@ -469,10 +471,10 @@ span.ico {
 
 .inp {
     position: relative;
-    margin: 10px 0 0 0;
+    /* margin: 10px 0 0 0; */
     min-width: 195px;
     width: 100%;
-    max-width: 500px;
+    /* max-width: 500px; */
     height: 32px;
 }
 
@@ -566,16 +568,44 @@ span.ico {
     transition: var(--transition-all-in);
 }
 
+.inp.wrong .inp-caption {
+    animation: blinkCaption .3s 4 linear;
+}
+
 .inp.wrong input {
     animation: blink .3s 4 linear;
 }
 
+.inp.wrong .ico {
+    animation: blinkIco .3s 4 linear;
+}
+
 @keyframes blink {
     from {
+        /* color: var(--primary); */
         box-shadow: var(--active-shadow) var(--primary300);
     }
     to {
-        box-shadow: var(--basic-shadow) var(--error);
+        /* color: var(--error700); */
+        box-shadow: var(--basic-shadow) var(--error700);
+    }
+}
+
+@keyframes blinkCaption {
+    from {
+        color: var(--primary);
+    }
+    to {
+        color: var(--error700);
+    }
+}
+
+@keyframes blinkIco {
+    from {
+        background-color: var(--primary);
+    }
+    to {
+        background-color: var(--error700);
     }
 }
 
@@ -1148,6 +1178,60 @@ input:checked + .slider:after {
     object-position: center center;
 }
 
+/* //////////////////////////////////////////////////// */
+/* Registration */
+.reg-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    max-width: 650px;
+    margin: auto;
+}
+
+.reg-form h3 {
+    color: var(--primary700);
+    margin: 0;
+}
+
+.image-frame {
+    width: 10rem;
+    height: 10rem;
+    border-radius: 4px;
+    border: 1px solid var(--primary);
+    cursor: pointer;
+}
+
+.image-frame:hover {
+    border: 1px solid var(--primary700);
+    -webkit-mask: url("../icons/add-circle.svg") top center/contain no-repeat;
+    background-color: var(--primary);
+    opacity: .8;
+}
+
+.image-frame:hover img {
+    opacity: .0;
+    transition: var(--transition-all-in)
+}
+
+.empty-avatar {
+    width: 100%;
+    height: 100%;
+    background-color: var(--primary300);
+}
+
+.selected-image {
+    width: 100%;
+    height: 100%;
+    border-radius: 4px;
+}
+
+.btn-block {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1 0 auto;
+    gap: 1rem;
+}
 
 /* //////////////////////////////////////////////////// */
 /* FOOTER */

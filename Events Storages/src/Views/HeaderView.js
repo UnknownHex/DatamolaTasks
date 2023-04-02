@@ -2,7 +2,7 @@ class HeaderView extends BaseView {
     constructor(containerId) {
         super(containerId);
 
-        this.userPanel = new UserPanel({});
+        this.userPanel = new UserPanel();
 
         this.init();
     }

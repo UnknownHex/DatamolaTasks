@@ -28,7 +28,7 @@ class UserData extends BaseElement {
         this.user = user;
         this.isInfo = !!isInfo;
         this.createdAt = createdAt;
-        this.avatara = avatara ?? `./assets/base-avas/body-${Math.floor(Math.random() * 4) + 1}.png`;
+        this.avatara = avatara ?? './assets/icons/avatar.svg';
         this.init();
     }
 
@@ -41,7 +41,7 @@ class UserData extends BaseElement {
         avatarDiv.classList.add(styles.avatar);
         spanUserName.classList.add(styles.userName);
 
-        spanUserName.textContent = this.user;
+        spanUserName.textContent = this.user.name;
 
         img.setAttribute('src', this.avatara);
         img.setAttribute('alt', 'User avatar');

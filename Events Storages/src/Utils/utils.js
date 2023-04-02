@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-const isString = (param) => (typeof param === 'string' && param.trim(param) !== '');
+const isString = (param) => (typeof param === 'string');
 const isNumber = (param) => (typeof param === 'number' && !Number.isFinite(param));
 const isBoolean = (param) => (typeof param === 'boolean');
 const isDate = (param) => (Object.prototype.toString.call(param) === '[object Date]' && !Number.isNaN(param));
-const isNotEmpty = (param) => (param !== undefined && param !== '' && param !== null);
+const isNotEmpty = (param) => (param !== undefined && param !== '' && param !== null && param.trim(param) !== '');
 const isLengthValid = (str, maxLen) => (str.length <= maxLen);
 const isMinLenValid = (str, minLen) => (str.length > minLen);
 
@@ -29,13 +29,13 @@ const isLoginValid = (login) => {
         if (err instanceof CustomError) {
             console.warn(err.shortMessage);
         } else {
-            console.log(err);
+            console.error(err);
         }
 
         return {
             status: 400,
             err: {
-                message: err?.shortMessage || err.message,
+                message: err.message,
             },
             isValid: false,
         };
@@ -64,20 +64,51 @@ const isLoginFree = (login, userlist) => {
         if (err instanceof CustomError) {
             console.warn(err.shortMessage);
         } else {
-            console.log(err);
+            console.error(err);
         }
 
         return {
             status: 400,
             err: {
-                message: err?.shortMessage || err.message,
+                message: err.message,
             },
             isValid: false,
         };
     }
 };
 
-const isPassConfirmed = (fPass, sPass) => (fPass === sPass);
+const isPassConfirmed = (fPass, sPass) => {
+    try {
+        const isConfirmed = fPass === sPass;
+
+        if (!isConfirmed) {
+            throw new CustomError({
+                name: errorslist.errorTypes.validationError,
+                message: errorslist.errorMessages.passDontMatch,
+            });
+        }
+
+        return {
+            status: 200,
+            code: 'provisionally',
+            isValid: isConfirmed,
+        };
+    } catch (err) {
+        if (err instanceof CustomError) {
+            console.warn(err.shortMessage);
+        } else {
+            console.error(err);
+        }
+
+        return {
+            status: 400,
+            err: {
+                message: err.message,
+            },
+            isValid: false,
+        };
+    }
+};
 
 const isChangePassAllow = (curPass, newPass) => (curPass !== newPass);
 

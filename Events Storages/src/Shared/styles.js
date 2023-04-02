@@ -89,6 +89,13 @@ const styles = {
     spoiler: 'spoiler',
     textInfo: 'text-info',
 
+    regForm: 'reg-form',
+    controlBlock: 'control-block',
+    selectedImage: 'selected-image',
+    imageFrame: 'image-frame',
+    btnBlock: 'btn-block',
+    emptyAvatar: 'empty-avatar',
+
     wrapperShortInfo: 'wrapper-short-info',
     fullInfo: 'full-info',
     todoType: 'todo-type',

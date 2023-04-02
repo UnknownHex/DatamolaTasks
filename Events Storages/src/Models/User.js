@@ -50,8 +50,8 @@ class User {
             image: isString(img),
         };
 
-        analizeObjErrors(verified);
+        const fullInfo = analizeObjErrors(verified);
 
-        return verified;
+        return { verified, fullInfo };
     }
 }

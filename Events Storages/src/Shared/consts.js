@@ -13,6 +13,14 @@ const customEvents = {
         caption: 'show-modal',
         action: new CustomEvent('show-modal', { bubbles: true }),
     },
+    registerUser: {
+        caption: 'register-user',
+        // { login, name, pass, confirm, img, imgBlob }
+        action: (userdata) => new CustomEvent('register-user', {
+            bubbles: true,
+            detail: userdata,
+        }),
+    },
     loginUser: {
         caption: 'login-user',
         action: ({ login, password }) => new CustomEvent(
@@ -88,6 +96,8 @@ const notiflyMessages = {
         bye: (user) => (`See you letter, <span class="${styles.focusInfo}">${user}</span>!`),
     },
     success: {
+        userAdded: `You're <span class="${styles.focusSucc}">successfully</span> registered.
+        Please <span class="${styles.focusSucc}">SIGN IN</span> with your login and password!`,
         taskAdded: (name, assignee) => (`
             Task "<span class="${styles.focusSucc}">${name}</span>"
              <span class="${styles.focusSucc}">added</span> by "
