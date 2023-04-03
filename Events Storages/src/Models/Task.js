@@ -12,7 +12,7 @@ class Task {
     static titleMaxLength = 100;
     static descriptionMaxLength = 280;
 
-    constructor(name, description, assignee, status, priority, isPrivate) {
+    constructor(name, description, assignee, status, priority, isPrivate, author) {
         this.#id = crypto.randomUUID();
         this.#createdAt = new Date();
         this.#comments = [];
@@ -22,6 +22,7 @@ class Task {
         this.#status = status;
         this.#priority = priority;
         this.#isPrivate = isPrivate;
+        this.author = author;
     }
 
     get id() {

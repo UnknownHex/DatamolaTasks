@@ -1320,7 +1320,7 @@ input:checked + .slider:after {
     display: flex;
     justify-content: space-between;
     align-items: end;
-    padding: 0 0 8px 0;
+    padding: 8px 0 4px 0;
 }
 
 .bar-group {

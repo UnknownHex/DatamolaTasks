@@ -45,7 +45,7 @@ class UserCollector {
                 throw new CustomError(error);
             }
 
-            const [user] = this.#userlist.filter((userEl) => (userEl.id === id));
+            const [user] = this.#userlist.filter((userEl) => (userEl?.id === id));
 
             if (!user) {
                 const error = {
@@ -58,7 +58,12 @@ class UserCollector {
 
             return user;
         } catch (err) {
-            console.warn(err.shortMessage);
+            if (err instanceof CustomError) {
+                console.warn(err.shortMessage);
+            } else {
+                console.error(err);
+            }
+                
             return null;
         }
     }

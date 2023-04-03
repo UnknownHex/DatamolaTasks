@@ -1,8 +1,10 @@
-class AuthorizationView extends BaseView {
-    constructor(containerId) {
+class AddTaskView extends BaseView {
+    constructor(containerId, { userlist, assignee }) {
         super(containerId);
 
         this.authForm = document.createElement('form');
+        this.userlist = userlist;
+        this.assignee = assignee;
 
         this.init();
     }
@@ -17,7 +19,7 @@ class AuthorizationView extends BaseView {
 
         const formCaption = fieldContainer.cloneNode();
         const title = document.createElement('h3');
-        title.textContent = 'Authorization';
+        title.textContent = 'Add task';
         const closeForm = document.createElement('span');
         closeForm.classList.add(styles.ico);
         closeForm.classList.add(styles.icons.iclose);
@@ -25,22 +27,45 @@ class AuthorizationView extends BaseView {
         formCaption.appendChild(title);
         formCaption.appendChild(closeForm);
 
-        const login = new CustomInput({
-            name: 'login',
-            label: 'Login',
+        const taskName = new CustomInput({
+            name: 'name',
+            label: 'Task name',
             isRequired: true,
         });
 
-        const password = new CustomInput({
-            name: 'password',
-            type: 'password',
-            icon: styles.icons.ieyeSlash,
-            label: 'Password',
+        const description = new CustomInput({
+            name: 'description',
+            label: 'Task description',
             isRequired: true,
         });
+
+        const assignee = new Select({
+            avaliableUsers: this.userlist,
+            assignee: this.assignee,
+            name: fieldKeys.assignee.key,
+        });
+
+        const publicBtn = new Button({
+            classNames: [styles.btn, styles.primary],
+            icon: styles.icons.ipublicEarth,
+            name: fieldKeys.isPrivate.key,
+            dataset: 'false',
+        });
+        const privateBtn = new Button({
+            classNames: [styles.btn, styles.primary],
+            icon: styles.icons.iprivateLock,
+            name: fieldKeys.isPrivate.key,
+            dataset: 'true',
+        });
+        const privacyGroupBtn = new ButtonGroup({ 
+            buttons: [publicBtn, privateBtn],
+            commonStyle: styles.btnGroup,
+        });
+
+
 
         const submit = new Button({
-            caption: 'login',
+            caption: 'Create task',
             type: 'sumbit',
             classNames: [styles.primary, styles.btn, styles.filled],
         });
@@ -48,11 +73,13 @@ class AuthorizationView extends BaseView {
         const signUpLink = document.createElement('a');
         signUpLink.classList.add(styles.link);
         signUpLink.textContent = 'Sign UP';
-        signUpLink.href = '';
+        signUpLink.href = 'null';
 
         this.authForm.appendChild(formCaption);
-        this.authForm.appendChild(login.node);
-        this.authForm.appendChild(password.node);
+        this.authForm.appendChild(taskName.node);
+        this.authForm.appendChild(description.node);
+        this.authForm.appendChild(assignee.node);
+        this.authForm.appendChild(privacyGroupBtn.node);
         this.authForm.appendChild(submit.node);
         this.authForm.appendChild(signUpLink);
 
@@ -74,8 +101,7 @@ class AuthorizationView extends BaseView {
 
         signUpLink.addEventListener('click', (event) => {
             event.preventDefault();
-            event.target.dispatchEvent(customEvents.showRegistration.action);
-            event.target.dispatchEvent(customEvents.closeModal.action);
+            console.log('link');
         });
 
         this.render(template);

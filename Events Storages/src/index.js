@@ -26,8 +26,13 @@ class App {
     }
 
     test() {
-        this.mainSection.clear();
-        const registrationView = new RegistrationView('main-content');
+        const blur = this.createBlur();
+        const addTaskView = new AddTaskView(this.appContainer.id, {
+            userlist: this.userCollection.userlist,
+            assignee: this.userCollection.user,
+        });
+
+        blur.appendChild(addTaskView.authForm);
     }
 
     init() {
@@ -60,6 +65,7 @@ class App {
 
         if (this.storage.currentUserId) {
             const user = this.userCollection.get(this.storage.currentUserId);
+            console.log(user);
             this.setCurrentUser(user || null);
         }
     }
@@ -75,6 +81,8 @@ class App {
         this.appContainer.addEventListener(customEvents.logoutUser.caption, this.logoutUser.bind(this));
         this.appContainer.addEventListener(customEvents.showModal.caption, this.showAuthorization.bind(this));
         this.appContainer.addEventListener(customEvents.registerUser.caption, this.registerUser.bind(this));
+        this.appContainer.addEventListener(customEvents.showRegistration.caption, this.showRegistration.bind(this));
+        this.appContainer.addEventListener(customEvents.showTaskFeed.caption, this.showTaskFeedPage.bind(this));
     }
 
     showAuthorization() {
@@ -124,7 +132,6 @@ class App {
             pass,
             confirm,
             img,
-            imgBlob,
         } = event.detail;
 
         const loginFreeRequest = isLoginFree(login.input.value, this.userCollection.userlist);
@@ -159,7 +166,10 @@ class App {
             img,
         };
 
-        isOk.continue && this.addUser(userData);
+        if (isOk.continue) {
+            this.addUser(userData);
+            this.storage.setUserlist(this.userCollection.userlist);
+        }
     }
 
     logoutUser() {
@@ -303,6 +313,11 @@ class App {
 
         // console.log(this.storage.filterOptions);
         // console.log(this.storage.activeFilters);
+    }
+
+    showRegistration() {
+        this.mainSection.clear();
+        const registrationView = new RegistrationView('main-content');
     }
 
     setCurrentUser(user) {

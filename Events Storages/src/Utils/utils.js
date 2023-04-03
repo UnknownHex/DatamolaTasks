@@ -43,6 +43,7 @@ const isLoginValid = (login) => {
 };
 
 const isLoginFree = (login, userlist) => {
+    console.log(login, userlist);
     try {
         const index = userlist.findIndex((user) => user.login.toLowerCase() === login.toLowerCase());
 

@@ -16,6 +16,17 @@ class User {
         this.#createdAt = new Date();
     }
 
+    get info() {
+        return {
+            id: this.#id,
+            name: this.name,
+            login: this.#login,
+            password: this.#password,
+            createdAt: this.#createdAt,
+            img: this.img,
+        }
+    }
+
     get id() {
         return this.#id;
     }

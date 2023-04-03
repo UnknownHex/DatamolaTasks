@@ -9,6 +9,14 @@ const customEvents = {
         caption: 'close-modal',
         action: new CustomEvent('close-modal', { bubbles: true }),
     },
+    showRegistration: {
+        caption: 'show-registration',
+        action: new CustomEvent('show-registration', { bubbles: true }),
+    },
+    showTaskFeed: {
+        caption: 'show-taskfeed',
+        action: new CustomEvent('show-taskfeed', { bubbles: true }),
+    },
     showModal: {
         caption: 'show-modal',
         action: new CustomEvent('show-modal', { bubbles: true }),

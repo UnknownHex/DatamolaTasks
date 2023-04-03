@@ -28,7 +28,7 @@ class RegistrationView extends BaseView {
 
         backToFeedLink.addEventListener('click', (event) => {
             event.preventDefault();
-            showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+            event.target.dispatchEvent(customEvents.showTaskFeed.action);
         });
 
         const login = new CustomInput({

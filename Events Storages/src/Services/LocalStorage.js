@@ -116,8 +116,13 @@ class LocalStorage {
     }
 
     setTasklist(tasklist) {
-        this.tasklist = tasklist;
-        this.saveToStore(this.storageKeys, this.tasklist);
+        this.taskCollector = tasklist;
+        this.saveToStore(this.storageKeys.tasklist, this.taskCollector);
+    }
+
+    setUserlist(userlist) {
+        this.userCollector = userlist.map((user) => user.info);
+        this.saveToStore(this.storageKeys.userlist, this.userCollector);
     }
 
     setFilterString(searchString) {
