@@ -32,7 +32,7 @@ class App {
             assignee: this.userCollection.user,
         });
 
-        blur.appendChild(addTaskView.authForm);
+        blur.appendChild(addTaskView.addTaskForm);
     }
 
     init() {
@@ -83,6 +83,19 @@ class App {
         this.appContainer.addEventListener(customEvents.registerUser.caption, this.registerUser.bind(this));
         this.appContainer.addEventListener(customEvents.showRegistration.caption, this.showRegistration.bind(this));
         this.appContainer.addEventListener(customEvents.showTaskFeed.caption, this.showTaskFeedPage.bind(this));
+        this.appContainer.addEventListener(customEvents.addTask.caption, this.addTaskHandler.bind(this));
+        this.appContainer.addEventListener(customEvents.showAddTaskModal.caption, () => {});
+    }
+
+    addTaskHandler(event) {
+        // name, description, assignee, options = detail
+        const data = event.detail;
+        const name = data.name.input.value;
+        const description = data.description.value;
+        const assignee = data.assignee;
+        const { options } = data;
+
+        console.log(name, description, assignee, options);
     }
 
     showAuthorization() {
@@ -376,6 +389,7 @@ class App {
             task.status,
             task.priority,
             task.isPrivate,
+            this.userCollection.user,
         );
 
         if (isAdded) {

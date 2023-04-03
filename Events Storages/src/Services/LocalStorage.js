@@ -121,7 +121,7 @@ class LocalStorage {
     }
 
     setUserlist(userlist) {
-        this.userCollector = userlist.map((user) => user.info);
+        this.userCollector = userlist.map((user) => (user instanceof User ? user?.info : user));
         this.saveToStore(this.storageKeys.userlist, this.userCollector);
     }
 

@@ -17,6 +17,14 @@ const customEvents = {
         caption: 'show-taskfeed',
         action: new CustomEvent('show-taskfeed', { bubbles: true }),
     },
+    addTask: {
+        caption: 'add-task',
+        action: (taskData) => new CustomEvent('add-task', { bubbles: true, detail: taskData }),
+    },
+    showAddTaskModal: {
+        caption: 'show-add-task-modal',
+        action: new CustomEvent('show-add-task-modal', { bubbles: true }),
+    },
     showModal: {
         caption: 'show-modal',
         action: new CustomEvent('show-modal', { bubbles: true }),
@@ -105,7 +113,7 @@ const notiflyMessages = {
     },
     success: {
         userAdded: `You're <span class="${styles.focusSucc}">successfully</span> registered.
-        Please <span class="${styles.focusSucc}">SIGN IN</span> with your login and password!`,
+            Please <span class="${styles.focusSucc}">SIGN IN</span> with your login and password!`,
         taskAdded: (name, assignee) => (`
             Task "<span class="${styles.focusSucc}">${name}</span>"
              <span class="${styles.focusSucc}">added</span> by "

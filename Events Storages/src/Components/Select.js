@@ -1,6 +1,6 @@
 class Select extends BaseElement {
     constructor({
-        avaliableUsers, assignee, onChange, name,
+        avaliableUsers, assignee, onChange, name, withHidden,
     }) {
         super('div');
 
@@ -8,6 +8,7 @@ class Select extends BaseElement {
         this.assignee = assignee || '';
         this.onChange = onChange;
         this.name = name;
+        this.withHidden = withHidden ?? true;
 
         this.init();
     }
@@ -21,15 +22,17 @@ class Select extends BaseElement {
         this.select.required = true;
         const optoinsTemplate = document.createElement('template');
         optoinsTemplate.innerHTML = `
-        <option value="" disabled>
+            ${this.withHidden ? `
+                <option value="" disabled>
                     ${this.assignee || 'All greatest team'}
                 </option>
                 <option default value="" ${!this.assignee ? 'selected' : ''}>
-                All greatest team
+                    All greatest team
                 </option>
-                ${this.avaliableUsers.map((user) => (`
-                    <option value=${user.id} ${user.name === this.assignee ? 'selected' : ''}>${user.name}</option>
-                `)).join('')}
+                ` : null}
+            ${this.avaliableUsers.map((user) => (`
+                <option value=${user.id} ${user.name === this.assignee ? 'selected' : ''}>${user.name}</option>
+            `)).join('')}
         `;
         this.select.appendChild(optoinsTemplate.content);
 

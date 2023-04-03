@@ -37,6 +37,7 @@ const styles = {
     activeFilters: 'active-filters',
     filterBadge: 'filter-badge',
     text: 'text',
+    textarea: 'textarea',
 
     boardWrapper: 'board-wrapper',
     taskboard: 'taskboard',
