@@ -45,6 +45,7 @@ class TaskContainer extends BaseElement {
     }
 
     init() {
+        this.node.id = this.taskEnt.id;
         const taskFragment = document.createDocumentFragment();
         const task = document.createElement('div');
         const taskHeader = document.createElement('div');

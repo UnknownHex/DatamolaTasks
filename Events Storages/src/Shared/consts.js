@@ -15,6 +15,10 @@ const customEvents = {
         caption: 'show-registration',
         action: new CustomEvent('show-registration', { bubbles: true }),
     },
+    showTaskPage: {
+        caption: 'show-task-id-page',
+        action: (taskId) => new CustomEvent('show-task-id-page', { bubbles: true, detail: taskId }),
+    },
     showTaskFeed: {
         caption: 'show-taskfeed',
         action: new CustomEvent('show-taskfeed', { bubbles: true }),

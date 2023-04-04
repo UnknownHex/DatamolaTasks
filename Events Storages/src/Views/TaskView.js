@@ -7,19 +7,17 @@ class TaskView extends BaseView {
     }
 
     init(task, currentUser) {
-        const [avatara] = fakeUsers.filter((user) => (task.assignee === user.name));
-        const [myAva] = fakeUsers.filter((user) => (user.name === currentUser));
         const assigneeInfo = new UserData({
             user: task.assignee,
             createdAt: task.createdAt,
             isInfo: true,
-            avatara: avatara?.img,
+            avatara: currentUser?.img,
         });
         const userinfo = new UserData({
-            user: currentUser,
+            user: currentUser.id,
             createdAt: task.createdAt,
             isInfo: true,
-            avatara: myAva?.img,
+            avatara: currentUser?.img,
         });
 
         const taskInfo = new TaskInfo(task, true);
@@ -37,7 +35,7 @@ class TaskView extends BaseView {
 
         backToFeedLink.addEventListener('click', (event) => {
             event.preventDefault();
-            showTaskFeedPage(taskCollection.tasklist, taskCollection.user);
+            event.target.dispatchEvent(customEvents.showTaskFeed.action);
         });
 
         this.container.node.innerHTML = `
@@ -49,7 +47,7 @@ class TaskView extends BaseView {
                     ${taskInfo.outerHTML}
                     ${assigneeInfo.outerHTML}
 
-                    ${isCurrentUser(task.assignee, currentUser) ? `
+                    ${isCurrentUser(task.assignee, currentUser.id) ? `
                         <div class="${styles.taskActions}">
                             <button type="button" class="btn secondary onlyicon">
                                 <span class="ico idelete"></span>
@@ -120,12 +118,12 @@ class TaskView extends BaseView {
         if (comments.length < 1) return '';
 
         return comments.map((comment) => {
-            const [avatara] = fakeUsers.filter((user) => (comment.author === user.name));
+            // const [avatara] = fakeUsers.filter((user) => (comment.author === user.name));
             const userinfo = new UserData({
                 isInfo: true,
                 createdAt: comment.createdAt,
                 user: comment.author,
-                avatara: avatara.img,
+                avatara: LocalStorage.getUser(comment.author).img,
             });
 
             return `

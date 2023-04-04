@@ -61,7 +61,7 @@ class App {
         }
 
         this.filterView = new FilterView(this.appContainer.id);
-        this.taskView = new TaskView(this.appContainer.id);
+        this.taskView = new TaskView('main-content');
 
         this.footer = new FooterView(this.appContainer.id);
 
@@ -89,6 +89,13 @@ class App {
         this.appContainer.addEventListener(customEvents.editTask.caption, this.editTaskHandler.bind(this));
         this.appContainer.addEventListener(customEvents.showTaskModal.caption, this.showTaskModal.bind(this));
         this.appContainer.addEventListener(customEvents.deleteTask.caption, this.deleteTaskHandler.bind(this));
+        this.appContainer.addEventListener(customEvents.showTaskPage.caption, this.openTaskPage.bind(this));
+    }
+
+    openTaskPage(event) {
+        const task = LocalStorage.getTask(event.detail);
+
+        this.showTaskPage(task, this.getCurrentUser());
     }
 
     deleteTaskHandler(event) {
