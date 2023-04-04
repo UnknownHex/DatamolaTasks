@@ -7,7 +7,6 @@ class LocalStorage {
 
         this.currentUserId = null;
 
-
         this.filterString = null;
         this.setToDefaults();
         // this.filterOptions = {

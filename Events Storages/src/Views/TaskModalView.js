@@ -1,10 +1,11 @@
 class TaskModalView extends BaseView {
-    constructor(containerId, { userlist, assignee }) {
+    constructor(containerId, { userlist, assignee, task }) {
         super(containerId);
 
         this.addTaskForm = document.createElement('form');
         this.userlist = userlist;
         this.assignee = assignee;
+        this.task = task;
 
         this.taskState = {
             isPrivate: false,
@@ -39,7 +40,7 @@ class TaskModalView extends BaseView {
 
         const formCaption = fieldContainer.cloneNode();
         const title = document.createElement('h3');
-        title.textContent = 'Add task';
+        title.textContent = this.task ? 'Edit task' : 'Add task';
         const closeForm = document.createElement('span');
         closeForm.classList.add(styles.ico);
         closeForm.classList.add(styles.icons.iclose);
@@ -52,6 +53,9 @@ class TaskModalView extends BaseView {
             label: 'Task name',
             isRequired: true,
         });
+        if (this.task?.name) {
+            taskName.value = this.task.name;
+        }
 
         const inpDescription = document.createElement('div');
         inpDescription.classList.add(styles.inp);

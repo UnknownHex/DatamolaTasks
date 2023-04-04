@@ -24,11 +24,10 @@ class UserData extends BaseElement {
     }) {
         super();
 
-        
         this.user = LocalStorage.getUser(user);
         this.isInfo = !!isInfo;
         this.createdAt = createdAt;
-        this.avatara =this.user?.img || STANDARD_IMG;
+        this.avatara = this.user?.img || STANDARD_IMG;
         this.init();
     }
 
