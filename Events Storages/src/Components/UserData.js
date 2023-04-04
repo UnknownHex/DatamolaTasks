@@ -19,16 +19,16 @@
 class UserData extends BaseElement {
     constructor({
         user,
-        avatara,
         isInfo,
         createdAt,
     }) {
         super();
 
-        this.user = user;
+        
+        this.user = LocalStorage.getUser(user);
         this.isInfo = !!isInfo;
         this.createdAt = createdAt;
-        this.avatara = avatara ?? './assets/icons/avatar.svg';
+        this.avatara =this.user?.img || STANDARD_IMG;
         this.init();
     }
 

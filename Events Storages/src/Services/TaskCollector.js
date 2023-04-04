@@ -61,8 +61,8 @@ class TaskCollector {
         return isValid;
     }
 
-    add(name, description, assignee, status, priority, isPrivate) {
-        const taskObj = new Task(name, description, assignee, status, priority, isPrivate);
+    add(name, description, assignee, status, priority, isPrivate, author) {
+        const taskObj = new Task(name, description, assignee, status, priority, isPrivate, author);
 
         const isValid = TaskCollector.verify(taskObj);
 

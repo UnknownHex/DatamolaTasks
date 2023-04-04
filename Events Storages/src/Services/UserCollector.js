@@ -77,14 +77,17 @@ class UserCollector {
 
     add(username, login, password, img) {
         const userObj = new User({
-            username, login, password, img,
+            username,
+            login,
+            password,
+            img,
         });
 
         const isValid = UserCollector.verify(userObj);
         const isFree = isLoginFree(login, this.#userlist);
 
         if (isValid && isFree) {
-            this.#userlist = [...this.#userlist, userObj];
+            this.#userlist = [...this.#userlist, userObj.info];
         }
 
         return isValid;

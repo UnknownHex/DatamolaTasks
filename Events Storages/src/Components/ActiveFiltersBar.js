@@ -22,7 +22,8 @@ class ActiveFiltersBar extends BaseElement {
                     fragment.appendChild(badge.node);
                 });
             } else {
-                const badge = new FilterBadge({ key, value });
+                const isAssigneeKey = key === fieldKeys.assignee.key;
+                const badge = new FilterBadge({ key, value: isAssigneeKey ? LocalStorage.getUser(value).name : value });
                 fragment.appendChild(badge.node);
             }
         });

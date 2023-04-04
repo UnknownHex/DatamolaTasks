@@ -51,16 +51,16 @@ class TaskFeedView extends BaseView {
         this.render(taskFeedFragment);
     }
 
-    chooseTable(task, isAllow) {
+    chooseTable(task, currentUser) {
         switch (task.status.toLowerCase()) {
         case taskStatus.toDo.toLowerCase():
-            this.toDoBoard.drawTask(task, isAllow);
+            this.toDoBoard.drawTask(task, currentUser);
             break;
         case taskStatus.inProgress.toLowerCase():
-            this.inProgressBoard.drawTask(task, isAllow);
+            this.inProgressBoard.drawTask(task, currentUser);
             break;
         case taskStatus.complete.toLowerCase():
-            this.completeBoard.drawTask(task, isAllow);
+            this.completeBoard.drawTask(task, currentUser);
             break;
         default:
             break;
@@ -70,7 +70,8 @@ class TaskFeedView extends BaseView {
     display({
         tasklist, isTableView, currentUser, filterOpt,
     }) {
-        if (Array.isArray(tasklist) && tasklist.length > 0) {
+        // if (Array.isArray(tasklist) && tasklist.length > 0) {
+        if (Array.isArray(tasklist)) {
             this.updateTasks(tasklist, currentUser);
         }
 
@@ -94,8 +95,8 @@ class TaskFeedView extends BaseView {
 
     updateTasks(tasklist, currentUser) {
         tasklist.forEach((task) => {
-            const isAllow = isCurrentUser(task.assignee, currentUser);
-            this.chooseTable(task, isAllow);
+            // const isAllow = isCurrentUser(task.assignee, currentUser.name);
+            this.chooseTable(task, currentUser);
         });
 
         this.taskboardsGroup.forEach((tb) => {

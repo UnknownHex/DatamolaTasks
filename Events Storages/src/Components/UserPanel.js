@@ -24,10 +24,9 @@ class UserPanel extends BaseElement {
         this.node.classList.add(styles.userPanel);
 
         if (this.user) {
-            const avatara = this.user?.img;
             const userPanelFragment = document.createDocumentFragment();
             const notification = document.createElement('div');
-            const userData = new UserData({ user: this.user, avatara });
+            const userData = new UserData({ user: this.user.id });
             const logoutBtn = new Button({
                 caption: 'logout',
                 classNames: [styles.btn, styles.primary],

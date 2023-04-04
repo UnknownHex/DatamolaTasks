@@ -38,8 +38,8 @@ class Taskboard extends BaseElement {
         }
     }
 
-    drawTask(task, isAllow) {
-        const taskView = new TaskContainer(task, isAllow);
+    drawTask(task, currentUser) {
+        const taskView = new TaskContainer(task, currentUser);
         this.fragmentWithTasks.appendChild(taskView.node);
     }
 

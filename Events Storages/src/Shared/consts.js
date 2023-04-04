@@ -4,6 +4,8 @@ const consts = {
     update: '02.04.2023',
 };
 
+const STANDARD_IMG = './assets/icons/avatar.svg';
+
 const customEvents = {
     closeModal: {
         caption: 'close-modal',
@@ -129,7 +131,7 @@ const notiflyMessages = {
             "<span class="${styles.focusSucc}">${user}</span>"!`),
     },
     warn: {
-
+        login: 'Log in to your account before using the service!',
     },
 };
 

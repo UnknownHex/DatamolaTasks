@@ -1,6 +1,6 @@
 const fakeUsers = [
     {
-        id: crypto.randomUUID(),
+        id: '99c55f3a-88ca-4700-bc21-cbaec2f17fc9',
         login: 'Ivan',
         name: 'Иванов Иван',
         img: './assets/base-avas/body-5.png',
@@ -8,7 +8,7 @@ const fakeUsers = [
         password: '12345',
     },
     {
-        id: crypto.randomUUID(),
+        id: '740b5471-60b3-4cee-9b02-34bdc7774010',
         login: 'Curent',
         name: 'Карэнт Йусер',
         img: './assets/base-avas/body-6.png',
@@ -16,7 +16,7 @@ const fakeUsers = [
         password: '12345',
     },
     {
-        id: crypto.randomUUID(),
+        id: 'fb86eb10-92ac-4d05-b7c8-0ab5b520a09d',
         login: 'KosaGon',
         name: 'Константина Гон',
         img: './assets/base-avas/body-13.png',
@@ -24,7 +24,7 @@ const fakeUsers = [
         password: '12345',
     },
     {
-        id: crypto.randomUUID(),
+        id: '5d6139e1-02af-4072-8f6b-001407a34dc4',
         login: 'RealDev',
         name: 'Синьёр Петя',
         img: './assets/base-avas/body-7.png',
@@ -32,7 +32,7 @@ const fakeUsers = [
         password: '12345',
     },
     {
-        id: crypto.randomUUID(),
+        id: '3c537d69-b210-43e8-8740-4acaeec741e9',
         login: 'GUru',
         name: 'Лида Тим',
         img: './assets/base-avas/body-8.png',
@@ -40,7 +40,7 @@ const fakeUsers = [
         password: '12345',
     },
     {
-        id: crypto.randomUUID(),
+        id: 'b89e8614-58d5-4ed7-ae48-713d0c0e5cc7',
         login: 'Heronozero',
         name: 'Игорёша',
         img: './assets/base-avas/body-9.png',
@@ -48,7 +48,7 @@ const fakeUsers = [
         password: '12345',
     },
     {
-        id: crypto.randomUUID(),
+        id: 'dd7098cf-4cd7-4491-b744-7b5cba3f673f',
         login: 'Programmer',
         name: 'Йосиф Программилла',
         img: './assets/base-avas/body-10.png',
@@ -56,7 +56,7 @@ const fakeUsers = [
         password: '12345',
     },
     {
-        id: crypto.randomUUID(),
+        id: '4aad2055-650f-4828-b141-5e8b2f5f1782',
         login: 'InKa',
         name: 'Инна Катеринина',
         img: './assets/base-avas/body-11.png',
@@ -64,7 +64,7 @@ const fakeUsers = [
         password: '12345',
     },
     {
-        id: crypto.randomUUID(),
+        id: 'b13b2d3e-a4f2-412c-b227-7e7e4aeecefa',
         login: 'AlexeySyvorov',
         name: 'Джун-Курьер',
         img: './assets/base-avas/body-12.png',

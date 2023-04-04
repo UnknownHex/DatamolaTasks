@@ -185,7 +185,6 @@ const analizeObjErrors = (obj) => {
 
     const result = objEnt.map((entry) => {
         const [key, value] = entry;
-        console.log(key, value);
         if (!value) {
             const error = {
                 name: errorslist.errorTypes.validationError,

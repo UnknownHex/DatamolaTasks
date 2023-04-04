@@ -1,11 +1,12 @@
 class LocalStorage {
+    static userCollector = [];
+    static taskCollector = [];
+
     constructor() {
         this.storage = localStorage;
 
         this.currentUserId = null;
 
-        this.userCollector = [];
-        this.taskCollector = [];
 
         this.filterString = null;
         this.setToDefaults();
@@ -39,6 +40,18 @@ class LocalStorage {
         }
 
         this.saveStoredData();
+    }
+
+    static getUser(id) {
+        const [user] = LocalStorage.userCollector.filter((user) => user.id === id);
+
+        return user || null;
+    }
+
+    static getTask(id) {
+        const [task] = LocalStorage.taskCollector.filter((user) => task.id === id);
+
+        return task || null;
     }
 
     get activeFilters() {
@@ -80,16 +93,16 @@ class LocalStorage {
 
     saveStoredData() {
         this.saveToStore(this.storageKeys.currentUserId, this.currentUserId);
-        this.saveToStore(this.storageKeys.tasklist, this.taskCollector);
-        this.saveToStore(this.storageKeys.userlist, this.userCollector);
+        this.saveToStore(this.storageKeys.tasklist, LocalStorage.taskCollector);
+        this.saveToStore(this.storageKeys.userlist, LocalStorage.userCollector);
         this.saveToStore(this.storageKeys.filterString, this.filterString);
         this.saveFilterOptions();
     }
 
     loadStoredData() {
         this.currentUserId = this.loadFromStore(this.storageKeys.currentUserId);
-        this.taskCollector = this.loadFromStore(this.storageKeys.tasklist);
-        this.userCollector = this.loadFromStore(this.storageKeys.userlist);
+        LocalStorage.taskCollector = this.loadFromStore(this.storageKeys.tasklist);
+        LocalStorage.userCollector = this.loadFromStore(this.storageKeys.userlist);
         this.filterString = this.loadFromStore(this.storageKeys.filterString);
         this.loadFilterOptions();
     }
@@ -107,7 +120,8 @@ class LocalStorage {
     }
 
     setCurrentUser(user) {
-        this.saveToStore(this.storageKeys.currentUserId, user ? user?.id : user);
+        this.currentUserId = user ? user?.id : null;
+        this.saveToStore(this.storageKeys.currentUserId, this.currentUserId);
     }
 
     setAssignee(assignee) {
@@ -116,13 +130,13 @@ class LocalStorage {
     }
 
     setTasklist(tasklist) {
-        this.taskCollector = tasklist;
-        this.saveToStore(this.storageKeys.tasklist, this.taskCollector);
+        LocalStorage.taskCollector = tasklist.map((task) => (task instanceof Task ? task?.info : task));
+        this.saveToStore(this.storageKeys.tasklist, LocalStorage.taskCollector);
     }
 
     setUserlist(userlist) {
-        this.userCollector = userlist.map((user) => (user instanceof User ? user?.info : user));
-        this.saveToStore(this.storageKeys.userlist, this.userCollector);
+        LocalStorage.userCollector = userlist.map((user) => (user instanceof User ? user?.info : user));
+        this.saveToStore(this.storageKeys.userlist, LocalStorage.userCollector);
     }
 
     setFilterString(searchString) {

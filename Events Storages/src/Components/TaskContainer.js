@@ -35,11 +35,11 @@
 */
 
 class TaskContainer extends BaseElement {
-    constructor(task, isAllow) {
+    constructor(task, currentUser) {
         super('article');
 
         this.taskEnt = task;
-        this.isAllow = isAllow;
+        this.currentUser = currentUser;
 
         this.init();
     }
@@ -54,12 +54,10 @@ class TaskContainer extends BaseElement {
         const taskTextBlock = document.createElement('div');
         const taskActions = document.createElement('div');
         const taskInfo = new TaskInfo(this.taskEnt);
-        const [avatara] = fakeUsers.filter((user) => (this.taskEnt.assignee === user.name));
         const userInfo = new UserData({
             createdAt: this.taskEnt.createdAt,
-            isInfo: true,
             user: this.taskEnt.assignee,
-            avatara: avatara?.img,
+            isInfo: true,
         });
 
         const editBtn = new Button({
@@ -107,7 +105,9 @@ class TaskContainer extends BaseElement {
         taskPanel.appendChild(userInfo.node);
         taskPanel.appendChild(taskActions);
 
-        if (this.isAllow) {
+        console.log(this.taskEnt.assignee);
+        console.log(this.taskEnt.author, this.currentUser?.id);
+        if (isCurrentUser(this.taskEnt.author, this.currentUser?.id)) {
             taskActions.appendChild(editBtn.node);
             taskActions.appendChild(deleteBtn.node);
         }

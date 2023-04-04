@@ -1,4 +1,4 @@
-class AddTaskView extends BaseView {
+class TaskModalView extends BaseView {
     constructor(containerId, { userlist, assignee }) {
         super(containerId);
 
@@ -33,12 +33,6 @@ class AddTaskView extends BaseView {
                 const isPrivateName = targetBtn.name === 'isPrivate';
                 this.taskState[targetBtn.name] = isPrivateName ? !!targetBtn.dataset.data : targetBtn.dataset.data;
             }
-            // event.target.closest(styles.btnGroup).childNodes.forEach((node) => node.classList.add(styles.active));
-            // target.classList.remove(styles.active);
-            // const { name, dataset } = target.closest('button');
-            // target.closest('button').classList.add(styles.active);
-
-            console.log('POST:', this.taskState);
         };
 
         const template = document.createDocumentFragment();
@@ -70,16 +64,12 @@ class AddTaskView extends BaseView {
         label.classList.add(styles.inpCaption);
         inpDescription.appendChild(textarea);
         inpDescription.appendChild(label);
-
+        console.log(this.assignee);
         const assignee = new Select({
             avaliableUsers: this.userlist,
-            assignee: this.assignee,
+            assignee: this.assignee.id,
             name: fieldKeys.assignee.key,
             withHidden: false,
-            onChange: () => {
-                this.assignee = assignee.select.value;
-                console.log(this.assignee);
-            },
         });
 
         const publicBtn = new Button({
@@ -189,11 +179,9 @@ class AddTaskView extends BaseView {
             const data = {
                 name: taskName,
                 description: textarea,
-                assignee: this.assignee,
+                assignee: assignee.select.value,
                 options: this.taskState,
             };
-
-            console.log(data.assignee);
 
             event.target.dispatchEvent(customEvents.addTask.action(data));
         });

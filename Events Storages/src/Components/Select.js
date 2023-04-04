@@ -31,7 +31,7 @@ class Select extends BaseElement {
                 </option>
                 ` : null}
             ${this.avaliableUsers.map((user) => (`
-                <option value=${user.id} ${user.name === this.assignee ? 'selected' : ''}>${user.name}</option>
+                <option value=${user.id} ${user.id === this.assignee ? 'selected' : ''}>${user.name}</option>
             `)).join('')}
         `;
         this.select.appendChild(optoinsTemplate.content);
@@ -47,19 +47,5 @@ class Select extends BaseElement {
         `;
 
         this.node.prepend(this.select);
-
-        // this.node.innerHTML = `
-        //     <select required>
-        //         <option value="${this.assignee}" disabled selected ${this.assignee && 'hidden'}>
-        //             ${this.assignee}
-        //         </option>
-        //     ${this.avaliableUsers.map((user) => (`
-        //         <option value=${user.login}>${user.name}</option>
-        //     `)).join('')}
-        //     </select>
-        //     <button class="${styles.ico} ${styles.icons.iexpand}"></button>
-        //     <span class="${styles.border}"></span>
-        //     <label class="${styles.inpCaption}">Select ASSIGNEE...</label>
-        // `;
     }
 }

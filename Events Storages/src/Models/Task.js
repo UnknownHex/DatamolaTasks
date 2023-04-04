@@ -25,6 +25,21 @@ class Task {
         this.author = author;
     }
 
+    get info() {
+        return {
+            id: this.#id,
+            createdAt: this.#createdAt,
+            name: this.#name,
+            description: this.#description,
+            assignee: this.#assignee,
+            status: this.#status,
+            priority: this.#priority,
+            isPrivate: this.#isPrivate,
+            comments: this.#comments,
+            author: this.author,
+        }
+    }
+
     get id() {
         return this.#id;
     }
