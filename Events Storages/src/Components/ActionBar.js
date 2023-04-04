@@ -47,7 +47,7 @@ class ActionBar extends BaseElement {
                 const nodes = event.target.closest('button').parentNode.childNodes;
                 nodes.forEach((node) => node.classList.remove(styles.active));
                 activeBtn.classList.add(styles.active);
-                console.log('DONE!');
+                console.log('Comming soon!');
             }
         };
 

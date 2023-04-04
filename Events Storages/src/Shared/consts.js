@@ -19,6 +19,10 @@ const customEvents = {
         caption: 'show-taskfeed',
         action: new CustomEvent('show-taskfeed', { bubbles: true }),
     },
+    deleteTask: {
+        caption: 'delete-task',
+        action: (taskId) => new CustomEvent('delete-task', { bubbles: true, detail: taskId }),
+    },
     editTask: {
         caption: 'edit-task',
         action: (taskData) => new CustomEvent('edit-task', { bubbles: true, detail: taskData }),
@@ -136,6 +140,9 @@ const notiflyMessages = {
     },
     warn: {
         login: 'Log in to your account before using the service!',
+    },
+    err: {
+        wrongLogin: 'Wrong login or password...',
     },
 };
 

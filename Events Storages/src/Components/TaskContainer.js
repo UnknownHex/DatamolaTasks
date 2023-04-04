@@ -118,6 +118,8 @@ class TaskContainer extends BaseElement {
             event.stopPropagation();
             event.target.closest('[name="edit"]')
                 && event.target.dispatchEvent(customEvents.showTaskModal.action(this.taskEnt.id));
+            event.target.closest('[name="remove"]')
+                && event.target.dispatchEvent(customEvents.deleteTask.action(this.taskEnt.id));
         });
     }
 }

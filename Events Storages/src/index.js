@@ -88,6 +88,19 @@ class App {
         this.appContainer.addEventListener(customEvents.addTask.caption, this.addTaskHandler.bind(this));
         this.appContainer.addEventListener(customEvents.editTask.caption, this.editTaskHandler.bind(this));
         this.appContainer.addEventListener(customEvents.showTaskModal.caption, this.showTaskModal.bind(this));
+        this.appContainer.addEventListener(customEvents.deleteTask.caption, this.deleteTaskHandler.bind(this));
+    }
+
+    deleteTaskHandler(event) {
+        const id = event.detail;
+
+        const isOk = window.confirm(`Are you really want to delete task ${id}?`);
+
+        if (!isOk) return;
+
+        this.removeTask(id);
+
+        this.storage.setTasklist(this.taskCollection.tasklist);
     }
 
     editTaskHandler(event) {
@@ -145,7 +158,7 @@ class App {
         const isPassCorrect = user?.password === password.input.value;
         if (!user || !isPassCorrect) {
             NotificationView.createNotifly({
-                message: 'Wrong login or password...',
+                message: notiflyMessages.err.wrongLogin,
                 type: notiflyVariants.errNoti,
             });
 
@@ -216,7 +229,6 @@ class App {
     }
 
     logoutUser() {
-        console.log('LOGOUT user;');
         this.setCurrentUser(null);
     }
 
@@ -247,20 +259,12 @@ class App {
             break;
         }
 
-        console.log(this.storage.activeFilters);
         this.getFeed(0, 10, this.storage.activeFilters);
-
-        // this.showTaskFeedPage({
-        //     tasklist: this.taskCollection.tasklist,
-        //     currentUser: this.taskCollection.user,
-        //     activeFilters: this.storage.activeFilters,
-        // });
     }
 
     changeInputParams(e) {
         const paramName = e.detail.name;
         const paramValue = e.detail.value;
-        console.log(paramName, ':', paramValue);
 
         switch (paramName) {
         case fieldKeys.assignee.key: {
@@ -269,18 +273,14 @@ class App {
             break;
         }
         case fieldKeys.dateFrom.key:
-            console.log('save date:', paramValue, new Date(paramValue));
             this.storage.setDateFrom(paramValue);
             break;
         case fieldKeys.dateTo.key:
-            console.log('save date:', paramValue, new Date(paramValue));
             this.storage.setDateTo(paramValue);
             break;
         default:
             break;
         }
-
-        console.log(`\naction: ${customEvents.getSelectParam.caption}`, this.storage.activeFilters);
     }
 
     changeButtonParams(e) {
@@ -307,9 +307,6 @@ class App {
         default:
             break;
         }
-
-        console.log(`\naction: ${customEvents.getFilterParam.caption}`, this.storage.activeFilters);
-        console.log(e.detail);
     }
 
     clearFilters() {
@@ -319,15 +316,11 @@ class App {
             avaliableUsers: this.userCollection.userlist,
             filterOpt: this.storage.activeFilters,
         });
-
-        console.log(`\naction: ${customEvents.clearFilters.caption}`, this.storage.activeFilters);
     }
 
     confirmFilters() {
         console.log(this.storage.activeFilters);
         this.getFeed(0, 10, this.storage.activeFilters);
-
-        console.log(`\naction: ${customEvents.confirmFilters.caption}`);
     }
 
     showTaskFeedPage({ tasklist, currentUser, activeFilters }) {
@@ -355,7 +348,7 @@ class App {
             });
             return;
         }
-        console.log('In storage:', this.storage.activeFilters);
+
         this.filterView.display({
             filterOpt: this.storage.activeFilters,
             avaliableUsers: this.userCollection.userlist,
@@ -379,9 +372,7 @@ class App {
             return;
         }
         const id = event.detail;
-        console.log(id, event.detail);
         const task = id ? LocalStorage.getTask(id) : null;
-        console.log(task);
         const blur = this.createBlur();
         const taskModalView = new TaskModalView(this.appContainer.id, {
             userlist: this.userCollection.userlist,
@@ -393,7 +384,6 @@ class App {
     }
 
     setCurrentUser(user = null) {
-        console.log(user);
         const tmpUser = this.userCollection.user;
         this.userCollection.user = user?.id || null;
 
@@ -403,7 +393,7 @@ class App {
             this.headerView.display(user);
             this.showTaskFeedPage({
                 tasklist: this.taskCollection.tasklist,
-                currentUser: LocalStorage.getUser(this.userCollection.user),
+                currentUser: this.getCurrentUser(),
             });
 
             this.storage.setToDefaults();
@@ -424,18 +414,12 @@ class App {
     addUser({ login, name, pass, img }) {
         const isRegistered = this.userCollection.add(name, login, pass, img);
 
-        console.log(isRegistered);
-
         if (isRegistered) {
             NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
                 message: notiflyMessages.success.userAdded,
             });
-
-            console.log(notiflyMessages.success.userAdded);
         }
-
-        console.log(this.userCollection.userlist);
     }
 
     getCurrentUser() {
@@ -504,13 +488,13 @@ class App {
         if (isRemoved) {
             this.showTaskFeedPage({
                 tasklist: this.taskCollection.tasklist,
-                currentUser: this.taskCollection.user,
+                currentUser: this.getCurrentUser(),
                 activeFilters: this.storage.activeFilters,
             });
 
-            this.NotificationView.createNotifly({
+            NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
-                message: notiflyMessages.success.taskRemoved(id, this.taskCollection.user),
+                message: notiflyMessages.success.taskRemoved(id, this.getCurrentUser().name),
             });
         }
     }
@@ -520,11 +504,10 @@ class App {
 
         this.showTaskFeedPage({
             tasklist: filteredTasks,
-            currentUser: LocalStorage.getUser(this.userCollection.user),
+            currentUser: this.getCurrentUser(),
             activeFilters: this.storage.activeFilters,
         });
-
-        console.log(filteredTasks); // Need only for testlog in console!
+        // console.log(filteredTasks); // Need only for testlog in console!
     }
 
     showTask(id) {

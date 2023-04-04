@@ -106,7 +106,7 @@ class TaskCollector {
 
     remove(id) {
         const removableTask = this.get(id);
-        if (!removableTask || !isCurrentUser(this.user, removableTask.assignee, false)) return false;
+        if (!removableTask) return false;
 
         const indexOfRemTask = this.tasklist.indexOf(removableTask);
         this.#tasklist = [...this.tasklist.slice(0, indexOfRemTask), ...this.tasklist.slice(indexOfRemTask + 1)];
