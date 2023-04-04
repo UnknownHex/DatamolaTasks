@@ -76,7 +76,7 @@ class TaskCollector {
     edit(id, name, description, assignee, status, priority, isPrivate) {
         const editableTask = this.get(id);
 
-        if (!editableTask || !isCurrentUser(this.user, editableTask.assignee, false)) return false;
+        if (!editableTask) return false;
 
         const updatedTask = {
             id: editableTask.id,
@@ -86,7 +86,7 @@ class TaskCollector {
             status: status ?? editableTask.status,
             priority: priority ?? editableTask.priority,
             isPrivate: isPrivate ?? editableTask.isPrivate,
-            createdAt: editableTask.createdAt,
+            createdAt: new Date(editableTask.createdAt),
             comments: editableTask.comments,
         };
 

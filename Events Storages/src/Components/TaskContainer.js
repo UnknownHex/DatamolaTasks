@@ -67,6 +67,7 @@ class TaskContainer extends BaseElement {
                 styles.onlyicon,
             ],
             icon: styles.icons.iedit,
+            name: 'edit',
         });
 
         const deleteBtn = new Button({
@@ -76,6 +77,7 @@ class TaskContainer extends BaseElement {
                 styles.onlyicon,
             ],
             icon: styles.icons.idelete,
+            name: 'remove',
         });
 
         this.node.classList.add(styles.taskContainer);
@@ -105,13 +107,17 @@ class TaskContainer extends BaseElement {
         taskPanel.appendChild(userInfo.node);
         taskPanel.appendChild(taskActions);
 
-        console.log(this.taskEnt.assignee);
-        console.log(this.taskEnt.author, this.currentUser?.id);
+        // console.log(this.taskEnt.assignee);
+        // console.log(this.taskEnt.author, this.currentUser?.id);
         if (isCurrentUser(this.taskEnt.author, this.currentUser?.id)) {
             taskActions.appendChild(editBtn.node);
             taskActions.appendChild(deleteBtn.node);
         }
 
-        // this.node.addEventListener('click', showTask.bind(this, this.taskEnt.id));
+        taskActions.addEventListener('click', (event) => {
+            event.stopPropagation();
+            event.target.closest('[name="edit"]')
+                && event.target.dispatchEvent(customEvents.showTaskModal.action(this.taskEnt.id));
+        });
     }
 }

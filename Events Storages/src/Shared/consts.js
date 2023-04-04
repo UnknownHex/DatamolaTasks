@@ -19,13 +19,17 @@ const customEvents = {
         caption: 'show-taskfeed',
         action: new CustomEvent('show-taskfeed', { bubbles: true }),
     },
+    editTask: {
+        caption: 'edit-task',
+        action: (taskData) => new CustomEvent('edit-task', { bubbles: true, detail: taskData }),
+    },
     addTask: {
         caption: 'add-task',
         action: (taskData) => new CustomEvent('add-task', { bubbles: true, detail: taskData }),
     },
-    showAddTaskModal: {
+    showTaskModal: {
         caption: 'show-add-task-modal',
-        action: new CustomEvent('show-add-task-modal', { bubbles: true }),
+        action: (id = null) => new CustomEvent('show-add-task-modal', { bubbles: true, detail: id }),
     },
     showModal: {
         caption: 'show-modal',

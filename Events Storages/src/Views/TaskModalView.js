@@ -8,9 +8,9 @@ class TaskModalView extends BaseView {
         this.task = task;
 
         this.taskState = {
-            isPrivate: false,
-            status: taskStatus.toDo,
-            priority: taskPriority.medium,
+            isPrivate: task ? task.isPrivate : false,
+            status: task ? task.status : taskStatus.toDo,
+            priority: task ? task.priority : taskPriority.medium,
         };
 
         this.init();
@@ -31,8 +31,9 @@ class TaskModalView extends BaseView {
 
                 btnGroup.childNodes.forEach((node) => node.classList.remove(styles.active));
                 targetBtn.classList.add(styles.active);
-                const isPrivateName = targetBtn.name === 'isPrivate';
+                const isPrivateName = targetBtn.name === fieldKeys.isPrivate.key;
                 this.taskState[targetBtn.name] = isPrivateName ? !!targetBtn.dataset.data : targetBtn.dataset.data;
+                console.log(this.taskState);
             }
         };
 
@@ -53,9 +54,6 @@ class TaskModalView extends BaseView {
             label: 'Task name',
             isRequired: true,
         });
-        if (this.task?.name) {
-            taskName.value = this.task.name;
-        }
 
         const inpDescription = document.createElement('div');
         inpDescription.classList.add(styles.inp);
@@ -68,7 +66,7 @@ class TaskModalView extends BaseView {
         label.classList.add(styles.inpCaption);
         inpDescription.appendChild(textarea);
         inpDescription.appendChild(label);
-        console.log(this.assignee);
+
         const assignee = new Select({
             avaliableUsers: this.userlist,
             assignee: this.assignee.id,
@@ -145,6 +143,26 @@ class TaskModalView extends BaseView {
             classNames: [styles.primary, styles.btn, styles.filled],
         });
 
+        if (this.task) {
+            const setActiveClass = (btnArray, val) => {
+                btnArray.forEach((btn) => {
+                    btn.node.classList.remove(styles.active);
+                    const btnName = btn.node.name;
+                    const btnValue = btnName === fieldKeys.isPrivate.key
+                        ? !!btn.node.dataset.data
+                        : btn.node.dataset.data;
+                    val === btnValue && btn.node.classList.add(styles.active);
+                });
+            };
+            taskName.input.value = this.task.name;
+            textarea.value = this.task.description;
+            assignee.select.value = this.task.assignee;
+            setActiveClass([publicBtn, privateBtn], this.task.isPrivate);
+            setActiveClass([lowBtn, medBtn, highBtn], this.task.priority);
+            setActiveClass([toDoBtn, inProgBtn, complBtn], this.task.status);
+            submit.node.textContent = 'Edit task';
+        }
+
         const privacyContainer = fieldContainer.cloneNode();
         const privacyName = fieldCaption.cloneNode();
         privacyName.textContent = 'Privacy:';
@@ -181,13 +199,16 @@ class TaskModalView extends BaseView {
         this.addTaskForm.addEventListener('submit', (event) => {
             event.preventDefault();
             const data = {
+                ...this.task,
                 name: taskName,
                 description: textarea,
                 assignee: assignee.select.value,
                 options: this.taskState,
             };
 
-            event.target.dispatchEvent(customEvents.addTask.action(data));
+            this.task
+                ? event.target.dispatchEvent(customEvents.editTask.action(data))
+                : event.target.dispatchEvent(customEvents.addTask.action(data));
         });
 
         closeForm.addEventListener('click', (event) => {

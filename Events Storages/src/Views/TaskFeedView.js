@@ -48,6 +48,10 @@ class TaskFeedView extends BaseView {
 
         this.taskboardWrapper.appendChild(this.taskBoardsFragment);
 
+        this.taskboardWrapper.addEventListener('click', (event) => {
+            console.log(event.target.closest('.task-container'), event);
+        });
+
         this.render(taskFeedFragment);
     }
 

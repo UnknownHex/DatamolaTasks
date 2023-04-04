@@ -42,13 +42,13 @@ class LocalStorage {
     }
 
     static getUser(id) {
-        const [user] = LocalStorage.userCollector.filter((user) => user.id === id);
+        const [user] = LocalStorage.userCollector.filter((userEnt) => userEnt.id === id);
 
         return user || null;
     }
 
     static getTask(id) {
-        const [task] = LocalStorage.taskCollector.filter((user) => task.id === id);
+        const [task] = LocalStorage.taskCollector.filter((taskEnt) => taskEnt.id === id);
 
         return task || null;
     }

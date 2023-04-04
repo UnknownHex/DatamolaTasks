@@ -32,7 +32,7 @@ class ActionBar extends BaseElement {
             caption: 'Add task',
             icon: styles.icons.iaddTask,
             classNames: [styles.btn, styles.primary],
-            onClick: (event) => event.target.dispatchEvent(customEvents.showAddTaskModal.action),
+            onClick: (event) => event.target.dispatchEvent(customEvents.showTaskModal.action()),
         });
         searchGroup.appendChild(searchInp.node);
         searchGroup.appendChild(this.filterBtn.node);

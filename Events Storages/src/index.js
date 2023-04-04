@@ -26,7 +26,16 @@ class App {
     }
 
     test() {
-        
+        // const task = LocalStorage.getTask('e8e24d27-f194-4844-8a5d-aff52fe95e96');
+        // console.log(task);
+        // const blur = this.createBlur();
+        // const taskModalView = new TaskModalView(this.appContainer.id, {
+        //     userlist: this.userCollection.userlist,
+        //     assignee: LocalStorage.getUser(this.userCollection.user),
+        //     task,
+        // });
+
+        // blur.appendChild(taskModalView.addTaskForm);
     }
 
     init() {
@@ -37,6 +46,8 @@ class App {
         this.taskCollection = new TaskCollector(LocalStorage.taskCollector);
         this.userCollection = new UserCollector(LocalStorage.userCollector);
 
+        this.notificationView = new NotificationView(this.appContainer.id);
+
         this.headerView = new HeaderView(this.appContainer.id);
 
         this.mainSection = new MainSection('main-content');
@@ -44,10 +55,13 @@ class App {
 
         this.taskFeedView = new TaskFeedView('main-content');
 
+        if (this.storage.currentUserId) {
+            const user = this.userCollection.get(this.storage.currentUserId);
+            this.setCurrentUser(user || null);
+        }
+
         this.filterView = new FilterView(this.appContainer.id);
         this.taskView = new TaskView(this.appContainer.id);
-
-        this.notificationView = new NotificationView(this.appContainer.id);
 
         this.footer = new FooterView(this.appContainer.id);
 
@@ -56,11 +70,6 @@ class App {
         // this.storage.saveToStore(this.storage.storageKeys.tasklist, fakeTasks);
         // this.storage.saveToStore(this.storage.storageKeys.userlist, fakeUsers);
         this.getFeed(0, this.taskCollection.tasklist.length, this.storage.activeFilters);
-
-        if (this.storage.currentUserId) {
-            const user = this.userCollection.get(this.storage.currentUserId);
-            this.setCurrentUser(user || null);
-        }
     }
 
     initListeners() {
@@ -77,7 +86,24 @@ class App {
         this.appContainer.addEventListener(customEvents.showRegistration.caption, this.showRegistration.bind(this));
         this.appContainer.addEventListener(customEvents.showTaskFeed.caption, this.showTaskFeedPage.bind(this));
         this.appContainer.addEventListener(customEvents.addTask.caption, this.addTaskHandler.bind(this));
-        this.appContainer.addEventListener(customEvents.showAddTaskModal.caption, this.showAddTaskModal.bind(this));
+        this.appContainer.addEventListener(customEvents.editTask.caption, this.editTaskHandler.bind(this));
+        this.appContainer.addEventListener(customEvents.showTaskModal.caption, this.showTaskModal.bind(this));
+    }
+
+    editTaskHandler(event) {
+        this.editTask(
+            event.detail.id,
+            {
+                name: event.detail.name.input.value,
+                description: event.detail.description.value,
+                assignee: event.detail.assignee,
+                status: event.detail.options.status,
+                isPrivate: !!event.detail.options.isPrivate,
+                priority: event.detail.options.priority,
+            },
+        );
+
+        this.storage.setTasklist(this.taskCollection.tasklist);
     }
 
     addTaskHandler(event) {
@@ -85,13 +111,13 @@ class App {
         const data = event.detail;
         const name = data.name.input.value;
         const description = data.description.value;
-        const assignee = data.assignee;
+        const assignee = data?.assignee;
         const { options } = data;
 
         const preTaskInst = {
             name,
             description,
-            assignee: assignee,
+            assignee,
             isPrivate: options.isPrivate,
             priority: options.priority,
             status: options.status,
@@ -327,7 +353,7 @@ class App {
                 type: notiflyVariants.warnNoty,
                 message: notiflyMessages.warn.login,
             });
-            return null;
+            return;
         }
         console.log('In storage:', this.storage.activeFilters);
         this.filterView.display({
@@ -344,18 +370,23 @@ class App {
         const registrationView = new RegistrationView('main-content');
     }
 
-    showAddTaskModal() {
+    showTaskModal(event) {
         if (!this.storage.currentUserId) {
             NotificationView.createNotifly({
                 type: notiflyVariants.warnNoty,
                 message: notiflyMessages.warn.login,
             });
-            return null;
+            return;
         }
+        const id = event.detail;
+        console.log(id, event.detail);
+        const task = id ? LocalStorage.getTask(id) : null;
+        console.log(task);
         const blur = this.createBlur();
         const taskModalView = new TaskModalView(this.appContainer.id, {
             userlist: this.userCollection.userlist,
             assignee: LocalStorage.getUser(this.userCollection.user),
+            task,
         });
 
         blur.appendChild(taskModalView.addTaskForm);
@@ -374,7 +405,7 @@ class App {
                 tasklist: this.taskCollection.tasklist,
                 currentUser: LocalStorage.getUser(this.userCollection.user),
             });
-            
+
             this.storage.setToDefaults();
             this.storage.saveFilterOptions();
 
@@ -456,13 +487,13 @@ class App {
         if (isEdited) {
             this.showTaskFeedPage({
                 tasklist: this.taskCollection.tasklist,
-                currentUser: this.taskCollection.user,
+                currentUser: this.getCurrentUser(),
                 activeFilters: this.storage.activeFilters,
             });
 
-            this.NotificationView.createNotifly({
+            NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
-                message: notiflyMessages.success.taskUpdated(id, this.taskCollection.user),
+                message: notiflyMessages.success.taskUpdated(id, LocalStorage.getUser(this.userCollection.user).name),
             });
         }
     }
