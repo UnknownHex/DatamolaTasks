@@ -65,7 +65,6 @@ class App {
         }
 
         this.filterView = new FilterView(this.appContainer.id);
-        this.taskView = new TaskView('main-content');
 
         this.footer = new FooterView(this.appContainer.id);
 
@@ -73,7 +72,7 @@ class App {
         //
         // this.storage.saveToStore(this.storage.storageKeys.tasklist, fakeTasks);
         // this.storage.saveToStore(this.storage.storageKeys.userlist, fakeUsers);
-        this.getFeed(0, this.taskCollection.tasklist.length, this.storage.activeFilters);
+        this.showTaskFeedPage();
     }
 
     initListeners() {
@@ -121,7 +120,8 @@ class App {
                 message: notiflyMessages.warn.requiredRegistration,
             });
             return;
-        };
+        }
+
         const task = LocalStorage.getTask(event.detail);
 
         this.showTaskPage(task, this.getCurrentUser());
@@ -266,6 +266,7 @@ class App {
 
     logoutUser() {
         this.setCurrentUser(null);
+        this.storage.setToDefaults();
     }
 
     cancelFilterParam({ target }) {
@@ -295,7 +296,7 @@ class App {
             break;
         }
 
-        this.getFeed(0, 10, this.storage.activeFilters);
+        this.showTaskFeedPage();
     }
 
     changeInputParams(e) {
@@ -348,30 +349,34 @@ class App {
     clearFilters() {
         this.storage.setToDefaults();
         this.storage.saveStoredData();
+
         this.filterView.display({
             avaliableUsers: this.userCollection.userlist,
             filterOpt: this.storage.activeFilters,
         });
+        // this.showTaskFeedPage();
     }
 
     confirmFilters() {
-        console.log(this.storage.activeFilters);
-        this.getFeed(0, 10, this.storage.activeFilters);
+        this.showTaskFeedPage();
     }
 
-    showTaskFeedPage({ tasklist, currentUser, activeFilters }) {
+    showTaskFeedPage() {
+        const tasks = this.getFeed(0, 10, this.storage.activeFilters);
         this.mainSection.clear();
         this.taskFeedView.display({
-            tasklist,
-            currentUser,
-            filterOpt: activeFilters,
+            tasklist: tasks,
+            currentUser: this.getCurrentUser(),
+            filterOpt: this.storage.activeFilters,
             isTableView: this.state.isTableView,
         });
     }
 
     showTaskPage(task, currentUser) {
         this.mainSection.clear();
-        this.taskView.display({
+
+        const taskView = new TaskView('main-content');
+        taskView.display({
             task,
             currentUser,
         });
@@ -386,10 +391,13 @@ class App {
             return;
         }
 
-        this.filterView.display({
+        const blur = this.createBlur();
+        const filter = this.filterView.display({
             filterOpt: this.storage.activeFilters,
             avaliableUsers: this.userCollection.userlist,
         });
+
+        blur.appendChild(filter);
 
         // console.log(this.storage.filterOptions);
         // console.log(this.storage.activeFilters);
@@ -428,13 +436,8 @@ class App {
             this.storage.setCurrentUser(user);
 
             this.headerView.display(user);
-            this.showTaskFeedPage({
-                tasklist: this.taskCollection.tasklist,
-                currentUser: this.getCurrentUser(),
-                isTableView: this.state.isTableView,
-            });
+            this.showTaskFeedPage();
 
-            this.storage.setToDefaults();
             this.storage.saveFilterOptions();
 
             this.userCollection.user
@@ -482,12 +485,7 @@ class App {
         );
 
         if (isAdded) {
-            this.showTaskFeedPage({
-                tasklist: this.taskCollection.tasklist,
-                currentUser,
-                activeFilters: this.storage.activeFilters,
-                isTableView: this.state.isTableView,
-            });
+            this.showTaskFeedPage();
 
             NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
@@ -508,12 +506,7 @@ class App {
         );
 
         if (isEdited) {
-            this.showTaskFeedPage({
-                tasklist: this.taskCollection.tasklist,
-                currentUser: this.getCurrentUser(),
-                activeFilters: this.storage.activeFilters,
-                isTableView: this.state.isTableView,
-            });
+            this.showTaskFeedPage();
 
             NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
@@ -526,12 +519,7 @@ class App {
         const isRemoved = this.taskCollection.remove(id);
 
         if (isRemoved) {
-            this.showTaskFeedPage({
-                tasklist: this.taskCollection.tasklist,
-                currentUser: this.getCurrentUser(),
-                activeFilters: this.storage.activeFilters,
-                isTableView: this.state.isTableView,
-            });
+            this.showTaskFeedPage();
 
             NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
@@ -543,12 +531,7 @@ class App {
     getFeed(skip, top, filterConfig) {
         const filteredTasks = this.taskCollection.getPage(skip, top, filterConfig);
 
-        this.showTaskFeedPage({
-            tasklist: filteredTasks,
-            currentUser: this.getCurrentUser(),
-            activeFilters: this.storage.activeFilters,
-            isTableView: this.state.isTableView,
-        });
+        return filteredTasks;
         // console.log(filteredTasks); // Need only for testlog in console!
     }
 

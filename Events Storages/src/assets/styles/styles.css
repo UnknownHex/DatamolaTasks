@@ -1293,21 +1293,14 @@ input:checked + .slider:after {
     gap: 1.5rem;
 }
 
-.app-caption {
+.app-caption,
+.caption {
     font-size: 1.6rem;
     font-weight: 700;
 }
 
 .version {
     font-size: .7rem;
-}
-
-.contact {
-    font-weight: 600;
-    padding: 16px 0 0 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
 }
 
 .contact {
@@ -1335,15 +1328,15 @@ input:checked + .slider:after {
     mask: url("./src/assets/icons/mailto.svg") center center/cover no-repeat;
     -webkit-mask: url("../icons/mailto.svg") center center/cover no-repeat;
     background-color: var(--dark);
-    width: 41px;
-    height: 41px;
+    width: 1.4rem;
+    height: 1.4rem;
     margin: 0 10px;
     transition: var(--transition-all-in);
 }
 
 .copyright p {
     font-size: .9rem;
-    margin: 4px;
+    margin: 0 0 4px 0;
 }
 
 

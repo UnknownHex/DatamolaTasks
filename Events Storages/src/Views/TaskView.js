@@ -3,12 +3,14 @@ class TaskView extends BaseView {
         super(containerId);
 
         this.container = new Container();
-        this.taskViewFragmen = document.createDocumentFragment();
 
         this.comments = [];
     }
 
     init(task, currentUser) {
+        const taskViewFragmen = document.createDocumentFragment();
+        this.container.innerHTML = '';
+
         this.task = task;
         const assigneeInfo = new UserData({
             user: task.assignee,
@@ -52,23 +54,26 @@ class TaskView extends BaseView {
         `;
 
         spoiler.addEventListener('click', (event) => {
-            console.log('sdfsdf');
             if (event.target.closest(`.${styles.spoiler}`)) {
                 event.target.closest(`.${styles.spoiler}`).classList.toggle(styles.hide);
             }
         });
 
-                // <div class="${styles.spoiler}">
-                //     <div class="${styles.taskHeader}">
-                //         Comments
-                //         ${taskComments.outerHTML}
-                //     </div>
-                //     <span class="${styles.ico} ${styles.icons.iexpand}"></span>
-                // </div>
-
         this.commentsSection = document.createElement('div');
         this.commentsSection.classList.add(styles.commentsSection);
         this.commentsSection.innerHTML = this.showComments({ comments: task.comments });
+
+        const commentToTask = document.createElement('div');
+        commentToTask.classList.add(styles.inp);
+        commentToTask.classList.add(styles.textarea);
+        const textarea = document.createElement('textarea');
+        textarea.required = true;
+        textarea.name = 'comment';
+        const label = document.createElement('label');
+        label.textContent = 'Your comment...';
+        label.classList.add(styles.inpCaption);
+        commentToTask.appendChild(textarea);
+        commentToTask.appendChild(label);
 
         const addCommentBtn = new Button({
             caption: 'Add comment',
@@ -84,18 +89,6 @@ class TaskView extends BaseView {
             },
         });
 
-        const commentToTask = document.createElement('div');
-        commentToTask.classList.add(styles.inp);
-        commentToTask.classList.add(styles.textarea);
-        const textarea = document.createElement('textarea');
-        textarea.required = true;
-        textarea.name = 'comment';
-        const label = document.createElement('label');
-        label.textContent = 'Your comment...';
-        label.classList.add(styles.inpCaption);
-        commentToTask.appendChild(textarea);
-        commentToTask.appendChild(label);
-
         const addCommentBlock = document.createElement('div');
         addCommentBlock.classList.add('add-comment-block');
         const commentData = document.createElement('div');
@@ -105,24 +98,6 @@ class TaskView extends BaseView {
 
         addCommentBlock.appendChild(commentData);
         addCommentBlock.appendChild(commentToTask);
-        // `
-        //     <div class="add-comment-block">
-        //         // <div class="comment-data">
-
-        //         //     ${userinfo.outerHTML}
-
-        //         // // <button type="button" class="btn primary">
-        //         // //     <span class="btn-caption">Add comment</span>
-        //         // //     <span class="ico icomment"></span>
-        //         // // </button>
-
-        //         // </div>
-                
-        //         // <div class="inp textarea"> 
-        //         //     <textarea required></textarea>
-        //         //     <label class="inp-caption">You comment...</label>
-        //         // </div>
-        // </div>`;
 
         const commentsContainer = document.createElement('div');
         commentsContainer.classList.add(styles.commentsContainer);
@@ -130,48 +105,66 @@ class TaskView extends BaseView {
         commentsContainer.appendChild(this.commentsSection);
         commentsContainer.appendChild(addCommentBlock);
 
-        this.container.node.innerHTML = `
-            <div class="${styles.fullInfo}">
+        const wrapperShInfo = document.createElement('div');
+        wrapperShInfo.classList.add(styles.wrapperShortInfo);
 
-                <div class="${styles.wrapperShortInfo}">
-                    <div class="${styles.todoType}">${task.status}</div>
- 
-                    ${taskInfo.outerHTML}
-                    ${assigneeInfo.outerHTML}
+        const taskStatus = document.createElement('div');
+        taskStatus.classList.add(styles.todoType);
+        taskStatus.textContent = task.status;
 
-                    ${isCurrentUser(task.assignee, currentUser.id) ? `
-                        <div class="${styles.taskActions}">
-                            <button type="button" class="btn secondary onlyicon">
-                                <span class="ico idelete"></span>
-                            </button>
-                            <button type="button" class="btn primary">
-                                <span class="btn-caption">Edit</span><span class="ico iedit">
-                                </span>
-                            </button>
-                        </div>
-                    ` : `
-                        <div class="${styles.taskActions}">
-                        </div>
-                    `}
-                    
-                </div>
+        wrapperShInfo.appendChild(taskStatus);
+        wrapperShInfo.appendChild(taskInfo.node);
+        wrapperShInfo.appendChild(assigneeInfo.node);
 
-                <div class="${styles.textInfo}">
-                    <span class="${styles.taskTitle}">${task.name}</span>
-                    <span class="${styles.taskDescription}">${task.description}</span>
-                </div>
+        const editBtn = new Button({
+            caption: 'edit',
+            classNames: [
+                styles.btn,
+                styles.primary,
+            ],
+            icon: styles.icons.iedit,
+            name: 'edit',
+        });
 
-            </div>
+        const deleteBtn = new Button({
+            classNames: [
+                styles.btn,
+                styles.secondary,
+                styles.onlyicon,
+            ],
+            icon: styles.icons.idelete,
+            name: 'remove',
+        });
+
+        const textInfo = document.createElement('div');
+        textInfo.classList.add(styles.textInfo);
+        textInfo.innerHTML = `
+                <span class="${styles.taskTitle}">${task.name}</span>
+                <span class="${styles.taskDescription}">${task.description}</span>
         `;
 
-        this.container.node.prepend(brBar);
+        const fullInfo = document.createElement('div');
+        fullInfo.classList.add(styles.fullInfo);
+        fullInfo.appendChild(wrapperShInfo);
+        fullInfo.appendChild(textInfo);
+
+        const taskActions = document.createElement('div');
+        taskActions.classList.add(styles.taskActions);
+        if (isCurrentUser(task.author, currentUser.id)) {
+            taskActions.appendChild(editBtn.node);
+            taskActions.appendChild(deleteBtn.node);
+        }
+
+        wrapperShInfo.appendChild(taskActions);
+
+        this.container.node.appendChild(brBar);
+        this.container.node.appendChild(fullInfo);
         this.container.node.appendChild(commentsContainer);
 
-        this.taskViewFragmen.appendChild(this.container.node);
-        this.render(this.taskViewFragmen);
+        taskViewFragmen.appendChild(this.container.node);
+        this.render(taskViewFragmen);
     }
 
-    // eslint-disable-next-line class-methods-use-this
     showComments({ comments }) {
         if (comments.length < 1) return '';
         this.comments = comments.map((comment) => {
@@ -197,27 +190,6 @@ class TaskView extends BaseView {
 
     display({ task, currentUser }) {
         this.init(task, currentUser);
-    }
-
-    drawComment(commentEnt) {
-        const userinfo = new UserData({
-            isInfo: true,
-            createdAt: commentEnt.createdAt,
-            user: commentEnt.author,
-            avatara: LocalStorage.getUser(commentEnt.author).img,
-        });
-
-        const comment = document.createElement('article');
-        const commentText = document.createElement('div');
-        commentText.classList.add(styles.commentText);
-        commentText.textContent = commentEnt.text;
-        comment.classList.add(styles.userComment);
-        comment.appendChild(userinfo.node);
-        comment.appendChild(commentText);
-
-
-        this.comments = [...this.comments, comment];
-        console.log(this.comments);
     }
 
     clear() {

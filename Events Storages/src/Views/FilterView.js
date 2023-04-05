@@ -4,13 +4,13 @@ class FilterView extends BaseView {
 
         this.filterFragment = document.createDocumentFragment();
         this.filter = document.createElement('form');
-        this.blur = new Blur();
+        // this.blur = new Blur();
     }
 
-    clear() {
-        this.filter.remove();
-        this.blur.node.remove();
-    }
+    // clear() {
+    //     this.filter.remove();
+    //     this.blur.node.remove();
+    // }
 
     display({ filterOpt, avaliableUsers }) {
         if (!filterOpt || !avaliableUsers) {
@@ -24,7 +24,7 @@ class FilterView extends BaseView {
             return;
         }
 
-        this.clear();
+        // this.clear();
 
         const {
             assignee,
@@ -37,7 +37,7 @@ class FilterView extends BaseView {
 
         const activeStyle = (list, param) => (list?.includes(param) ? styles.active : 'off');
 
-        this.blur = new Blur();
+        // this.blur = new Blur();
         this.filter = document.createElement('form');
         const selectInp = new Select({
             avaliableUsers,
@@ -184,7 +184,10 @@ class FilterView extends BaseView {
         closeForm.classList.add(styles.close);
         formCaption.textContent = 'Task filter';
 
-        closeForm.addEventListener('click', this.clear.bind(this));
+        // closeForm.addEventListener('click', this.clear.bind(this));
+        closeForm.addEventListener('click', (event) => {
+            event.target.dispatchEvent(customEvents.closeModal.action);
+        });
 
         this.filter.classList.add(styles.taskFilter);
 
@@ -199,8 +202,10 @@ class FilterView extends BaseView {
         this.filter.appendChild(actionContainer);
 
         // this.filterFragment.appendChild(this.filter);
-        this.blur.node.appendChild(this.filter);
-        this.filterFragment.appendChild(this.blur.node);
+        // this.blur.node.appendChild(this.filter);
+        // this.filterFragment.appendChild(this.blur.node);
+
+        this.filterFragment.appendChild(this.filter);
 
         this.filter.addEventListener('click', (e) => {
             if (e.target.closest('button[name]')) {
@@ -210,7 +215,9 @@ class FilterView extends BaseView {
             }
         });
 
-        this.render(this.filterFragment);
+        // eslint-disable-next-line consistent-return
+        return this.filterFragment;
+        // this.render(this.filterFragment);
         // parentNode.appendChild(this.filter);
     }
 }

@@ -23,7 +23,7 @@ class UserData extends BaseElement {
         createdAt,
     }) {
         super();
-        console.log(user);
+
         this.user = LocalStorage.getUser(user);
         this.isInfo = !!isInfo;
         this.createdAt = createdAt;

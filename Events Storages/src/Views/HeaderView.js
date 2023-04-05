@@ -50,7 +50,6 @@ class HeaderView extends BaseView {
     }
 
     display(params) {
-        console.log(params);
         this.userPanel.update(params);
     }
 }
