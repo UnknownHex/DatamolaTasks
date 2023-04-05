@@ -113,9 +113,7 @@ class TaskFeedView extends BaseView {
     }
 
     changeView(isTableView) {
-        this.isTableView = isTableView;
-
-        if (this.isTableView) {
+        if (isTableView) {
             this.taskboardWrapper.classList.add(styles.asTable);
         } else {
             this.taskboardWrapper.classList.remove(styles.asTable);

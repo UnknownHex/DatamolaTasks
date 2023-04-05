@@ -38,6 +38,60 @@ class TaskView extends BaseView {
             event.target.dispatchEvent(customEvents.showTaskFeed.action);
         });
 
+        const spoiler = document.createElement('div');
+        spoiler.classList.add(styles.spoiler);
+        spoiler.innerHTML = `
+            <div class="${styles.taskHeader}">
+                Comments
+                ${taskComments.outerHTML}
+            </div>
+            <span class="${styles.ico} ${styles.icons.iexpand}"></span>
+        `;
+
+        spoiler.addEventListener('click', (event) => {
+            console.log('sdfsdf');
+            if (event.target.closest(`.${styles.spoiler}`)) {
+                event.target.closest(`.${styles.spoiler}`).classList.toggle(styles.hide);
+            }
+        });
+
+                // <div class="${styles.spoiler}">
+                //     <div class="${styles.taskHeader}">
+                //         Comments
+                //         ${taskComments.outerHTML}
+                //     </div>
+                //     <span class="${styles.ico} ${styles.icons.iexpand}"></span>
+                // </div>
+
+        const commentsSection = document.createElement('div');
+        commentsSection.classList.add(styles.commentsSection);
+        commentsSection.innerHTML = this.showComments({ comments: task.comments });
+
+        const addCommentBlock = `
+            <div class="add-comment-block">
+                <div class="comment-data">
+
+                    ${userinfo.outerHTML}
+
+                    <button type="button" class="btn primary">
+                        <span class="btn-caption">Add comment</span>
+                        <span class="ico icomment"></span>
+                    </button>
+
+                </div>
+                
+                <div class="inp textarea"> 
+                    <textarea required></textarea>
+                    <label class="inp-caption">You comment...</label>
+                </div>
+            </div>`;
+
+        const commentsContainer = document.createElement('div');
+        commentsContainer.classList.add(styles.commentsContainer);
+        commentsContainer.appendChild(spoiler);
+        commentsContainer.appendChild(commentsSection);
+        // commentsContainer.innerHTML += addCommentBlock;
+
         this.container.node.innerHTML = `
             <div class="${styles.fullInfo}">
 
@@ -70,44 +124,10 @@ class TaskView extends BaseView {
                 </div>
 
             </div>
-
-            <div class="${styles.commentsContainer}">
-                <div class="${styles.spoiler}">
-                    <div class="${styles.taskHeader}">
-                        Comments
-                        ${taskComments.outerHTML}
-                    </div>
-                    <span class="${styles.ico} ${styles.icons.iexpand}"></span>
-                </div>
-
-                <div class="${styles.commentsSection}">
-                    ${this.showComments({ comments: task.comments })}
-                </div>
-
-        ${currentUser
-        ? `<div class="add-comment-block">
-                    <div class="comment-data">
-
-                        ${userinfo.outerHTML}
-
-                        <button type="button" class="btn primary">
-                            <span class="btn-caption">Add comment</span>
-                            <span class="ico icomment"></span>
-                        </button>
-
-                    </div>
-                    
-                    <div class="inp textarea"> 
-                        <textarea required></textarea>
-                        <label class="inp-caption">You comment...</label>
-                    </div>
-                </div>`
-        : ''}
-
-            </div>
         `;
 
         this.container.node.prepend(brBar);
+        this.container.node.appendChild(commentsContainer);
 
         this.taskViewFragmen.appendChild(this.container.node);
         this.render(this.taskViewFragmen);
@@ -118,7 +138,6 @@ class TaskView extends BaseView {
         if (comments.length < 1) return '';
 
         return comments.map((comment) => {
-            // const [avatara] = fakeUsers.filter((user) => (comment.author === user.name));
             const userinfo = new UserData({
                 isInfo: true,
                 createdAt: comment.createdAt,

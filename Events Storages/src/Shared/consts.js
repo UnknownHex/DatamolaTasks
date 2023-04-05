@@ -7,6 +7,14 @@ const consts = {
 const STANDARD_IMG = './assets/icons/avatar.svg';
 
 const customEvents = {
+    addComment: {
+        caption: 'add-comment-to-task',
+        action: (data) => new CustomEvent('add-comment-to-task', { bubbles: true, detail: { data } }),
+    },
+    changeTaskfeedView: {
+        caption: 'change-taskfeed-view',
+        action: new CustomEvent('change-taskfeed-view', { bubbles: true }),
+    },
     closeModal: {
         caption: 'close-modal',
         action: new CustomEvent('close-modal', { bubbles: true }),
@@ -144,6 +152,7 @@ const notiflyMessages = {
     },
     warn: {
         login: 'Log in to your account before using the service!',
+        requiredRegistration: 'Registration is required to view tasks!',
     },
     err: {
         wrongLogin: 'Wrong login or password...',

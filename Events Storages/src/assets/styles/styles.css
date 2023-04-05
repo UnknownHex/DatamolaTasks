@@ -42,7 +42,7 @@ html {
     font-family: "Ubuntu", sans-serif;
     font-size: 16px;
     color: var(--dark);
-    min-height: 100vh;
+    height: 100%;
 }
 
 body, div, span, input {
@@ -54,7 +54,7 @@ body, div, span, input {
 body {
     display: flex;
     flex-direction: column;
-    min-height: 100vh;
+    height: 100%;
 }
 
 main {
@@ -67,6 +67,12 @@ span.ico {
     margin: 0 0 0 10px;
     top: 0;
     right: 0;
+}
+
+#mount-point {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .container {
@@ -791,6 +797,16 @@ input:checked + .slider:after {
     display: none;
 }
 
+.spoiler.hide .iexpand {
+    transform: rotate(0deg);
+}
+
+.hide + .comments-section {
+    height: 0;
+    overflow: hidden;
+    visibility: hidden;
+}
+
 .notifly {
     padding: 10px 20px;
     display: flex;
@@ -881,6 +897,16 @@ input:checked + .slider:after {
 /* TEMPLATES */
 /* ////////////////////////////////////////////////////// */
 /* TASK_CARD */
+
+.out {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 310px;
+    transform: translate(-50%, -50%);
+    transition: var(--transition-all-in);
+    z-index: 103;
+}
 
 .task-container {
     display: block;
@@ -1489,7 +1515,7 @@ input:checked + .slider:after {
     font-weight: 600;
     color: var(--primary);
     background-color: var(--disabled);
-    padding: 10px 40px;
+    padding: 5px 40px;
     border-radius: 8px;
     cursor: pointer;
 }
@@ -1500,6 +1526,7 @@ input:checked + .slider:after {
     background-color: var(--primary700);
     pointer-events: none;
     align-self: baseline;
+    transform: rotate(180deg);
 }
 
 .comments-header {
@@ -1560,7 +1587,7 @@ input:checked + .slider:after {
     justify-content: space-between;
     gap: 20px;
     width: 100%;
-    height: calc(100vh - 48px - 82px - 22px);
+    /* height: calc(100vh - 48px - 82px - 22px); */
     /* height: 50vh; */
     padding: 10px 0 0 0;
     /* overflow: hidden; */
@@ -1578,6 +1605,7 @@ input:checked + .slider:after {
     display: flex;
     flex-direction: column;
     justify-content: start;
+    height: calc(100vh - 48px - 82px - 22px);
     border-radius: 8px;
     border: 1px solid var(--white);
     box-shadow: var(--basic-shadow) var(--primary300);
@@ -1641,6 +1669,11 @@ input:checked + .slider:after {
 
 .as-table .taskboard {
     border-radius: 0;
+    height: 100%;
+}
+
+.as-table .taskboard-content {
+    gap: .1rem;
 }
 
 .as-table .taskboard .taskboard-header {
@@ -1959,6 +1992,7 @@ input:checked + .slider:after {
 
     .taskboard {
         flex: 0 1 100%;
+        height: auto;
     }
 
 /* user-page */

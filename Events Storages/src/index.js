@@ -1,5 +1,9 @@
 class App {
     constructor() {
+        this.state = {
+            isTableView: false,
+        };
+
         this.init();
         this.initListeners();
 
@@ -90,9 +94,22 @@ class App {
         this.appContainer.addEventListener(customEvents.showTaskModal.caption, this.showTaskModal.bind(this));
         this.appContainer.addEventListener(customEvents.deleteTask.caption, this.deleteTaskHandler.bind(this));
         this.appContainer.addEventListener(customEvents.showTaskPage.caption, this.openTaskPage.bind(this));
+        this.appContainer.addEventListener(customEvents.changeTaskfeedView.caption, this.changeView.bind(this));
+    }
+
+    changeView() {
+        this.state.isTableView = !this.state.isTableView;
+        this.taskFeedView.changeView(this.state.isTableView);
     }
 
     openTaskPage(event) {
+        if (!this.userCollection.user) {
+            NotificationView.createNotifly({
+                type: notiflyVariants.warnNoty,
+                message: notiflyMessages.warn.requiredRegistration,
+            });
+            return;
+        };
         const task = LocalStorage.getTask(event.detail);
 
         this.showTaskPage(task, this.getCurrentUser());
@@ -336,6 +353,7 @@ class App {
             tasklist,
             currentUser,
             filterOpt: activeFilters,
+            isTableView: this.state.isTableView,
         });
     }
 
@@ -401,6 +419,7 @@ class App {
             this.showTaskFeedPage({
                 tasklist: this.taskCollection.tasklist,
                 currentUser: this.getCurrentUser(),
+                isTableView: this.state.isTableView,
             });
 
             this.storage.setToDefaults();
@@ -455,6 +474,7 @@ class App {
                 tasklist: this.taskCollection.tasklist,
                 currentUser,
                 activeFilters: this.storage.activeFilters,
+                isTableView: this.state.isTableView,
             });
 
             NotificationView.createNotifly({
@@ -480,6 +500,7 @@ class App {
                 tasklist: this.taskCollection.tasklist,
                 currentUser: this.getCurrentUser(),
                 activeFilters: this.storage.activeFilters,
+                isTableView: this.state.isTableView,
             });
 
             NotificationView.createNotifly({
@@ -497,6 +518,7 @@ class App {
                 tasklist: this.taskCollection.tasklist,
                 currentUser: this.getCurrentUser(),
                 activeFilters: this.storage.activeFilters,
+                isTableView: this.state.isTableView,
             });
 
             NotificationView.createNotifly({
@@ -513,6 +535,7 @@ class App {
             tasklist: filteredTasks,
             currentUser: this.getCurrentUser(),
             activeFilters: this.storage.activeFilters,
+            isTableView: this.state.isTableView,
         });
         // console.log(filteredTasks); // Need only for testlog in console!
     }

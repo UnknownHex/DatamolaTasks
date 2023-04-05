@@ -60,17 +60,28 @@ class ActionBar extends BaseElement {
         const tableViewBtn = new Button({
             icon: styles.icons.iviewVertical,
             classNames: [styles.btn, styles.primary, styles.onlyicon, styles.active],
-            name: 'table',
+            name: 'table-view',
         });
         const cardViewBtn = new Button({
             icon: styles.icons.iviewHorizontal,
             classNames: [styles.btn, styles.primary, styles.onlyicon],
-            name: 'card',
+            name: 'card-view',
         });
 
         actionGroup.appendChild(langBtnGroup.node);
         actionGroup.appendChild(tableViewBtn.node);
         actionGroup.appendChild(cardViewBtn.node);
+
+        actionGroup.addEventListener('click', (event) => {
+            if (event.target.closest('[name="card-view"]')
+                || event.target.closest('[name="table-view"]')) {
+                event.target.closest(`.${styles.barGroup}`).childNodes.forEach((child) => {
+                    child.classList.remove(styles.active);
+                });
+                event.target.closest(`.${styles.btn}`).classList.add(styles.active);
+                event.target.dispatchEvent(customEvents.changeTaskfeedView.action);
+            };
+        });
 
         this.node.appendChild(this.fragment);
     }

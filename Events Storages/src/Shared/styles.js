@@ -103,6 +103,7 @@ const styles = {
 
     notificationBox: 'notification-box',
     hidden: 'hidden',
+    hide: 'hide',
     notifly: 'notifly',
     errNoti: 'err-noti',
     warnNoti: 'warn-noti',
