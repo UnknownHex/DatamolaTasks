@@ -114,18 +114,18 @@ class TaskCollector {
         return true;
     }
 
-    addComment(id, text) {
+    addComment(id, text, author) {
         const task = this.get(id);
 
         if (!task) return false;
 
-        const commentObj = new Comment(text, this.user);
+        const commentObj = new Comment(text, author);
 
         const verified = Comment.validate(commentObj);
         const isValid = checkAppropriate(verified);
 
         if (isValid) {
-            task.comments = [...task.comments, commentObj];
+            task.comments = [...task.comments, commentObj.info];
         }
 
         return isValid;

@@ -13,6 +13,15 @@ class Comment {
         this.#text = text;
     }
 
+    get info() {
+        return {
+            id: this.#id,
+            createdAt: this.#createdAt,
+            author: this.#author,
+            text: this.#text,
+        }
+    }
+
     get id() {
         return this.#id;
     }

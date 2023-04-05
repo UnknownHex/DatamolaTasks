@@ -95,6 +95,18 @@ class App {
         this.appContainer.addEventListener(customEvents.deleteTask.caption, this.deleteTaskHandler.bind(this));
         this.appContainer.addEventListener(customEvents.showTaskPage.caption, this.openTaskPage.bind(this));
         this.appContainer.addEventListener(customEvents.changeTaskfeedView.caption, this.changeView.bind(this));
+        this.appContainer.addEventListener(customEvents.addComment.caption, this.addCommentHandler.bind(this));
+    }
+
+    addCommentHandler(event) {
+        const { text, taskId } = event.detail.data;
+
+        this.taskCollection.addComment(taskId, text, this.getCurrentUser().id);
+
+        this.storage.setTasklist(this.taskCollection.tasklist);
+
+        const task = LocalStorage.getTask(taskId);
+        this.showTaskPage(task, this.getCurrentUser());
     }
 
     changeView() {
