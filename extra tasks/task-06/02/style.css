@@ -1,0 +1,151 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: sans-serif;
+}
+
+body {
+    background-color: #888;
+}
+
+#tic-tac-toe {
+    display: grid;
+    padding: 1.5rem;
+    grid-template-columns: 1fr 1fr 1fr;
+    max-width: 20rem;
+    margin: 2rem auto;
+    border: .6rem solid #aaa;
+    background: #eee;
+    border-radius: .5rem;
+}
+
+.panel {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.cell {
+    position: relative;
+    padding: 2rem;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
+.cell:nth-child(3n+2) {
+    border-right: .2rem solid #888;
+    border-left: .2rem solid #888;
+}
+
+.cell:nth-child(4),
+.cell:nth-child(6) {
+    border-bottom: .2rem solid #888;
+    border-top: .2rem solid #888;
+}
+
+.cell:nth-child(5) {
+    border: .2rem solid #888;
+}
+
+.drop::before {
+    animation: dropChar .3s ease-in-out forwards !important;
+}
+
+.cross,
+.nought {
+    pointer-events: none;
+}
+
+.cross::before {
+    position: absolute;
+    content: "X";
+    color: #4185df;
+}
+
+.nought::before {
+    position: absolute;
+    content: "O";
+    color: #ffd61d;
+
+}
+
+.cross::before,
+.nought::before {
+    top: 50%;
+    right: 50%;
+    transform: translate(50%, -50%);
+    text-shadow: 0 0 2px #555;
+    animation: flyChar .2s ease;
+}
+
+.cell-numb::after {
+    content: attr(data-numb);
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    font-size: .5rem;
+    font-weight: 500;
+    opacity: .6;
+}
+
+.negame {
+    margin: auto;
+    padding: 20px;
+    border: 0;
+    font-weight: 600;
+    text-transform: uppercase;
+    box-shadow: 1px 1px 4px #333;
+    cursor: pointer;
+    transition: all .2s linear;
+}
+
+.negame:hover {
+    box-shadow: 1px 2px 6px #333;
+    transition: all .2s linear;
+}
+
+.negame:active {
+    box-shadow: 0px 0px 4px #333;
+    transition: all .2s linear;
+}
+
+.info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.info.cross::before,
+.info.nought::before {
+    position: static;
+    top: 1rem;
+    right: 0;
+    font-size: 4rem;
+    transform: translate(0);
+    animation: none;
+}
+
+@keyframes flyChar {
+    from {
+        transform: translate(0%, 50%) rotate(16deg);
+        opacity: .6;
+    }
+    to {
+        transform: translate(50%, -50%) rotate(0);
+        opacity: 1#333;
+    }
+}
+
+@keyframes dropChar {
+    from {
+        transform: translate(50%, -50%) rotate(0);
+    }
+    to {
+        transform: translate(2rem, 3rem) rotate(250deg);
+        opacity: .4;
+    }
+}
