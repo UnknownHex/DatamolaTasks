@@ -26,7 +26,7 @@ class UserPanel extends BaseElement {
         if (this.user) {
             const userPanelFragment = document.createDocumentFragment();
             const notification = document.createElement('div');
-            const userData = new UserData({ user: this.user.id });
+            const userData = new UserData({ user: this.user });
             const logoutBtn = new Button({
                 caption: 'logout',
                 classNames: [styles.btn, styles.primary],

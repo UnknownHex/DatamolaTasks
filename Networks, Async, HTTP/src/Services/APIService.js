@@ -7,30 +7,34 @@ class APIService {
 
     async #request(urn, opt) {
         const path = `${this.host}${urn}`;
+        const headers = new Headers();
+
+        headers.append('Content-Type', 'application/json');
+        headers.append('Access-Control-Allow-Origin', '*');
+        headers.append('Access-Control-Allow-Credentials', 'true');
+        this.token && headers.append('Authorization', `Bearer ${this.token}`);
 
         const options = {
-            headers: {
-                ...opt.headers,
-                'Content-Type': 'application/json',
-                'Access-Control-Allow-Origin': '*',
-                'Access-Control-Allow-Credentials': 'true',
-            },
+            ...opt,
+            headers,
         };
+
+        console.log(options);
 
         const response = await fetch(path, options);
         const json = await response.json();
 
         const data = {
             json,
+            ok: response.ok,
             status: response.status,
+            statusText: response.statusText,
         };
-
         console.log(data);
-
         return data;
     }
 
-    register(params) {
+    async register(params) {
         // const {
         //     login,
         //     userName,
@@ -44,7 +48,7 @@ class APIService {
             body: JSON.stringify(params),
         };
         try {
-            return this.#request(urn, opt);
+            return await this.#request(urn, opt);
         } catch (err) {
             console.warn(err);
         }
@@ -55,30 +59,30 @@ class APIService {
 
         try {
             const response = await this.#request(urn);
+            console.log(response.json);
+            if (response.ok) {
+                LocalStorage.updateTmpUsers(response.json);
+            }
+
             return response;
         } catch (err) {
             console.warn(err);
         }
     }
 
-    test() {
-        const myHeaders = new Headers();
-        myHeaders.append('Content-Type', 'application/json');
-
-        const raw = JSON.stringify({
-            login: 'string',
-        });
-
-        const requestOptions = {
-            method: 'POST',
-            headers: myHeaders,
-            body: raw,
-            redirect: 'follow',
+    async authLogin(payload) {
+        const { login, password } = payload;
+        const { urn } = API.endpoints.authLogin;
+        const opt = {
+            method: API.endpoints.authLogin.method,
+            body: JSON.stringify(payload),
         };
 
-        fetch('http://169.60.206.50:7777/api/user/register', requestOptions)
-            .then((response) => response.text())
-            .then((result) => console.log(result))
-            .catch((error) => console.log('error', error));
+        try {
+            const response = await this.#request(urn, opt);
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
     }
 }

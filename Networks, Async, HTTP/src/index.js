@@ -30,19 +30,10 @@ class App {
     }
 
     test() {
-        // const task = LocalStorage.getTask('e8e24d27-f194-4844-8a5d-aff52fe95e96');
-        // console.log(task);
-        // const blur = this.createBlur();
-        // const taskModalView = new TaskModalView(this.appContainer.id, {
-        //     userlist: this.userCollection.userlist,
-        //     assignee: LocalStorage.getUser(this.userCollection.user),
-        //     task,
-        // });
-
-        // blur.appendChild(taskModalView.addTaskForm);
+    
     }
 
-    init() {
+    async init() {
         this.appContainer = document.querySelector('#mount-point');
 
         this.storage = new LocalStorage();
@@ -66,10 +57,13 @@ class App {
 
         this.footer = new FooterView(this.appContainer.id);
 
-        // uncomment next 2 lines for the first start or add users and tasks manually...
-        //
-        // this.storage.saveToStore(this.storage.storageKeys.tasklist, fakeTasks);
-        // this.storage.saveToStore(this.storage.storageKeys.userlist, fakeUsers);
+        this.storage.loadStoredData();
+        const user = await this.findUser('id', this.storage.currentUserId) || null;
+        if (this.storage.currentUserId) {
+            // TODO: waiting animation
+            const token = user ? this.storage.loadToken() : null;
+            this.setCurrentUser(user, token);
+        }
         this.showTaskFeedPage();
     }
 
@@ -163,14 +157,16 @@ class App {
         blur.appendChild(authorizationView.authForm);
     }
 
-    loginUser(event) {
+    async loginUser(event) {
         const { login, password } = event.detail;
-        const user = '';
+        const response = await this.apiService.authLogin({
+            login: login.input.value,
+            password: password.input.value,
+        });
 
-        const isPassCorrect = user?.password === password.input.value;
-        if (!user || !isPassCorrect) {
+        if (!response.ok) {
             NotificationView.createNotifly({
-                message: notiflyMessages.err.wrongLogin,
+                message: response.json.message,
                 type: notiflyVariants.errNoti,
             });
 
@@ -187,11 +183,11 @@ class App {
 
             return;
         }
-
-        this.setCurrentUser(user);
+        const user = await this.findUser('login', response.json.login);
+        this.setCurrentUser(user, response.json.token);
     }
 
-    registerUserHandler(event) {
+    async registerUserHandler(event) {
         // { login, name, pass, confirm, img, imgBlob }
         const {
             login,
@@ -224,14 +220,23 @@ class App {
             userName: name.input.value,
             password: pass.input.value,
             retypedPassword: confirm.input.value,
-            photo: btoa(img),
+            photo: 'btoa(img)',
         };
 
-        if (isOk.continue) {
-            console.log(userData);
-            // this.apiService.register(userData);
-            this.showTaskFeedPage();
+        if (!isOk.continue) return;
+
+        const response = await this.apiService.register(userData);
+
+        if (response.status >= 400) {
+            response.json.message.forEach((msg) => {
+                NotificationView.createNotifly({
+                    type: notiflyVariants.errNoti,
+                    message: msg,
+                });
+            });
         }
+
+        response.status === 200 && this.showTaskFeedPage();
     }
 
     logoutUser() {
@@ -275,8 +280,7 @@ class App {
 
         switch (paramName) {
         case fieldKeys.assignee.key: {
-            const user = null; // get user hz kak
-            this.storage.setAssignee(user?.id);
+            this.storage.setAssignee(paramValue);
             break;
         }
         case fieldKeys.dateFrom.key:
@@ -331,11 +335,12 @@ class App {
         this.showTaskFeedPage();
     }
 
-    showTaskFeedPage() {
-        const tasks = this.getFeed(0, 10, this.storage.activeFilters);
+    showTaskFeedPage(tasks, assignee) {
+        // const tasks3 = this.getFeed(0, 10, this.storage.activeFilters);
         this.mainSection.clear();
         this.taskFeedView.display({
-            tasklist: tasks,
+            tasklist: tasks || [],
+            assignee,
             currentUser: this.getCurrentUser(),
             filterOpt: this.storage.activeFilters,
             isTableView: this.state.isTableView,
@@ -361,13 +366,16 @@ class App {
             return;
         }
 
-        const blur = this.createBlur();
-        const filter = this.filterView.display({
-            filterOpt: this.storage.activeFilters,
-            avaliableUsers: this.userCollection.userlist,
-        });
+        this.apiService.allUsers()
+            .then((res) => {
+                const blur = this.createBlur();
+                const filter = this.filterView.display({
+                    filterOpt: this.storage.activeFilters,
+                    avaliableUsers: res.json,
+                });
 
-        blur.appendChild(filter);
+                blur.appendChild(filter);
+            });
     }
 
     showRegistration() {
@@ -375,7 +383,7 @@ class App {
         const registrationView = new RegistrationView('main-content');
     }
 
-    showTaskModal(event) {
+    async showTaskModal(event) {
         if (!this.storage.currentUserId) {
             NotificationView.createNotifly({
                 type: notiflyVariants.warnNoty,
@@ -386,37 +394,37 @@ class App {
         const id = event.detail;
         const task = ''; // GET task from API by ID
         const blur = this.createBlur();
+
+        const userlist = await this.apiService.allUsers();
+        const assignee = userlist.json.find((user) => user.id === this.storage.currentUserId);
+
         const taskModalView = new TaskModalView(this.appContainer.id, {
-            userlist: this.userCollection.userlist,
-            assignee: LocalStorage.getUser(this.userCollection.user),
+            userlist: userlist.json,
+            assignee,
             task,
         });
-
         blur.appendChild(taskModalView.addTaskForm);
     }
 
-    setCurrentUser(user = null) {
-        const tmpUser = this.userCollection.user;
-        this.userCollection.user = user?.id || null;
+    async setCurrentUser(user, token) {
+        this.apiService.token = token || null;
 
-        if (tmpUser !== this.userCollection.user) {
-            this.storage.setCurrentUser(user);
+        this.headerView.display(user);
+        this.showTaskFeedPage();
 
-            this.headerView.display(user);
-            this.showTaskFeedPage();
+        this.storage.setToDefaults();
+        this.storage.saveFilterOptions();
+        this.storage.setCurrentUser(user, token);
 
-            this.storage.saveFilterOptions();
-
-            this.userCollection.user
-                ? NotificationView.createNotifly({
-                    type: notiflyVariants.infoNoti,
-                    message: notiflyMessages.info.greeting(user.name),
-                })
-                : NotificationView.createNotifly({
-                    type: notiflyVariants.infoNoti,
-                    message: notiflyMessages.info.bye(LocalStorage.getUser(tmpUser).name),
-                });
-        }
+        this.apiService.token
+            ? NotificationView.createNotifly({
+                type: notiflyVariants.infoNoti,
+                message: notiflyMessages.info.greeting(user.userName),
+            })
+            : NotificationView.createNotifly({
+                type: notiflyVariants.infoNoti,
+                message: notiflyMessages.info.bye(LocalStorage.getUser(tmpUser).name),
+            });
     }
 
     addUser({
@@ -437,6 +445,21 @@ class App {
         const currentUser = ''; // Need to find user
 
         return currentUser;
+    }
+
+    async findUser(key, value) {
+        const allUsers = await this.apiService.allUsers();
+
+        if (allUsers.ok) {
+            const user = await allUsers.json.find((inst) => inst[key] === value);
+            console.log(user);
+            return user;
+        }
+
+        NotificationView.createNotifly({
+            type: notiflyVariants.errNoti,
+            message: `Can't find user with ${key}: ${value}.`,
+        });
     }
 
     addTask(task) {

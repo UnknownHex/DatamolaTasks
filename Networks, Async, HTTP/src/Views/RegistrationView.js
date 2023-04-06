@@ -152,7 +152,6 @@ class RegistrationView extends BaseView {
 
         this.regForm.addEventListener('submit', (event) => {
             event.preventDefault();
-            console.log('ALL RIGHT!');
             // { login, name, pass, confirm, img, imgBlob }
             const formInputs = {
                 login,

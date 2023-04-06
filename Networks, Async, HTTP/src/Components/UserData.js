@@ -24,10 +24,10 @@ class UserData extends BaseElement {
     }) {
         super();
 
-        this.user = LocalStorage.getUser(user);
+        this.user = user;
         this.isInfo = !!isInfo;
         this.createdAt = createdAt;
-        this.avatara = this.user?.img || STANDARD_IMG;
+        this.avatara = atob(this.user?.photo) || STANDARD_IMG;
         this.init();
     }
 
@@ -39,8 +39,8 @@ class UserData extends BaseElement {
 
         avatarDiv.classList.add(styles.avatar);
         spanUserName.classList.add(styles.userName);
-        
-        spanUserName.textContent = this.user?.name;
+
+        spanUserName.textContent = this.user?.userName;
 
         img.setAttribute('src', this.avatara);
         img.setAttribute('alt', 'User avatar');

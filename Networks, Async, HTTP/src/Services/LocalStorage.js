@@ -1,4 +1,9 @@
 class LocalStorage {
+    tmpData = {
+        users: [],
+        tasks: [],
+    };
+
     constructor() {
         this.storage = localStorage;
 
@@ -17,10 +22,19 @@ class LocalStorage {
 
         this.storageKeys = {
             currentUserId: 'currentUserId',
+            token: 'token',
 
             filterString: 'filterString',
             filterOptions: 'filterOptions',
         };
+    }
+
+    static updateTmpUsers(tmpUsers) {
+        LocalStorage.tmpData.users = tmpUsers || [];
+    }
+
+    static updateTmpTasks(tmpTasks) {
+        LocalStorage.tmpData.tasks = tmpTasks || [];
     }
 
     static getUser() {
@@ -78,6 +92,11 @@ class LocalStorage {
         this.loadFilterOptions();
     }
 
+    loadToken() {
+        const token = this.loadFromStore(this.storageKeys.token);
+        return token || null;
+    }
+
     saveToStore(key, data) {
         this.storage.setItem(key, JSON.stringify(data));
     }
@@ -90,9 +109,10 @@ class LocalStorage {
         this.storage.clear();
     }
 
-    setCurrentUser(user) {
+    setCurrentUser(user, token) {
         this.currentUserId = user ? user?.id : null;
         this.saveToStore(this.storageKeys.currentUserId, this.currentUserId);
+        this.saveToStore(this.storageKeys.token, token || null);
     }
 
     setAssignee(assignee) {

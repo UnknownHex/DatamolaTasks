@@ -7,6 +7,10 @@ const consts = {
 const API = {
     address: 'http://169.60.206.50:7777',
     endpoints: {
+        authLogin: {
+            method: 'POST',
+            urn: '/api/auth/login',
+        },
         allUsers: {
             method: 'GET',
             urn: '/api/user/allUsers',

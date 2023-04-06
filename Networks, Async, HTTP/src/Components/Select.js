@@ -20,6 +20,7 @@ class Select extends BaseElement {
         this.select = document.createElement('select');
         this.select.name = this.name || '';
         this.select.required = true;
+
         const optoinsTemplate = document.createElement('template');
         optoinsTemplate.innerHTML = `
             ${this.withHidden ? `
@@ -31,7 +32,7 @@ class Select extends BaseElement {
                 </option>
                 ` : null}
             ${this.avaliableUsers.map((user) => (`
-                <option value=${user.id} ${user.id === this.assignee ? 'selected' : ''}>${user.name}</option>
+                <option value=${user.id} ${user.id === this.assignee ? 'selected' : ''}>${user.userName}</option>
             `)).join('')}
         `;
         this.select.appendChild(optoinsTemplate.content);
