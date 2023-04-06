@@ -39,8 +39,8 @@ class UserData extends BaseElement {
 
         avatarDiv.classList.add(styles.avatar);
         spanUserName.classList.add(styles.userName);
-
-        spanUserName.textContent = this.user.name;
+        
+        spanUserName.textContent = this.user?.name;
 
         img.setAttribute('src', this.avatara);
         img.setAttribute('alt', 'User avatar');

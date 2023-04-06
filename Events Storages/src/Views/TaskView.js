@@ -155,6 +155,14 @@ class TaskView extends BaseView {
             taskActions.appendChild(deleteBtn.node);
         }
 
+        taskActions.addEventListener('click', (event) => {
+            event.stopPropagation();
+            event.target.closest('[name="edit"]')
+                && event.target.dispatchEvent(customEvents.showTaskModal.action(this.task.id));
+            event.target.closest('[name="remove"]')
+                && event.target.dispatchEvent(customEvents.deleteTask.action(this.task.id));
+        });
+
         wrapperShInfo.appendChild(taskActions);
 
         this.container.node.appendChild(brBar);
@@ -172,7 +180,7 @@ class TaskView extends BaseView {
                 isInfo: true,
                 createdAt: comment.createdAt,
                 user: comment.author,
-                avatara: LocalStorage.getUser(comment.author).img,
+                avatara: LocalStorage.getUser(comment.author)?.img,
             });
 
             return `

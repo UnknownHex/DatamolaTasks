@@ -67,7 +67,7 @@ class TaskCollector {
         const isValid = TaskCollector.verify(taskObj);
 
         if (isValid) {
-            this.#tasklist = [...this.tasklist, taskObj];
+            this.#tasklist = [...this.tasklist, taskObj.info];
         }
 
         return isValid;

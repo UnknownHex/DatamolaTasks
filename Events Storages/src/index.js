@@ -105,7 +105,7 @@ class App {
         this.storage.setTasklist(this.taskCollection.tasklist);
 
         const task = LocalStorage.getTask(taskId);
-        this.showTaskPage(task, this.getCurrentUser());
+        this.showTaskPage(task);
     }
 
     changeView() {
@@ -124,7 +124,7 @@ class App {
 
         const task = LocalStorage.getTask(event.detail);
 
-        this.showTaskPage(task, this.getCurrentUser());
+        this.showTaskPage(task);
     }
 
     deleteTaskHandler(event) {
@@ -372,13 +372,13 @@ class App {
         });
     }
 
-    showTaskPage(task, currentUser) {
+    showTaskPage(task) {
         this.mainSection.clear();
 
         const taskView = new TaskView('main-content');
         taskView.display({
             task,
-            currentUser,
+            currentUser: this.getCurrentUser(),
         });
     }
 
@@ -472,7 +472,6 @@ class App {
 
     addTask(task) {
         if (!this.userCollection.user) return;
-        const currentUser = this.getCurrentUser();
 
         const isAdded = this.taskCollection.add(
             task.name,
@@ -489,7 +488,7 @@ class App {
 
             NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
-                message: notiflyMessages.success.taskAdded(task.name, this.userCollection.user),
+                message: notiflyMessages.success.taskAdded(task.name, this.getCurrentUser().name),
             });
         }
     }
@@ -503,10 +502,13 @@ class App {
             task.status,
             task.priority,
             task.isPrivate,
+            task.comments,
         );
 
         if (isEdited) {
             this.showTaskFeedPage();
+
+            // this.showTaskPage(LocalStorage.getTask(id));
 
             NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
@@ -538,7 +540,7 @@ class App {
     showTask(id) {
         const foundTask = this.taskCollection.get(id);
 
-        foundTask && this.showTaskPage(foundTask, this.taskCollection.user);
+        foundTask && this.showTaskPage(foundTask);
     }
 }
 

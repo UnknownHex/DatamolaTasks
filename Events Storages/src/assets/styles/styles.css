@@ -1519,6 +1519,9 @@ input:checked + .slider:after {
     background-color: var(--primary700);
     pointer-events: none;
     align-self: baseline;
+}
+
+.spoiler .iexpand {
     transform: rotate(180deg);
 }
 
