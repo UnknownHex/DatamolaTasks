@@ -3,7 +3,7 @@
 ---
 
 ![](https://shields.io/badge/0.5-grey?&style=plastic&label=version:&labelColor=blue)<br />
-![](https://shields.io/badge/04%Apr%202023-grey?&style=plastic&label=last%20update:&labelColor=blue)
+![](https://shields.io/badge/04%20Apr%202023-grey?&style=plastic&label=last%20update:&labelColor=blue)
 
 > In this project i will use and study:
 
