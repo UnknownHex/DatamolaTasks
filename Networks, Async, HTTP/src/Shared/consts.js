@@ -1,7 +1,7 @@
 const consts = {
     appName: 'OUTY',
-    version: '0.5',
-    update: '02.04.2023',
+    version: '0.6',
+    update: '16.04.2023',
 };
 
 const API = {
@@ -25,11 +25,31 @@ const API = {
         },
         editUser: {
             method: 'PATCH',
-            urn: '/api/user/',
+            urn: (id) => (`/api/user/${id}`),
         },
         deleteUser: {
             method: 'DELETE',
-            urn: '/api/user/',
+            urn: (id) => (`/api/user/${id}`),
+        },
+        tasks: {
+            method: 'GET',
+            urn: '/api/tasks',
+        },
+        getTaskById: {
+            method: 'GET',
+            urn: (id) => (`/api/tasks/${id}`),
+        },
+        createTask: {
+            method: 'POST',
+            urn: '/api/tasks',
+        },
+        editTask: {
+            method: 'PATCH',
+            urn: (id) => (`/api/tasks/${id}`),
+        },
+        deleteTask: {
+            method: 'DELETE',
+            urn: (id) => (`/api/tasks/${id}`),
         },
     },
 };
@@ -141,7 +161,7 @@ const customEvents = {
 
 const taskStatus = {
     toDo: 'To Do',
-    inProgress: 'In Progress',
+    inProgress: 'In progress',
     complete: 'Complete',
 };
 
@@ -166,10 +186,10 @@ const notiflyMessages = {
     success: {
         userAdded: `You're <span class="${styles.focusSucc}">successfully</span> registered.
             Please <span class="${styles.focusSucc}">SIGN IN</span> with your login and password!`,
-        taskAdded: (name, assignee) => (`
+        taskAdded: (name, creator) => (`
             Task "<span class="${styles.focusSucc}">${name}</span>"
              <span class="${styles.focusSucc}">added</span> by "
-             <span class="${styles.focusSucc}">${assignee}</span>"!`),
+             <span class="${styles.focusSucc}">${creator}</span>"!`),
         taskUpdated: (id, user) => (`
             Task "<span class="${styles.focusSucc}">${id}</span>"
             <span class="${styles.focusSucc}">successfully updated</span> by

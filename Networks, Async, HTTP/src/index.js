@@ -2,6 +2,7 @@ class App {
     constructor() {
         this.state = {
             isTableView: false,
+            isTasksLoading: true,
         };
 
         this.init();
@@ -48,22 +49,20 @@ class App {
 
         this.taskFeedView = new TaskFeedView('main-content');
 
-        if (this.storage.currentUserId) {
-            const user = this.userCollection.get(this.storage.currentUserId);
-            this.setCurrentUser(user || null);
-        }
-
         this.filterView = new FilterView(this.appContainer.id);
 
         this.footer = new FooterView(this.appContainer.id);
 
         this.storage.loadStoredData();
-        const user = await this.findUser('id', this.storage.currentUserId) || null;
+        await this.apiService.getAllUsers();
+        const user = this.getCurrentUser() || null;
+
         if (this.storage.currentUserId) {
             // TODO: waiting animation
             const token = user ? this.storage.loadToken() : null;
             this.setCurrentUser(user, token);
         }
+
         this.showTaskFeedPage();
     }
 
@@ -100,6 +99,11 @@ class App {
         this.taskFeedView.changeView(this.state.isTableView);
     }
 
+    inLoading(isLoading) {
+        this.state.isTasksLoading = isLoading;
+        this.taskFeedView.showLoading(this.state.isTasksLoading);
+    }
+
     openTaskPage(event) {
         if (!this.storage.currentUserId) {
             NotificationView.createNotifly({
@@ -114,25 +118,65 @@ class App {
         // this.showTaskPage(task);
     }
 
-    deleteTaskHandler(event) {
+    async deleteTaskHandler(event) {
         const id = event.detail;
 
         const isOk = window.confirm(`Are you really want to delete task ${id}?`);
+
+        if (!isOk) return;
+        this.inLoading(true);
+
+        const response = await this.apiService.deleteTask(id);
+
+        if (response.ok) {
+            const remover = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
+
+            this.showTaskFeedPage();
+
+            NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.taskRemoved(id, remover.userName),
+            });
+        } else {
+            NotificationView.createNotifly({
+                type: notiflyVariants.errNoti,
+                message: response.json.message,
+            });
+        }
     }
 
-    editTaskHandler(event) {
-        // event.detail.id
-        // {
-        //     name: event.detail.name.input.value,
-        //     description: event.detail.description.value,
-        //     assignee: event.detail.assignee,
-        //     status: event.detail.options.status,
-        //     isPrivate: !!event.detail.options.isPrivate,
-        //     priority: event.detail.options.priority,
-        // },
+    async editTaskHandler(event) {
+        this.inLoading(true);
+        const { id } = event.detail;
+        const editableData = {
+            name: event.detail.name.input.value,
+            description: event.detail.description.value,
+            assignee: event.detail.assignee,
+            status: event.detail.options.status,
+            isPrivate: !!event.detail.options.isPrivate,
+            priority: event.detail.options.priority,
+        };
+
+        const response = await this.apiService.editTask(id, editableData);
+
+        if (response.ok) {
+            const editor = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
+
+            NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.taskUpdated(id, editor.userName),
+            });
+
+            this.showTaskFeedPage();
+        } else {
+            NotificationView.createNotifly({
+                type: notiflyVariants.errNoti,
+                message: response.json.message,
+            });
+        }
     }
 
-    addTaskHandler(event) {
+    async addTaskHandler(event) {
         // name, description, assignee, options = detail
         const data = event.detail;
         const name = data.name.input.value;
@@ -148,6 +192,16 @@ class App {
             priority: options.priority,
             status: options.status,
         };
+
+        const response = await this.apiService.createTask(preTaskInst);
+
+        if (response.ok) {
+            const creator = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
+            NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.taskAdded(name, creator.userName),
+            })
+        }
     }
 
     showAuthorization() {
@@ -183,7 +237,8 @@ class App {
 
             return;
         }
-        const user = await this.findUser('login', response.json.login);
+        const user = LocalStorage.findUser(fieldKeys.login.key, login.input.value);
+        console.log(user, login);
         this.setCurrentUser(user, response.json.token);
     }
 
@@ -220,7 +275,7 @@ class App {
             userName: name.input.value,
             password: pass.input.value,
             retypedPassword: confirm.input.value,
-            photo: 'btoa(img)',
+            photo: btoa(img),
         };
 
         if (!isOk.continue) return;
@@ -332,19 +387,24 @@ class App {
     }
 
     confirmFilters() {
+        this.inLoading(true);
         this.showTaskFeedPage();
+        this.inLoading(false);
     }
 
-    showTaskFeedPage(tasks, assignee) {
+    async showTaskFeedPage() {
+        this.inLoading(true);
+        await this.apiService.getAllTasks();
         // const tasks3 = this.getFeed(0, 10, this.storage.activeFilters);
         this.mainSection.clear();
         this.taskFeedView.display({
-            tasklist: tasks || [],
-            assignee,
+            isTasksLoading: this.state.isTasksLoading,
+            tasklist: LocalStorage.tmpData.tasks,
             currentUser: this.getCurrentUser(),
             filterOpt: this.storage.activeFilters,
             isTableView: this.state.isTableView,
         });
+        this.inLoading(false);
     }
 
     showTaskPage(task) {
@@ -366,7 +426,7 @@ class App {
             return;
         }
 
-        this.apiService.allUsers()
+        this.apiService.getAllUsers()
             .then((res) => {
                 const blur = this.createBlur();
                 const filter = this.filterView.display({
@@ -391,22 +451,22 @@ class App {
             });
             return;
         }
+        console.log(event.detail);
         const id = event.detail;
-        const task = ''; // GET task from API by ID
+        const response = id ? await this.apiService.getTaskById(id) : null;
         const blur = this.createBlur();
 
-        const userlist = await this.apiService.allUsers();
-        const assignee = userlist.json.find((user) => user.id === this.storage.currentUserId);
-
-        const taskModalView = new TaskModalView(this.appContainer.id, {
-            userlist: userlist.json,
-            assignee,
-            task,
-        });
-        blur.appendChild(taskModalView.addTaskForm);
+        if (response?.ok || !id) {
+            const taskModalView = new TaskModalView(this.appContainer.id, {
+                task: response?.json,
+            });
+            blur.appendChild(taskModalView.addTaskForm);
+        }
     }
 
     async setCurrentUser(user, token) {
+        const tmpUser = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
+
         this.apiService.token = token || null;
 
         this.headerView.display(user);
@@ -423,57 +483,29 @@ class App {
             })
             : NotificationView.createNotifly({
                 type: notiflyVariants.infoNoti,
-                message: notiflyMessages.info.bye(LocalStorage.getUser(tmpUser).name),
+                message: notiflyMessages.info.bye(tmpUser.name),
             });
-    }
-
-    addUser({
-        login, name, pass, img,
-    }) {
-        const isRegistered = ''; // REGISTER from API
-
-        if (isRegistered) {
-            NotificationView.createNotifly({
-                type: notiflyVariants.succNoti,
-                message: notiflyMessages.success.userAdded,
-            });
-        }
     }
 
     getCurrentUser() {
         if (!this.storage.currentUserId) return;
-        const currentUser = ''; // Need to find user
+        const currentUser = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
 
         return currentUser;
-    }
-
-    async findUser(key, value) {
-        const allUsers = await this.apiService.allUsers();
-
-        if (allUsers.ok) {
-            const user = await allUsers.json.find((inst) => inst[key] === value);
-            console.log(user);
-            return user;
-        }
-
-        NotificationView.createNotifly({
-            type: notiflyVariants.errNoti,
-            message: `Can't find user with ${key}: ${value}.`,
-        });
     }
 
     addTask(task) {
         if (!this.storage.currentUserId) return;
 
-        const isAdded = this.taskCollection.add(
-            task.name,
-            task.description,
-            task.assignee,
-            task.status,
-            task.priority,
-            task.isPrivate,
-            this.storage.currentUserId,
-        );
+        // const isAdded = this.taskCollection.add(
+        //     task.name,
+        //     task.description,
+        //     task.assignee,
+        //     task.status,
+        //     task.priority,
+        //     task.isPrivate,
+        //     this.storage.currentUserId,
+        // );
 
         if (isAdded) {
             this.showTaskFeedPage();
@@ -481,44 +513,6 @@ class App {
             NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
                 message: notiflyMessages.success.taskAdded(task.name, this.getCurrentUser().name),
-            });
-        }
-    }
-
-    editTask(id, task) {
-        const isEdited = ''; // PATCH API
-        // this.taskCollection.edit(
-        //     id,
-        //     task.name,
-        //     task.description,
-        //     task.assignee,
-        //     task.status,
-        //     task.priority,
-        //     task.isPrivate,
-        //     task.comments,
-        // );
-
-        if (isEdited) {
-            this.showTaskFeedPage();
-
-            // this.showTaskPage(LocalStorage.getTask(id));
-
-            NotificationView.createNotifly({
-                type: notiflyVariants.succNoti,
-                message: notiflyMessages.success.taskUpdated(id, LocalStorage.getUser(this.userCollection.user).name),
-            });
-        }
-    }
-
-    removeTask(id) {
-        const isRemoved = ''; // this.taskCollection.remove(id);   REMOVE WITH API
-
-        if (isRemoved) {
-            this.showTaskFeedPage();
-
-            NotificationView.createNotifly({
-                type: notiflyVariants.succNoti,
-                message: notiflyMessages.success.taskRemoved(id, this.getCurrentUser().name),
             });
         }
     }

@@ -1,5 +1,5 @@
 class LocalStorage {
-    tmpData = {
+    static tmpData = {
         users: [],
         tasks: [],
     };
@@ -11,14 +11,6 @@ class LocalStorage {
 
         this.filterString = null;
         this.setToDefaults();
-        // this.filterOptions = {
-        //     assignee: null,
-        //     status: new Set(),
-        //     priority: new Set(),
-        //     private: new Set(),
-        //     startDate: '',
-        //     endDate: '',
-        // };
 
         this.storageKeys = {
             currentUserId: 'currentUserId',
@@ -35,6 +27,18 @@ class LocalStorage {
 
     static updateTmpTasks(tmpTasks) {
         LocalStorage.tmpData.tasks = tmpTasks || [];
+    }
+
+    static findUser(key, value) {
+        const user = LocalStorage.tmpData.users.find((inst) => inst[key] === value);
+        console.log(user);
+        return user || null;
+    }
+
+    static findTask(key, value) {
+        const task = LocalStorage.tmpData.tasks.find((inst) => inst[key] === value);
+        console.log(task);
+        return task || null;
     }
 
     static getUser() {

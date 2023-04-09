@@ -23,6 +23,7 @@ const styles = {
     mprio: 'mprio',
     lprio: 'lprio',
     active: 'active',
+    inLoading: 'loading',
 
     userPanel: 'user-panel',
     notification: 'notification',

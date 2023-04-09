@@ -110,7 +110,7 @@ class TaskContainer extends BaseElement {
 
         // console.log(this.taskEnt.assignee);
         // console.log(this.taskEnt.author, this.currentUser?.id);
-        if (isCurrentUser(this.taskEnt.author, this.currentUser?.id)) {
+        if (isCurrentUser(this.taskEnt.creator.id, this.currentUser?.id)) {
             taskActions.appendChild(editBtn.node);
             taskActions.appendChild(deleteBtn.node);
         }

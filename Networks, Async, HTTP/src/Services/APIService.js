@@ -48,22 +48,53 @@ class APIService {
             body: JSON.stringify(params),
         };
         try {
-            return await this.#request(urn, opt);
+            const response = await this.#request(urn, opt);
+            return response;
         } catch (err) {
             console.warn(err);
         }
     }
 
-    async allUsers() {
+    async getAllUsers() {
         const { urn } = API.endpoints.allUsers;
 
         try {
             const response = await this.#request(urn);
-            console.log(response.json);
+            
             if (response.ok) {
                 LocalStorage.updateTmpUsers(response.json);
             }
 
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async getAllTasks() {
+        const { urn } = API.endpoints.tasks;
+
+        try {
+            const response = await this.#request(urn);
+
+            if (response.ok) {
+                LocalStorage.updateTmpTasks(response.json);
+            }
+
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async getTaskById(id) {
+        const { urn } = API.endpoints.getTaskById;
+        const opt = {
+            method: API.endpoints.getTaskById.method,
+        };
+
+        try {
+            const response = await this.#request(urn(id), opt);
             return response;
         } catch (err) {
             console.warn(err);
@@ -80,6 +111,66 @@ class APIService {
 
         try {
             const response = await this.#request(urn, opt);
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async createTask(payload) {
+        const {
+            name,
+            description,
+            assignee,
+            status,
+            priority,
+            isPrivate
+        } = payload;
+        const { urn } = API.endpoints.createTask;
+        const opt = {
+            method: API.endpoints.createTask.method,
+            body: JSON.stringify(payload),
+        };
+
+        try {
+            const response = await this.#request(urn, opt);
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async editTask(id, payload) {
+        const {
+            name,
+            description,
+            assignee,
+            status,
+            priority,
+            isPrivate
+        } = payload;
+        const { urn } = API.endpoints.editTask;
+        const opt = {
+            method: API.endpoints.editTask.method,
+            body: JSON.stringify(payload),
+        };
+
+        try {
+            const response = await this.#request(urn(id), opt);
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async deleteTask(id) {
+        const { urn } = API.endpoints.deleteTask;
+        const opt = {
+            method: API.endpoints.deleteTask.method,
+        };
+
+        try {
+            const response = await this.#request(urn(id), opt);
             return response;
         } catch (err) {
             console.warn(err);

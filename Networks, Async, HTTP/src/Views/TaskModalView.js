@@ -1,10 +1,8 @@
 class TaskModalView extends BaseView {
-    constructor(containerId, { userlist, assignee, task }) {
+    constructor(containerId, { task }) {
         super(containerId);
 
         this.addTaskForm = document.createElement('form');
-        this.userlist = userlist;
-        this.assignee = assignee;
         this.task = task;
 
         this.taskState = {
@@ -33,7 +31,6 @@ class TaskModalView extends BaseView {
                 targetBtn.classList.add(styles.active);
                 const isPrivateName = targetBtn.name === fieldKeys.isPrivate.key;
                 this.taskState[targetBtn.name] = isPrivateName ? !!targetBtn.dataset.data : targetBtn.dataset.data;
-                console.log(this.taskState);
             }
         };
 
@@ -69,7 +66,7 @@ class TaskModalView extends BaseView {
 
         const assignee = new Select({
             avaliableUsers: this.userlist,
-            assignee: this.assignee.id,
+            assignee: this.task?.assignee.id,
             name: fieldKeys.assignee.key,
             withHidden: false,
         });
@@ -156,7 +153,7 @@ class TaskModalView extends BaseView {
             };
             taskName.input.value = this.task.name;
             textarea.value = this.task.description;
-            assignee.select.value = this.task.assignee;
+            assignee.select.value = this.task.assignee.id;
             setActiveClass([publicBtn, privateBtn], this.task.isPrivate);
             setActiveClass([lowBtn, medBtn, highBtn], this.task.priority);
             setActiveClass([toDoBtn, inProgBtn, complBtn], this.task.status);

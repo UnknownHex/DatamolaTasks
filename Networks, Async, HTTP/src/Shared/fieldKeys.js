@@ -46,6 +46,7 @@ const fieldKeys = {
         tip: 'USERNAME NAME must be a not empty string and less than 32 characters;',
     },
     login: {
+        key: 'login',
         tip: 'LOGIN must consist only cyrylic simbols and _;',
     },
     password: {

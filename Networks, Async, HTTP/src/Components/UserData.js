@@ -27,8 +27,19 @@ class UserData extends BaseElement {
         this.user = user;
         this.isInfo = !!isInfo;
         this.createdAt = createdAt;
-        this.avatara = atob(this.user?.photo) || STANDARD_IMG;
-        this.init();
+        this.avatara = this.decodePhoto(this.user?.photo) || STANDARD_IMG;
+        this.init()
+        // `data:image/png;base64,${atob(this.user?.photo)}`
+        // console.log(btoa(this.user?.photo));
+    }
+
+    decodePhoto(photo) {
+        const ava = atob(photo);
+        if (ava.includes('data:image/')) {
+            return ava;
+        }
+
+        return `data:image/png;base64,${this.user?.photo}`;
     }
 
     init() {

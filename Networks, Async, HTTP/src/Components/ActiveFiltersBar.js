@@ -1,9 +1,8 @@
 class ActiveFiltersBar extends BaseElement {
-    constructor(activeFilters, assignee) {
+    constructor(activeFilters) {
         super('section');
 
         this.activeFilters = activeFilters;
-        this.assignee = assignee;
 
         this.init();
     }
@@ -12,7 +11,7 @@ class ActiveFiltersBar extends BaseElement {
         this.node.classList.add(styles.activeFilters);
         const fragment = document.createDocumentFragment();
 
-        Object.entries(this.activeFilters || []).forEach((option) => {
+        Object.entries(this.activeFilters).forEach((option) => {
             const [key, value] = option;
 
             if (!value) return;
@@ -24,7 +23,13 @@ class ActiveFiltersBar extends BaseElement {
                 });
             } else {
                 const isAssigneeKey = key === fieldKeys.assignee.key;
-                const badge = new FilterBadge({ key, value: isAssigneeKey ? this.assignee.name : value });
+                
+                const badge = new FilterBadge({ 
+                    key, 
+                    value: isAssigneeKey
+                        ? LocalStorage.findUser(fieldKeys.id.key, this.activeFilters.assignee)?.userName
+                        : value 
+                    });
                 fragment.appendChild(badge.node);
             }
         });

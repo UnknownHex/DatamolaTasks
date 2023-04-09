@@ -957,7 +957,7 @@ input:checked + .slider:after {
     overflow: hidden;
     word-break: break-word;
     width: 100%;
-    height: 42px;
+    height: 37px;
 
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -1651,6 +1651,23 @@ input:checked + .slider:after {
     width: 16px;
     height: 16px;
     transform: rotate(180deg);
+}
+
+.loading .task-container {
+    filter: blur(3px);
+    animation: loadingTasks 1s ease-in-out infinite;
+}
+
+@keyframes loadingTasks {
+    0% {
+        filter: blur(3px);
+    }
+    50% {
+        filter: blur(5px);
+    }
+    100% {
+        filter: blur(4);
+    }
 }
 
 .taskboard-content {

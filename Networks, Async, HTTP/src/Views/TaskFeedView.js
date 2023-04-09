@@ -75,7 +75,7 @@ class TaskFeedView extends BaseView {
     }
 
     display({
-        tasklist, isTableView, currentUser, filterOpt, assignee,
+        tasklist, isTableView, isTasksLoading, currentUser, filterOpt,
     }) {
         // if (Array.isArray(tasklist) && tasklist.length > 0) {
         if (Array.isArray(tasklist)) {
@@ -84,10 +84,11 @@ class TaskFeedView extends BaseView {
 
         this.clear();
         this.changeView(isTableView);
+        this.showLoading(isTasksLoading);
 
         this.container = new Container();
         const taskFeedFragment = document.createDocumentFragment();
-        const activeFiltersBar = new ActiveFiltersBar(filterOpt, assignee);
+        const activeFiltersBar = new ActiveFiltersBar(filterOpt);
 
         taskFeedFragment.appendChild(this.container.node);
 
@@ -117,6 +118,14 @@ class TaskFeedView extends BaseView {
             this.taskboardWrapper.classList.add(styles.asTable);
         } else {
             this.taskboardWrapper.classList.remove(styles.asTable);
+        }
+    }
+
+    showLoading(isTasksLoading) {
+        if (isTasksLoading) {
+            this.taskboardWrapper.classList.add(styles.inLoading);
+        } else {
+            this.taskboardWrapper.classList.remove(styles.inLoading);
         }
     }
 

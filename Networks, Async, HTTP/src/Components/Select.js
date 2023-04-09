@@ -4,7 +4,7 @@ class Select extends BaseElement {
     }) {
         super('div');
 
-        this.avaliableUsers = avaliableUsers;
+        this.avaliableUsers = avaliableUsers || LocalStorage.tmpData.users;
         this.assignee = assignee || '';
         this.onChange = onChange;
         this.name = name;
