@@ -7,8 +7,6 @@ class App {
 
         this.init();
         this.initListeners();
-
-        this.test();
     }
 
     createBlur() {
@@ -31,7 +29,10 @@ class App {
     }
 
     test() {
-    
+        this.mainSection.clear();
+        this.profileView = new ProfileView('main-content');
+        console.log('user', LocalStorage.tmpData.users[0]);
+        this.profileView.display(LocalStorage.tmpData.users[0]);
     }
 
     async init() {
@@ -39,6 +40,7 @@ class App {
 
         this.storage = new LocalStorage();
         this.apiService = new APIService(API.address);
+        await this.apiService.init();
 
         this.notificationView = new NotificationView(this.appContainer.id);
 
@@ -54,16 +56,18 @@ class App {
         this.footer = new FooterView(this.appContainer.id);
 
         this.storage.loadStoredData();
-        await this.apiService.getAllUsers();
-        const user = this.getCurrentUser() || null;
 
         if (this.storage.currentUserId) {
             // TODO: waiting animation
+            const user = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId) || null;
             const token = user ? this.storage.loadToken() : null;
+            // console.log(user, token);
             this.setCurrentUser(user, token);
         }
 
-        this.showTaskFeedPage();
+        this.test();
+
+        // this.showTaskFeedPage();
     }
 
     initListeners() {
@@ -88,10 +92,26 @@ class App {
         this.appContainer.addEventListener(customEvents.addComment.caption, this.addCommentHandler.bind(this));
     }
 
-    addCommentHandler(event) {
+    async addCommentHandler(event) {
         const { text, taskId } = event.detail.data;
 
-        this.showTaskPage(task);
+        const response = await this.apiService.postComment({ taskId, text });
+
+        if (!response.ok) {
+            const [message] = response.json.message;
+
+            NotificationView.createNotifly({
+                type: notiflyVariants.errNoti,
+                message,
+            });
+
+            return;
+        }
+        const taskResponse = await this.apiService.getTaskById(taskId);
+
+        if (taskResponse.ok) {
+            this.showTaskPage(taskResponse.json);
+        }
     }
 
     changeView() {
@@ -104,7 +124,7 @@ class App {
         this.taskFeedView.showLoading(this.state.isTasksLoading);
     }
 
-    openTaskPage(event) {
+    async openTaskPage(event) {
         if (!this.storage.currentUserId) {
             NotificationView.createNotifly({
                 type: notiflyVariants.warnNoty,
@@ -112,10 +132,20 @@ class App {
             });
             return;
         }
+        const id = event.detail;
+        const response = await this.apiService.getTaskById(id);
 
-        console.log(event.detail);
+        if (!response.ok) {
+            NotificationView.createNotifly({
+                type: notiflyVariants.errNoti,
+                message: response.json.message,
+            });
+        }
 
-        // this.showTaskPage(task);
+        if (response.ok) {
+            const task = response.json;
+            this.showTaskPage(task);
+        }
     }
 
     async deleteTaskHandler(event) {
@@ -200,7 +230,7 @@ class App {
             NotificationView.createNotifly({
                 type: notiflyVariants.succNoti,
                 message: notiflyMessages.success.taskAdded(name, creator.userName),
-            })
+            });
         }
     }
 
@@ -238,8 +268,9 @@ class App {
             return;
         }
         const user = LocalStorage.findUser(fieldKeys.login.key, login.input.value);
-        console.log(user, login);
+
         this.setCurrentUser(user, response.json.token);
+        event.target.dispatchEvent(customEvents.closeModal.action);
     }
 
     async registerUserHandler(event) {
@@ -282,7 +313,7 @@ class App {
 
         const response = await this.apiService.register(userData);
 
-        if (response.status >= 400) {
+        if (!response.ok) {
             response.json.message.forEach((msg) => {
                 NotificationView.createNotifly({
                     type: notiflyVariants.errNoti,
@@ -291,11 +322,17 @@ class App {
             });
         }
 
-        response.status === 200 && this.showTaskFeedPage();
+        if (response.ok) {
+            NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.userAdded,
+            });
+            this.showTaskFeedPage();
+        }
     }
 
     logoutUser() {
-        this.setCurrentUser(null);
+        this.setCurrentUser(null, null);
         this.storage.setToDefaults();
     }
 
@@ -326,7 +363,7 @@ class App {
             break;
         }
 
-        this.showTaskFeedPage();
+        // this.showTaskFeedPage();
     }
 
     changeInputParams(e) {
@@ -387,9 +424,7 @@ class App {
     }
 
     confirmFilters() {
-        this.inLoading(true);
-        this.showTaskFeedPage();
-        this.inLoading(false);
+        // this.showTaskFeedPage();
     }
 
     async showTaskFeedPage() {
@@ -397,23 +432,25 @@ class App {
         await this.apiService.getAllTasks();
         // const tasks3 = this.getFeed(0, 10, this.storage.activeFilters);
         this.mainSection.clear();
+        const currentUser = await this.getCurrentUser();
         this.taskFeedView.display({
             isTasksLoading: this.state.isTasksLoading,
             tasklist: LocalStorage.tmpData.tasks,
-            currentUser: this.getCurrentUser(),
+            currentUser,
             filterOpt: this.storage.activeFilters,
             isTableView: this.state.isTableView,
         });
         this.inLoading(false);
     }
 
-    showTaskPage(task) {
+    async showTaskPage(task) {
         this.mainSection.clear();
         // Get task from api
         const taskView = new TaskView('main-content');
+        const currentUser = await this.getCurrentUser();
         taskView.display({
             task,
-            currentUser: this.getCurrentUser(),
+            currentUser,
         });
     }
 
@@ -465,12 +502,13 @@ class App {
     }
 
     async setCurrentUser(user, token) {
+        console.log('setCurrentUser:', user);
         const tmpUser = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
 
         this.apiService.token = token || null;
 
         this.headerView.display(user);
-        this.showTaskFeedPage();
+        // this.showTaskFeedPage();
 
         this.storage.setToDefaults();
         this.storage.saveFilterOptions();
@@ -483,38 +521,26 @@ class App {
             })
             : NotificationView.createNotifly({
                 type: notiflyVariants.infoNoti,
-                message: notiflyMessages.info.bye(tmpUser.name),
+                message: notiflyMessages.info.bye(tmpUser.userName),
             });
     }
 
-    getCurrentUser() {
+    async getCurrentUser() {
         if (!this.storage.currentUserId) return;
-        const currentUser = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
+        // const currentUser = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
+        const response = await this.apiService.getMyProfile();
 
-        return currentUser;
-    }
-
-    addTask(task) {
-        if (!this.storage.currentUserId) return;
-
-        // const isAdded = this.taskCollection.add(
-        //     task.name,
-        //     task.description,
-        //     task.assignee,
-        //     task.status,
-        //     task.priority,
-        //     task.isPrivate,
-        //     this.storage.currentUserId,
-        // );
-
-        if (isAdded) {
-            this.showTaskFeedPage();
-
+        if (!response.ok) {
             NotificationView.createNotifly({
-                type: notiflyVariants.succNoti,
-                message: notiflyMessages.success.taskAdded(task.name, this.getCurrentUser().name),
+                type: notiflyVariants.errNoti,
+                message: response.message,
             });
         }
+
+        const currentUser = response.json;
+        console.log(currentUser);
+
+        return currentUser;
     }
 
     getFeed(skip, top, filterConfig) {

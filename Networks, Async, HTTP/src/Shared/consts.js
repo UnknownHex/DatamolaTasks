@@ -17,7 +17,7 @@ const API = {
         },
         myProfile: {
             method: 'GET',
-            urn: '/api/user/my_profile',
+            urn: '/api/user/myprofile',
         },
         register: {
             method: 'POST',
@@ -50,6 +50,14 @@ const API = {
         deleteTask: {
             method: 'DELETE',
             urn: (id) => (`/api/tasks/${id}`),
+        },
+        comments: {
+            method: 'GET',
+            urn: (id) => (`/api/tasks/${id}/comments`),
+        },
+        createComment: {
+            method: 'POST',
+            urn: (id) => (`/api/tasks/${id}/comments`),
         },
     },
 };

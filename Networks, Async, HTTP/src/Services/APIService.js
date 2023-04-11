@@ -5,6 +5,35 @@ class APIService {
         this.host = host || null;
     }
 
+    async init() {
+        const apiUsers = await this.getAllUsers();
+        const apiTasks = await this.getAllTasks();
+
+        if (apiTasks.ok && apiUsers.ok) {
+            LocalStorage.updateTmpTasks(apiTasks.json);
+            LocalStorage.updateTmpUsers(apiUsers.json);
+        }
+
+        this.shortPolling();
+    }
+
+    shortPolling() {
+        const timer = setTimeout(async () => {
+            console.log('SHORT POILLING!');
+            const apiUsers = await this.getAllUsers();
+            const apiTasks = await this.getAllTasks();
+
+            if (apiTasks.ok && apiUsers.ok) {
+                LocalStorage.updateTmpTasks(apiTasks.json);
+                LocalStorage.updateTmpUsers(apiUsers.json);
+            }
+
+            clearTimeout(timer);
+            console.log('----------------------------------');
+            this.shortPolling();
+        }, 350000);
+    }
+
     async #request(urn, opt) {
         const path = `${this.host}${urn}`;
         const headers = new Headers();
@@ -18,8 +47,6 @@ class APIService {
             ...opt,
             headers,
         };
-
-        console.log(options);
 
         const response = await fetch(path, options);
         const json = await response.json();
@@ -60,7 +87,7 @@ class APIService {
 
         try {
             const response = await this.#request(urn);
-            
+
             if (response.ok) {
                 LocalStorage.updateTmpUsers(response.json);
             }
@@ -102,7 +129,7 @@ class APIService {
     }
 
     async authLogin(payload) {
-        const { login, password } = payload;
+        // const { login, password } = payload;
         const { urn } = API.endpoints.authLogin;
         const opt = {
             method: API.endpoints.authLogin.method,
@@ -118,14 +145,14 @@ class APIService {
     }
 
     async createTask(payload) {
-        const {
-            name,
-            description,
-            assignee,
-            status,
-            priority,
-            isPrivate
-        } = payload;
+        // const {
+        //     name,
+        //     description,
+        //     assignee,
+        //     status,
+        //     priority,
+        //     isPrivate,
+        // } = payload;
         const { urn } = API.endpoints.createTask;
         const opt = {
             method: API.endpoints.createTask.method,
@@ -141,14 +168,14 @@ class APIService {
     }
 
     async editTask(id, payload) {
-        const {
-            name,
-            description,
-            assignee,
-            status,
-            priority,
-            isPrivate
-        } = payload;
+        // const {
+        //     name,
+        //     description,
+        //     assignee,
+        //     status,
+        //     priority,
+        //     isPrivate,
+        // } = payload;
         const { urn } = API.endpoints.editTask;
         const opt = {
             method: API.endpoints.editTask.method,
@@ -171,6 +198,52 @@ class APIService {
 
         try {
             const response = await this.#request(urn(id), opt);
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async getMyProfile() {
+        const { urn } = API.endpoints.myProfile;
+        const opt = {
+            method: API.endpoints.myProfile.method,
+        };
+
+        try {
+            const response = await this.#request(urn, opt);
+            console.log('MyProfile:', response);
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async deleteUser(id) {
+        const urn = API.endpoints.deleteUser.urn(id);
+        const opt = {
+            method: API.endpoints.deleteUser.method,
+        };
+
+        try {
+            const response = await this.#request(urn, opt);
+            console.log('Delete user:', response);
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async postComment({ taskId, text }) {
+        const urn = API.endpoints.createComment.urn(taskId);
+        const opt = {
+            method: API.endpoints.createComment.method,
+            body: JSON.stringify({ text }),
+        };
+
+        try {
+            const response = await this.#request(urn, opt);
+            console.log('Post comment:', response);
             return response;
         } catch (err) {
             console.warn(err);

@@ -72,7 +72,7 @@ class RegistrationView extends BaseView {
 
         const selectImgFantom = document.createElement('input');
         selectImgFantom.type = 'file';
-        selectImgFantom.accept = 'image/png, image/jpg';
+        selectImgFantom.accept = 'image/png, image/jpeg';
 
         selectImgFantom.addEventListener('change', (event) => {
             const [file] = event.target.files;

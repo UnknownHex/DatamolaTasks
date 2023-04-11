@@ -16,13 +16,13 @@ class TaskView extends BaseView {
             user: task.assignee,
             createdAt: task.createdAt,
             isInfo: true,
-            avatara: currentUser?.img,
+            avatara: currentUser?.photo,
         });
         const userinfo = new UserData({
-            user: currentUser.id,
+            user: currentUser,
             createdAt: task.createdAt,
             isInfo: true,
-            avatara: currentUser?.img,
+            avatara: currentUser?.photo,
         });
 
         const taskInfo = new TaskInfo(task, true);
@@ -150,7 +150,7 @@ class TaskView extends BaseView {
 
         const taskActions = document.createElement('div');
         taskActions.classList.add(styles.taskActions);
-        if (isCurrentUser(task.author, currentUser.id)) {
+        if (isCurrentUser(task.creator.id, currentUser.id)) {
             taskActions.appendChild(editBtn.node);
             taskActions.appendChild(deleteBtn.node);
         }
@@ -179,8 +179,8 @@ class TaskView extends BaseView {
             const userinfo = new UserData({
                 isInfo: true,
                 createdAt: comment.createdAt,
-                user: comment.author,
-                avatara: LocalStorage.getUser(comment.author)?.img,
+                user: comment.creator,
+                avatara: comment.creator?.photo,
             });
 
             return `
@@ -194,6 +194,10 @@ class TaskView extends BaseView {
         });
 
         return this.comments.join('');
+    }
+
+    updateComments() {
+        console.log(this.commentsSection);
     }
 
     display({ task, currentUser }) {

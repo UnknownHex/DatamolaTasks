@@ -24,6 +24,8 @@ const styles = {
     lprio: 'lprio',
     active: 'active',
     inLoading: 'loading',
+    readMode: 'read-mode',
+    loginHeader: 'login-header',
 
     userPanel: 'user-panel',
     notification: 'notification',

@@ -17,6 +17,8 @@ class MainSection extends BaseElement {
     }
 
     clear() {
-        this.node.firstChild.remove();
+        while (this.node.firstChild) {
+            this.node.firstChild.remove();
+        }
     }
 }

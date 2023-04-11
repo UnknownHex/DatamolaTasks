@@ -42,6 +42,15 @@ const isLoginValid = (login) => {
     }
 };
 
+const decodePhoto = (user) => {
+    const ava = atob(user?.photo);
+    if (ava.includes('data:image/')) {
+        return ava;
+    }
+
+    return `data:image/png;base64,${user?.photo}`;
+};
+
 const isLoginFree = (login, userlist) => {
     console.log(login, userlist);
     try {

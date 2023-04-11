@@ -81,6 +81,10 @@ class CustomInput extends BaseElement {
             this.input.setAttribute('name', this.placeholder);
         }
 
+        if (this.value) {
+            this.input.value = this.value;
+        }
+
         this.node.appendChild(this.input);
 
         label.classList.add(styles.inpCaption);
