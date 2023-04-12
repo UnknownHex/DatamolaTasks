@@ -7,14 +7,14 @@ class APIService {
 
     async init() {
         const apiUsers = await this.getAllUsers();
-        const apiTasks = await this.getAllTasks();
+        const apiTasks = null;// await this.getAllTasks();
 
-        if (apiTasks.ok && apiUsers.ok) {
-            LocalStorage.updateTmpTasks(apiTasks.json);
+        if (apiTasks?.ok && apiUsers.ok) {
+            // LocalStorage.updateTmpTasks(apiTasks.json);
             LocalStorage.updateTmpUsers(apiUsers.json);
         }
 
-        this.shortPolling();
+        // this.shortPolling();
     }
 
     shortPolling() {
@@ -228,6 +228,27 @@ class APIService {
         try {
             const response = await this.#request(urn, opt);
             console.log('Delete user:', response);
+            return response;
+        } catch (err) {
+            console.warn(err);
+        }
+    }
+
+    async editUserProfile(id, { userName, password, retypedPassword, photo }) {
+        const urn = API.endpoints.editUser.urn(id);
+        const opt = {
+            method: API.endpoints.editUser.method,
+            body: JSON.stringify({
+                userName,
+                password,
+                retypedPassword,
+                photo,
+            }),
+        };
+
+        try {
+            const response = await this.#request(urn, opt);
+            console.log('edit user:', response);
             return response;
         } catch (err) {
             console.warn(err);

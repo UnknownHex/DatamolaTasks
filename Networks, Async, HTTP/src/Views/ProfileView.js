@@ -7,8 +7,6 @@ class ProfileView extends BaseView {
         this.userLogin = document.createElement('p');
         this.userName = document.createElement('p');
 
-        this.defaultState = {};
-
         this.nameValue = '';
         this.passValue = '';
         this.confirmValue = '';
@@ -51,7 +49,7 @@ class ProfileView extends BaseView {
         return userDiv;
     }
 
-    controlBlock() {
+    controlBlock(userObj, container) {
         const controlBlock = document.createElement('div');
         const imageBlock = document.createElement('div');
 
@@ -59,20 +57,27 @@ class ProfileView extends BaseView {
         btnBlock.classList.add(styles.btnBlock);
 
         const selectedImage = document.createElement('img');
-        selectedImage.classList.add(styles.emptyAvatar);
-        selectedImage.classList.add(styles.icons.iavatar);
+        selectedImage.src = decodePhoto(userObj);
         selectedImage.classList.add(styles.selectedImage);
 
         const selectImgFantom = document.createElement('input');
         selectImgFantom.type = 'file';
         selectImgFantom.accept = 'image/png, image/jpeg';
 
+        const cancelBtn = new Button({
+            caption: 'cancel',
+            onClick: () => {
+                container.node.remove();
+                this.display(userObj, false);
+            },
+        });
+
         selectImgFantom.addEventListener('change', (event) => {
             const [file] = event.target.files;
             const reader = new FileReader();
             reader.onload = (rEvent) => {
-                this.selectedImage = rEvent.target.result;
-                selectedImage.src = this.selectedImage;
+                this.selectedImage = btoa(rEvent.target.result);
+                selectedImage.src = rEvent.target.result;
                 selectedImage.classList.remove(styles.emptyAvatar);
                 selectedImage.classList.remove(styles.icons.iavatar);
             };
@@ -95,30 +100,45 @@ class ProfileView extends BaseView {
             classNames: [styles.btn, styles.secondary],
             icon: styles.icons.iclear,
             onClick: () => {
-                this.regForm.reset();
-                this.selectedImage = null;
-                selectedImage.src = '';
-                selectedImage.classList.add(styles.icons.iavatar);
-                selectedImage.classList.add(styles.emptyAvatar);
-                confirmBtn.node.classList.remove(styles.filled);
-                confirmBtn.node.disabled = true;
+                container.node.remove();
+                this.display(this.user, true);
             },
         });
         btnBlock.appendChild(selectImgBtn.node);
         btnBlock.appendChild(resetBtn.node);
+        btnBlock.appendChild(cancelBtn.node);
         btnBlock.appendChild(confirmBtn.node);
+
+        imageBlock.classList.add(styles.imageFrame);
+        imageBlock.appendChild(selectedImage);
 
         controlBlock.classList.add(styles.controlBlock);
         controlBlock.appendChild(imageBlock);
         controlBlock.appendChild(btnBlock);
 
+        this.editForm.addEventListener('input', () => {
+            const hasEmpty = this.hasEmptyFields();
+            confirmBtn.node.disabled = hasEmpty;
+        });
+
+        this.editForm.addEventListener('submit', (event) => {
+            event.preventDefault();
+            event.target.dispatchEvent(customEvents.editProfile.action({
+                id: this.user.id,
+                userName: this.nameValue,
+                password: this.passValue,
+                retypedPassword: this.confirmValue,
+                photo: this.selectedImage,
+            }));
+        });
+
         return controlBlock;
     }
 
     initForm() {
-        this.regForm = document.createElement('form');
-        this.regForm.method = 'POST';
-        this.regForm.classList.add(styles.regForm);
+        this.editForm = document.createElement('form');
+        this.editForm.method = 'POST';
+        this.editForm.classList.add(styles.regForm);
     }
 
     showReadMode(userObj) {
@@ -141,8 +161,8 @@ class ProfileView extends BaseView {
             classNames: [styles.btn, styles.secondary],
             icon: styles.icons.iedit,
             onClick: () => {
-                console.log('edit');
-                this.showEditMode(userObj);
+                container.node.remove();
+                this.display(this.user, true);
             },
         });
 
@@ -161,16 +181,20 @@ class ProfileView extends BaseView {
 
     showEditMode(userObj) {
         this.initForm();
+        console.log(userObj);
+        this.selectedImage = userObj.photo;
+        this.nameValue = userObj.userName;
         const container = new Container();
         const brBar = this.linkToTaskfeed();
         const loginHeader = this.loginHeader(userObj.login);
+        const controls = this.controlBlock(userObj, container);
 
         const name = new CustomInput({
             name: 'name',
             label: 'Name',
             isRequired: true,
             value: userObj.userName,
-            onchange: (e) => { this.nameValue = e.target.value; },
+            onChange: (e) => { this.nameValue = e.target.value; },
         });
 
         const password = new CustomInput({
@@ -179,7 +203,7 @@ class ProfileView extends BaseView {
             label: 'Password',
             isRequired: true,
             icon: styles.icons.ieyeSlash,
-            onchange: (e) => { this.passValue = e.target.value; },
+            onChange: (e) => { this.passValue = e.target.value; },
         });
 
         const confirmationPass = new CustomInput({
@@ -188,32 +212,31 @@ class ProfileView extends BaseView {
             label: 'Password confirmation',
             isRequired: true,
             icon: styles.icons.ieyeSlash,
-            onchange: (e) => { this.confirmValue = e.target.value; },
+            onChange: (e) => { this.confirmValue = e.target.value; },
         });
 
-        this.regForm.appendChild(name.node);
-        this.regForm.appendChild(password.node);
-        this.regForm.appendChild(confirmationPass.node);
+        this.editForm.appendChild(name.node);
+        this.editForm.appendChild(password.node);
+        this.editForm.appendChild(confirmationPass.node);
 
-        container.node.appendChild(this.regForm);
+        container.node.appendChild(brBar);
         container.node.appendChild(loginHeader);
+        container.node.appendChild(this.editForm);
+        this.editForm.appendChild(controls);
 
         this.fragment.appendChild(container.node);
-
-        this.render(this.fragment);
-    }
-
-    setDefaults(user) {
-        this.defaultState = {
-            photo: user.photo,
-            userName: user.userName,
-            password: '',
-            confirm: '',
-        };
     }
 
     display(user, mode) {
-        this.showReadMode(user);
+        this.user = user;
+        mode ? this.showEditMode(user) : this.showReadMode(user);
         this.render(this.fragment);
+    }
+
+    hasEmptyFields() {
+        const formData = new FormData(this.editForm);
+        const isLocked = Array.from(formData.values()).includes('');
+
+        return isLocked;
     }
 }

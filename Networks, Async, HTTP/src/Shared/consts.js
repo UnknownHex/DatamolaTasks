@@ -65,6 +65,14 @@ const API = {
 const STANDARD_IMG = './assets/icons/avatar.svg';
 
 const customEvents = {
+    editProfile: {
+        caption: 'edit-profile',
+        action: (payload) => new CustomEvent('edit-profile', { bubbles: true, detail: payload }),
+    },
+    openProfile: {
+        caption: 'open-profile',
+        action: new CustomEvent('open-profile', { bubbles: true }),
+    },
     addComment: {
         caption: 'add-comment-to-task',
         action: (data) => new CustomEvent('add-comment-to-task', { bubbles: true, detail: { data } }),
@@ -192,6 +200,7 @@ const notiflyMessages = {
         bye: (user) => (`See you letter, <span class="${styles.focusInfo}">${user}</span>!`),
     },
     success: {
+        userEdited: (id) => (`User "#${id}" <span class="${styles.focusSucc}">successfully</span> updated!`),
         userAdded: `You're <span class="${styles.focusSucc}">successfully</span> registered.
             Please <span class="${styles.focusSucc}">SIGN IN</span> with your login and password!`,
         taskAdded: (name, creator) => (`
@@ -214,6 +223,7 @@ const notiflyMessages = {
     },
     err: {
         wrongLogin: 'Wrong login or password...',
+        notSimplePasswors: 'Passwords are not simple.',
     },
 };
 

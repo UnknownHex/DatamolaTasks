@@ -27,6 +27,7 @@ class UserPanel extends BaseElement {
             const userPanelFragment = document.createDocumentFragment();
             const notification = document.createElement('div');
             const userData = new UserData({ user: this.user });
+            const linkToProfile = document.createElement('a');
             const logoutBtn = new Button({
                 caption: 'logout',
                 classNames: [styles.btn, styles.primary],
@@ -39,8 +40,14 @@ class UserPanel extends BaseElement {
             notification.classList.add(styles.notification);
             this.node.classList.add(styles.userPanel);
 
+            linkToProfile.appendChild(userData.node);
+            linkToProfile.href = '';
+            linkToProfile.addEventListener('click', (event) => {
+                event.preventDefault();
+                event.target.dispatchEvent(customEvents.openProfile.action);
+            });
             userPanelFragment.appendChild(notification);
-            userPanelFragment.appendChild(userData.node);
+            userPanelFragment.appendChild(linkToProfile);
             userPanelFragment.appendChild(logoutBtn.node);
 
             this.node.append(userPanelFragment);

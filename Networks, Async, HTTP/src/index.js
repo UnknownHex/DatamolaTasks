@@ -29,10 +29,7 @@ class App {
     }
 
     test() {
-        this.mainSection.clear();
-        this.profileView = new ProfileView('main-content');
-        console.log('user', LocalStorage.tmpData.users[0]);
-        this.profileView.display(LocalStorage.tmpData.users[0]);
+        
     }
 
     async init() {
@@ -50,6 +47,7 @@ class App {
         this.mainSection.appendIn(this.appContainer.id);
 
         this.taskFeedView = new TaskFeedView('main-content');
+        this.profileView = new ProfileView('main-content');
 
         this.filterView = new FilterView(this.appContainer.id);
 
@@ -67,7 +65,7 @@ class App {
 
         this.test();
 
-        // this.showTaskFeedPage();
+        this.showTaskFeedPage();
     }
 
     initListeners() {
@@ -90,6 +88,63 @@ class App {
         this.appContainer.addEventListener(customEvents.showTaskPage.caption, this.openTaskPage.bind(this));
         this.appContainer.addEventListener(customEvents.changeTaskfeedView.caption, this.changeView.bind(this));
         this.appContainer.addEventListener(customEvents.addComment.caption, this.addCommentHandler.bind(this));
+        this.appContainer.addEventListener(customEvents.openProfile.caption, this.showProfile.bind(this));
+        this.appContainer.addEventListener(customEvents.editProfile.caption, this.editProfileHandler.bind(this));
+    }
+
+    // TODO: plz start from verify this
+    async editProfileHandler(event) {
+        console.log(event.detail);
+        const { id } = event.detail;
+        const { userName, password, retypedPassword, photo } = event.detail;
+
+        const passRequest = isPassConfirmed(password, retypedPassword);
+
+        if (passRequest.status >= 400) {
+            NotificationView.createNotifly({
+                type: notiflyVariants.errNoti,
+                message: notiflyMessages.err.notSimplePasswors,
+            });
+
+            return;
+        }
+
+        const response = await this.apiService.editUserProfile(id, {
+            userName,
+            password,
+            retypedPassword,
+            photo,
+        });
+
+        if (response.ok) {
+            console.log('done');
+            this.showProfile();
+            NotificationView.createNotifly({
+                type: notiflyVariants.succNoti,
+                message: notiflyMessages.success.userEdited(id),
+            });
+        } else {
+            NotificationView.createNotifly({
+                type: notiflyVariants.errNoti,
+                message: response.json.message,
+            });
+        }
+    }
+
+    async showProfile() {
+        const myProfileResponse = await this.apiService.getMyProfile();
+
+        if (myProfileResponse.ok) {
+            this.mainSection.clear();
+            this.profileView.display(myProfileResponse.json);
+        } else {
+            NotificationView.createNotifly({
+                type: notiflyVariants.errNoti,
+                message: myProfileResponse.json?.message,
+            });
+        }
+        // LocalStorage.tmpData.users = JSON.parse(localStorage.getItem('users'));
+        // console.log('user', LocalStorage.tmpData.users[0]);
     }
 
     async addCommentHandler(event) {

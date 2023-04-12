@@ -1274,12 +1274,13 @@ input:checked + .slider:after {
     gap: 25px;
 }
 
-.read-mode p {
+p {
     color: var(--primary700);
     margin: 5px;
 }
 
-.read-mode .login-header p {
+.login-header p {
+    text-align: center;
     font-weight: 600;
     font-size: 4rem;
     margin: 0px;
