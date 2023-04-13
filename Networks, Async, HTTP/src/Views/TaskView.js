@@ -175,7 +175,7 @@ class TaskView extends BaseView {
 
     showComments({ comments }) {
         if (comments.length < 1) return '';
-        this.comments = comments.map((comment) => {
+        this.comments = orderByDate(comments).map((comment) => {
             const userinfo = new UserData({
                 isInfo: true,
                 createdAt: comment.createdAt,

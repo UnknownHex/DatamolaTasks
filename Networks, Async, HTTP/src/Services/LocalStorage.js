@@ -21,6 +21,10 @@ class LocalStorage {
         };
     }
 
+    static get tmpTasks() {
+        return LocalStorage.tmpData.tasks;
+    }
+
     static updateTmpUsers(tmpUsers) {
         LocalStorage.tmpData.users = tmpUsers || [];
     }
@@ -31,7 +35,7 @@ class LocalStorage {
 
     static findUser(key, value) {
         const user = LocalStorage.tmpData.users.find((inst) => inst[key] === value);
-        console.log(user);
+
         return user || null;
     }
 
@@ -42,9 +46,9 @@ class LocalStorage {
     }
 
     static getUser() {
-        const user = this.loadFromStore(this.storageKeys.currentUserId);
+        const user = localStorage.getItem('currentUserId');
 
-        return user || null;
+        return JSON.parse(user) || null;
     }
 
     get activeFilters() {

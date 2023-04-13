@@ -218,8 +218,17 @@ const analizeObjErrors = (obj) => {
     return result;
 };
 
+const filterByWord = (tasklist, filterString) => {
+    const tasks = [...tasklist];
+    const filtered = tasks.filter((task) => (
+        task.description.includes(filterString) || task.name.includes(filterString)
+    ));
+
+    return filtered;
+};
+
 const filterTasks = (tasklist, filterOpt) => {
-    const tasks = tasklist.slice();
+    const tasks = [...tasklist];
     const filterEnt = Object.entries(filterOpt).filter((opt) => {
         const [key] = opt;
         return isValidKey(key);
@@ -231,9 +240,10 @@ const filterTasks = (tasklist, filterOpt) => {
         filterEnt.forEach((opt) => {
             const [key, value] = opt;
 
-            if (key.includes(fieldKeys.assignee.key)
-                || key.includes(fieldKeys.description.key)) {
-                filterResults[key] = !value || task[key].includes(value);
+            // console.log(key, value);
+
+            if (key === fieldKeys.assignee.key) {
+                filterResults[key] = !value || task[key].id === value;
             }
 
             if (key.includes(fieldKeys.status.key)

@@ -9,66 +9,58 @@ class App {
         this.initListeners();
     }
 
-    createBlur() {
-        const blur = new Blur();
+    showBlur() {
         this.appContainer.style = 'max-height: 100vh; overflow: hidden;';
-        this.appContainer.appendChild(blur.node);
+        this.appContainer.appendChild(this.blur.node);
 
-        blur.node.addEventListener('mousedown', (event) => {
-            event.target.classList.contains(styles.blurWrapper) && this.clearBlur(blur.node);
+        this.blur.node.addEventListener('mousedown', (event) => {
+            event.target.classList.contains(styles.blurWrapper) && this.clearBlur();
         });
-
-        blur.node.addEventListener(customEvents.closeModal.caption, this.clearBlur.bind(this, blur.node));
-
-        return blur.node;
     }
 
-    clearBlur(node) {
+    clearBlur() {
         this.appContainer.removeAttribute('style');
-        node.remove();
+        this.blur.clear();
     }
 
     test() {
-        
     }
 
     async init() {
         this.appContainer = document.querySelector('#mount-point');
-
         this.storage = new LocalStorage();
-        this.apiService = new APIService(API.address);
-        await this.apiService.init();
 
+        this.blur = new Blur();
+        this.taskModalView = new TaskModalView(this.appContainer.id);
         this.notificationView = new NotificationView(this.appContainer.id);
-
         this.headerView = new HeaderView(this.appContainer.id);
-
         this.mainSection = new MainSection('main-content');
         this.mainSection.appendIn(this.appContainer.id);
-
+        this.spiner = new Spiner();
+        this.spiner.showSpiner(this.appContainer);
         this.taskFeedView = new TaskFeedView('main-content');
         this.profileView = new ProfileView('main-content');
-
         this.filterView = new FilterView(this.appContainer.id);
-
         this.footer = new FooterView(this.appContainer.id);
+
+        this.apiService = new APIService(API.address);
+        await this.apiService.init();
 
         this.storage.loadStoredData();
 
         if (this.storage.currentUserId) {
-            // TODO: waiting animation
             const user = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId) || null;
             const token = user ? this.storage.loadToken() : null;
-            // console.log(user, token);
+
             this.setCurrentUser(user, token);
         }
-
-        this.test();
 
         this.showTaskFeedPage();
     }
 
     initListeners() {
+        this.blur.node.addEventListener(customEvents.closeModal.caption, this.clearBlur.bind(this));
+
         this.appContainer.addEventListener(customEvents.showFilters.caption, this.showFilter.bind(this));
         this.appContainer.addEventListener(customEvents.getSelectParam.caption, this.changeInputParams.bind(this));
         this.appContainer.addEventListener(customEvents.getFilterParam.caption, this.changeButtonParams.bind(this));
@@ -92,11 +84,16 @@ class App {
         this.appContainer.addEventListener(customEvents.editProfile.caption, this.editProfileHandler.bind(this));
     }
 
-    // TODO: plz start from verify this
+    inLoading(isLoading) {
+        isLoading ? this.spiner.showSpiner(this.appContainer) : this.spiner.clearSpiner();
+
+        this.state.isTasksLoading = isLoading;
+        this.taskFeedView.showLoading(this.state.isTasksLoading);
+    }
+
     async editProfileHandler(event) {
-        console.log(event.detail);
-        const { id } = event.detail;
-        const { userName, password, retypedPassword, photo } = event.detail;
+        this.inLoading(true);
+        const { id, userName, password, retypedPassword, photo } = event.detail;
 
         const passRequest = isPassConfirmed(password, retypedPassword);
 
@@ -105,6 +102,8 @@ class App {
                 type: notiflyVariants.errNoti,
                 message: notiflyMessages.err.notSimplePasswors,
             });
+
+            this.inLoading(false);
 
             return;
         }
@@ -128,10 +127,13 @@ class App {
                 type: notiflyVariants.errNoti,
                 message: response.json.message,
             });
+
+            this.inLoading(false);
         }
     }
 
     async showProfile() {
+        this.inLoading(true);
         const myProfileResponse = await this.apiService.getMyProfile();
 
         if (myProfileResponse.ok) {
@@ -143,17 +145,19 @@ class App {
                 message: myProfileResponse.json?.message,
             });
         }
-        // LocalStorage.tmpData.users = JSON.parse(localStorage.getItem('users'));
-        // console.log('user', LocalStorage.tmpData.users[0]);
+
+        this.inLoading(false);
     }
 
     async addCommentHandler(event) {
         const { text, taskId } = event.detail.data;
 
+        this.spiner.showSpiner(this.appContainer);
         const response = await this.apiService.postComment({ taskId, text });
 
         if (!response.ok) {
             const [message] = response.json.message;
+            this.spiner.clearSpiner();
 
             NotificationView.createNotifly({
                 type: notiflyVariants.errNoti,
@@ -174,11 +178,6 @@ class App {
         this.taskFeedView.changeView(this.state.isTableView);
     }
 
-    inLoading(isLoading) {
-        this.state.isTasksLoading = isLoading;
-        this.taskFeedView.showLoading(this.state.isTasksLoading);
-    }
-
     async openTaskPage(event) {
         if (!this.storage.currentUserId) {
             NotificationView.createNotifly({
@@ -187,6 +186,8 @@ class App {
             });
             return;
         }
+
+        this.inLoading(true);
         const id = event.detail;
         const response = await this.apiService.getTaskById(id);
 
@@ -195,6 +196,7 @@ class App {
                 type: notiflyVariants.errNoti,
                 message: response.json.message,
             });
+            this.inLoading(false);
         }
 
         if (response.ok) {
@@ -205,6 +207,7 @@ class App {
 
     async deleteTaskHandler(event) {
         const id = event.detail;
+        this.inLoading(true);
 
         const isOk = window.confirm(`Are you really want to delete task ${id}?`);
 
@@ -227,6 +230,7 @@ class App {
                 type: notiflyVariants.errNoti,
                 message: response.json.message,
             });
+            this.inLoading(false);
         }
     }
 
@@ -258,6 +262,8 @@ class App {
                 type: notiflyVariants.errNoti,
                 message: response.json.message,
             });
+
+            this.inLoading(false);
         }
     }
 
@@ -278,6 +284,8 @@ class App {
             status: options.status,
         };
 
+        this.inLoading(true);
+
         const response = await this.apiService.createTask(preTaskInst);
 
         if (response.ok) {
@@ -287,16 +295,19 @@ class App {
                 message: notiflyMessages.success.taskAdded(name, creator.userName),
             });
         }
+
+        this.inLoading(false);
     }
 
     showAuthorization() {
-        const blur = this.createBlur();
+        this.showBlur();
         const authorizationView = new AuthorizationView(this.appContainer.id);
 
-        blur.appendChild(authorizationView.authForm);
+        this.blur.node.appendChild(authorizationView.authForm);
     }
 
     async loginUser(event) {
+        this.inLoading(true);
         const { login, password } = event.detail;
         const response = await this.apiService.authLogin({
             login: login.input.value,
@@ -320,12 +331,15 @@ class App {
             password.node.addEventListener('animationend', blink);
             password.node.classList.add(styles.wrong);
 
+            this.inLoading(false);
+
             return;
         }
         const user = LocalStorage.findUser(fieldKeys.login.key, login.input.value);
 
         this.setCurrentUser(user, response.json.token);
         event.target.dispatchEvent(customEvents.closeModal.action);
+        this.inLoading(false);
     }
 
     async registerUserHandler(event) {
@@ -337,6 +351,8 @@ class App {
             confirm,
             img,
         } = event.detail;
+
+        this.inLoading(true);
 
         const loginValidRequest = isLoginValid(login.input.value);
         const passRequest = isPassConfirmed(pass.input.value, confirm.input.value);
@@ -364,7 +380,10 @@ class App {
             photo: btoa(img),
         };
 
-        if (!isOk.continue) return;
+        if (!isOk.continue) {
+            this.inLoading(false);
+            return;
+        }
 
         const response = await this.apiService.register(userData);
 
@@ -375,6 +394,8 @@ class App {
                     message: msg,
                 });
             });
+
+            this.inLoading(false);
         }
 
         if (response.ok) {
@@ -382,11 +403,14 @@ class App {
                 type: notiflyVariants.succNoti,
                 message: notiflyMessages.success.userAdded,
             });
+
             this.showTaskFeedPage();
         }
     }
 
     logoutUser() {
+        this.inLoading(true);
+
         this.setCurrentUser(null, null);
         this.storage.setToDefaults();
     }
@@ -418,7 +442,7 @@ class App {
             break;
         }
 
-        // this.showTaskFeedPage();
+        this.showTaskFeedPage();
     }
 
     changeInputParams(e) {
@@ -471,26 +495,29 @@ class App {
         this.storage.setToDefaults();
         this.storage.saveStoredData();
 
-        this.filterView.display({
-            avaliableUsers: [], // get users from api
-            filterOpt: this.storage.activeFilters,
-        });
-        // this.showTaskFeedPage();
+        this.filterView.filter.remove();
+        this.showFilter();
+
+        this.showTaskFeedPage();
     }
 
     confirmFilters() {
-        // this.showTaskFeedPage();
+        this.showTaskFeedPage();
+        this.storage.saveStoredData();
+        this.clearBlur();
     }
 
     async showTaskFeedPage() {
         this.inLoading(true);
         await this.apiService.getAllTasks();
-        // const tasks3 = this.getFeed(0, 10, this.storage.activeFilters);
-        this.mainSection.clear();
+
+        const filteredTasks = this.getFeed(0, 10, this.storage.activeFilters);
+
         const currentUser = await this.getCurrentUser();
+        this.mainSection.clear();
         this.taskFeedView.display({
             isTasksLoading: this.state.isTasksLoading,
-            tasklist: LocalStorage.tmpData.tasks,
+            tasklist: filteredTasks,
             currentUser,
             filterOpt: this.storage.activeFilters,
             isTableView: this.state.isTableView,
@@ -507,6 +534,8 @@ class App {
             task,
             currentUser,
         });
+
+        this.inLoading(false);
     }
 
     showFilter() {
@@ -517,16 +546,18 @@ class App {
             });
             return;
         }
+        this.inLoading(true);
 
         this.apiService.getAllUsers()
             .then((res) => {
-                const blur = this.createBlur();
+                this.showBlur();
                 const filter = this.filterView.display({
                     filterOpt: this.storage.activeFilters,
                     avaliableUsers: res.json,
                 });
 
-                blur.appendChild(filter);
+                this.blur.node.appendChild(filter);
+                this.inLoading(false);
             });
     }
 
@@ -543,27 +574,29 @@ class App {
             });
             return;
         }
-        console.log(event.detail);
+
+        this.inLoading(true);
+
         const id = event.detail;
         const response = id ? await this.apiService.getTaskById(id) : null;
-        const blur = this.createBlur();
 
         if (response?.ok || !id) {
-            const taskModalView = new TaskModalView(this.appContainer.id, {
-                task: response?.json,
-            });
-            blur.appendChild(taskModalView.addTaskForm);
+            this.showBlur();
+            this.taskModalView.display(response?.json, this.blur.node);
         }
+
+        this.inLoading(false);
     }
 
     async setCurrentUser(user, token) {
-        console.log('setCurrentUser:', user);
+        this.inLoading(true);
+
         const tmpUser = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
 
         this.apiService.token = token || null;
 
         this.headerView.display(user);
-        // this.showTaskFeedPage();
+        this.showTaskFeedPage();
 
         this.storage.setToDefaults();
         this.storage.saveFilterOptions();
@@ -582,7 +615,6 @@ class App {
 
     async getCurrentUser() {
         if (!this.storage.currentUserId) return;
-        // const currentUser = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId);
         const response = await this.apiService.getMyProfile();
 
         if (!response.ok) {
@@ -593,22 +625,17 @@ class App {
         }
 
         const currentUser = response.json;
-        console.log(currentUser);
 
         return currentUser;
     }
 
     getFeed(skip, top, filterConfig) {
-        const filteredTasks = []; // GET TASKS THAN FILTER
+        const filteredTasks = filterTasks(LocalStorage.tmpTasks, filterConfig); // GET TASKS THAN FILTER
+        const filteredByWord = this.storage.filterString && filterByWord(filteredTasks, this.storage.filterString);
+        const sortedTasks = orderByDate(filteredByWord || filteredTasks);
 
-        return filteredTasks;
-        // console.log(filteredTasks); // Need only for testlog in console!
-    }
-
-    showTask(id) {
-        const foundTask = this.taskCollection.get(id);
-
-        foundTask && this.showTaskPage(foundTask);
+        // console.log(sortedTasks); // Need only for testlog in console!
+        return sortedTasks;
     }
 }
 

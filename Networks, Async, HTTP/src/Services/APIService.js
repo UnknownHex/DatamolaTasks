@@ -7,14 +7,14 @@ class APIService {
 
     async init() {
         const apiUsers = await this.getAllUsers();
-        const apiTasks = null;// await this.getAllTasks();
+        const apiTasks = await this.getAllTasks();
 
         if (apiTasks?.ok && apiUsers.ok) {
-            // LocalStorage.updateTmpTasks(apiTasks.json);
+            LocalStorage.updateTmpTasks(apiTasks.json);
             LocalStorage.updateTmpUsers(apiUsers.json);
         }
 
-        // this.shortPolling();
+        this.shortPolling();
     }
 
     shortPolling() {

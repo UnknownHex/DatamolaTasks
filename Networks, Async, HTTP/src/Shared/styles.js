@@ -2,6 +2,7 @@ const styles = {
     container: 'container',
     link: 'link',
     brBar: 'br-bar',
+    ldsRing: 'lds-ring',
 
     header: 'header',
     headerWrapper: 'header-wrapper',

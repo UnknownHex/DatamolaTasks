@@ -12,4 +12,12 @@ class BaseElement {
     get outerHTML() {
         return this.#node.outerHTML;
     }
+
+    clear() {
+        while (this.#node.firstChild) {
+            this.#node.firstChild.remove();
+        }
+
+        this.#node.remove();
+    }
 }

@@ -6,7 +6,7 @@ class ActionBar extends BaseElement {
 
         this.init();
     }
-
+    // TODO: here we pasused
     init() {
         this.node.classList.add(styles.actionBar);
         const searchGroup = document.createElement('div');
@@ -22,6 +22,8 @@ class ActionBar extends BaseElement {
             label: 'Search',
             isRequired: true,
         });
+        console.log(searchInp);
+        searchInp.input.oninput = () => { console.log('eqw'); };
         this.filterBtn = new Button({
             caption: 'Filter',
             icon: styles.icons.ifilter,

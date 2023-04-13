@@ -1,7 +1,5 @@
 class TaskModalView extends BaseView {
-    constructor(containerId, { task }) {
-        super(containerId);
-
+    init(task) {
         this.addTaskForm = document.createElement('form');
         this.task = task;
 
@@ -10,11 +8,10 @@ class TaskModalView extends BaseView {
             status: task ? task.status : taskStatus.toDo,
             priority: task ? task.priority : taskPriority.medium,
         };
-
-        this.init();
     }
 
-    init() {
+    display(task, container) {
+        this.init(task);
         this.addTaskForm.method = 'POST';
         this.addTaskForm.classList.add('modal-frame');
         const fieldContainer = document.createElement('div');
@@ -66,7 +63,7 @@ class TaskModalView extends BaseView {
 
         const assignee = new Select({
             avaliableUsers: this.userlist,
-            assignee: this.task?.assignee.id,
+            assignee: this.task?.assignee.id || LocalStorage.findUser(fieldKeys.id.key, LocalStorage.getUser())?.id,
             name: fieldKeys.assignee.key,
             withHidden: false,
         });
@@ -212,6 +209,6 @@ class TaskModalView extends BaseView {
             event.target.dispatchEvent(customEvents.closeModal.action);
         });
 
-        this.render(template);
+        container.appendChild(template);
     }
 }
