@@ -9,7 +9,7 @@ class LocalStorage {
 
         this.currentUserId = null;
 
-        this.filterString = null;
+        this.filterString = 'null';
         this.setToDefaults();
 
         this.storageKeys = {
@@ -97,6 +97,7 @@ class LocalStorage {
     loadStoredData() {
         this.currentUserId = this.loadFromStore(this.storageKeys.currentUserId);
         this.filterString = this.loadFromStore(this.storageKeys.filterString);
+        console.log(this.filterString);
         this.loadFilterOptions();
     }
 
@@ -129,8 +130,8 @@ class LocalStorage {
     }
 
     setFilterString(searchString) {
-        this.searchString = searchString;
-        this.saveToStore(this.storageKeys.filterString, this.searchString);
+        this.filterString = searchString !== '' ? searchString : null;
+        this.saveToStore(this.storageKeys.filterString, this.filterString);
     }
 
     setStatus(status) {

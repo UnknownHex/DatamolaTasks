@@ -23,13 +23,13 @@ class ActiveFiltersBar extends BaseElement {
                 });
             } else {
                 const isAssigneeKey = key === fieldKeys.assignee.key;
-                
-                const badge = new FilterBadge({ 
-                    key, 
+
+                const badge = new FilterBadge({
+                    key,
                     value: isAssigneeKey
                         ? LocalStorage.findUser(fieldKeys.id.key, this.activeFilters.assignee)?.userName
-                        : value 
-                    });
+                        : value,
+                });
                 fragment.appendChild(badge.node);
             }
         });

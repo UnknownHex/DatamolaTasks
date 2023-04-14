@@ -1,12 +1,12 @@
 class ActionBar extends BaseElement {
-    constructor(eventDelegation) {
+    constructor() {
         super('section');
 
         this.fragment = document.createDocumentFragment();
 
         this.init();
     }
-    // TODO: here we pasused
+
     init() {
         this.node.classList.add(styles.actionBar);
         const searchGroup = document.createElement('div');
@@ -21,9 +21,19 @@ class ActionBar extends BaseElement {
             icon: styles.icons.isearch,
             label: 'Search',
             isRequired: true,
+            value: JSON.parse(localStorage.getItem('filterString')),
+            onClick: (event) => {
+                if (searchInp.input.value === '') {
+                    return;
+                }
+                event.target.dispatchEvent(customEvents.confirmFilters.action);
+            },
         });
-        console.log(searchInp);
-        searchInp.input.oninput = () => { console.log('eqw'); };
+
+        searchInp.input.oninput = (event) => {
+            event.target.dispatchEvent(customEvents.setWordFilter.action(event.target.value));
+        };
+
         this.filterBtn = new Button({
             caption: 'Filter',
             icon: styles.icons.ifilter,
@@ -82,7 +92,7 @@ class ActionBar extends BaseElement {
                 });
                 event.target.closest(`.${styles.btn}`).classList.add(styles.active);
                 event.target.dispatchEvent(customEvents.changeTaskfeedView.action);
-            };
+            }
         });
 
         this.node.appendChild(this.fragment);

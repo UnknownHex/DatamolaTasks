@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 const isString = (param) => (typeof param === 'string');
 const isNumber = (param) => (typeof param === 'number' && !Number.isFinite(param));
 const isBoolean = (param) => (typeof param === 'boolean');
@@ -48,7 +47,7 @@ const decodePhoto = (user) => {
         return ava;
     }
 
-    return `data:image/png;base64,${user?.photo}`;
+    return user?.photo ? `data:image/png;base64,${user?.photo}` : STANDARD_IMG;
 };
 
 const isLoginFree = (login, userlist) => {

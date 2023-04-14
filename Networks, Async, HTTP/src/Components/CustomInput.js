@@ -69,6 +69,10 @@ class CustomInput extends BaseElement {
             this.input.addEventListener('change', this.onChange);
         }
 
+        if (this.onClick) {
+            inputBtn.node.addEventListener('click', this.onClick);
+        }
+
         if (this.isRequired) {
             this.input.setAttribute('required', this.isRequired);
         }

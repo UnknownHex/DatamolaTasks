@@ -3,6 +3,10 @@ class App {
         this.state = {
             isTableView: false,
             isTasksLoading: true,
+            sortedTasks: [],
+            currentPage: 0,
+            step: 10,
+            skip: 0,
         };
 
         this.init();
@@ -44,10 +48,10 @@ class App {
         this.footer = new FooterView(this.appContainer.id);
 
         this.apiService = new APIService(API.address);
+
         await this.apiService.init();
 
         this.storage.loadStoredData();
-
         if (this.storage.currentUserId) {
             const user = LocalStorage.findUser(fieldKeys.id.key, this.storage.currentUserId) || null;
             const token = user ? this.storage.loadToken() : null;
@@ -82,6 +86,13 @@ class App {
         this.appContainer.addEventListener(customEvents.addComment.caption, this.addCommentHandler.bind(this));
         this.appContainer.addEventListener(customEvents.openProfile.caption, this.showProfile.bind(this));
         this.appContainer.addEventListener(customEvents.editProfile.caption, this.editProfileHandler.bind(this));
+        this.appContainer.addEventListener(customEvents.setWordFilter.caption, this.setWordFilter.bind(this));
+    }
+
+    setWordFilter(event) {
+        const { text } = event.detail;
+
+        this.storage.setFilterString(text);
     }
 
     inLoading(isLoading) {
@@ -511,7 +522,7 @@ class App {
         this.inLoading(true);
         await this.apiService.getAllTasks();
 
-        const filteredTasks = this.getFeed(0, 10, this.storage.activeFilters);
+        const filteredTasks = this.getFeed();
 
         const currentUser = await this.getCurrentUser();
         this.mainSection.clear();
@@ -598,9 +609,11 @@ class App {
         this.headerView.display(user);
         this.showTaskFeedPage();
 
-        this.storage.setToDefaults();
-        this.storage.saveFilterOptions();
-        this.storage.setCurrentUser(user, token);
+        if (tmpUser?.id !== this.storage.currentUserId) {
+            this.storage.setToDefaults();
+            this.storage.saveFilterOptions();
+            this.storage.setCurrentUser(user, token);
+        }
 
         this.apiService.token
             ? NotificationView.createNotifly({
@@ -629,13 +642,44 @@ class App {
         return currentUser;
     }
 
-    getFeed(skip, top, filterConfig) {
-        const filteredTasks = filterTasks(LocalStorage.tmpTasks, filterConfig); // GET TASKS THAN FILTER
+    getFeed() {
+        const filteredTasks = filterTasks(LocalStorage.tmpTasks, this.storage.activeFilters);
         const filteredByWord = this.storage.filterString && filterByWord(filteredTasks, this.storage.filterString);
-        const sortedTasks = orderByDate(filteredByWord || filteredTasks);
+        // this.state.sortedTasks = orderByDate(filteredByWord || filteredTasks);
+        this.state.sortedTasks = filteredByWord || filteredTasks;
+
+        const splicedTasks = [...this.state.sortedTasks].splice(this.state.skip, this.state.step);
+
+        console.log('SORTED:', this.state.sortedTasks);
+        console.log('BY_WORD:', filteredByWord);
+        console.log('SPLICED', splicedTasks);
+
+        this.state.currentPage = 0;
 
         // console.log(sortedTasks); // Need only for testlog in console!
-        return sortedTasks;
+        return splicedTasks;
+    }
+
+    loadNext() {
+        this.state.currentPage += 1;
+        const skip = this.state.step * this.state.currentPage;
+
+        if (this.state.sortedTasks.length > skip) {
+            const splicedTasks = [...this.state.sortedTasks].splice(skip, this.state.step);
+
+            this.taskFeedView.updateTasks(splicedTasks, this.getCurrentUser());
+        }
+    }
+
+    loadPrev() {
+        this.state.currentPage = this.state.currentPage - 1 >= 0 ? this.state.currentPage - 1 : 0;
+        const skip = this.state.step * this.state.currentPage;
+
+        if (this.state.sortedTasks.length > skip && skip >= 0) {
+            const splicedTasks = [...this.state.sortedTasks].splice(skip, this.state.step);
+
+            this.taskFeedView.updateTasks(splicedTasks, this.getCurrentUser());
+        }
     }
 }
 

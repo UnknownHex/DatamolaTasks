@@ -65,6 +65,10 @@ const API = {
 const STANDARD_IMG = './assets/icons/avatar.svg';
 
 const customEvents = {
+    setWordFilter: {
+        caption: 'find-in-text',
+        action: (text) => new CustomEvent('find-in-text', { bubbles: true, detail: { text } }),
+    },
     editProfile: {
         caption: 'edit-profile',
         action: (payload) => new CustomEvent('edit-profile', { bubbles: true, detail: payload }),
