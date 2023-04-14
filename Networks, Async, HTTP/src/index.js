@@ -348,6 +348,7 @@ class App {
         }
         const user = LocalStorage.findUser(fieldKeys.login.key, login.input.value);
 
+        this.storage.setToDefaults();
         this.setCurrentUser(user, response.json.token);
         event.target.dispatchEvent(customEvents.closeModal.action);
         this.inLoading(false);
@@ -609,11 +610,8 @@ class App {
         this.headerView.display(user);
         this.showTaskFeedPage();
 
-        if (tmpUser?.id !== this.storage.currentUserId) {
-            this.storage.setToDefaults();
-            this.storage.saveFilterOptions();
-            this.storage.setCurrentUser(user, token);
-        }
+        this.storage.setCurrentUser(user, token);
+        this.storage.saveFilterOptions();
 
         this.apiService.token
             ? NotificationView.createNotifly({
