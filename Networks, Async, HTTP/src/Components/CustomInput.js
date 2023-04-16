@@ -21,7 +21,6 @@ class CustomInput extends BaseElement {
 
     blink() {
         const blink = () => {
-            // console.log(e.target);
             this.node.classList.remove(styles.wrong);
             this.node.removeEventListener('animationend', blink);
         };
